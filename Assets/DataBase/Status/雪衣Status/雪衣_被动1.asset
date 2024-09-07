@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
+  m_Name: "\u96EA\u8863_\u88AB\u52A81"
+  m_EditorClassIdentifier: 
+  Caster: {fileID: 0}
+  Owner: {fileID: 0}
+  StatusName: 1001
+  description: "\u96EA\u8863\u88AB\u52A81"
+  duration: -1
+  NotAutoDelete: 0
+  statusType: 2
+  StatusValue: []
+  repeatRule: 0
+  ReapetFreshDuration: 0
+  StatusLayer: 0
+  LayerLimited: 0
+  ValueLimited: 0
+  IsDepend: 1
+  dependValues:
+  - property: 3
+    dependTarget: 0
+    values:
+    - 1
+    correctValues: 0
+  InvolvedName: 0300000002000000
+  isField: 0
+  fieldEffects: []
+  IsAttached: 0
+  attachOtherStatus:
+    StatusName: 
+    AddValue: 0
+  counter:
+    hasCounter: 0
+    counterType: 0
+    addLayer: 
+  trigger:
+    hasTrigger: 0
+    triggerCondition: 0
+    triggerLayer: 0
+    triggerSkill: {fileID: 0}

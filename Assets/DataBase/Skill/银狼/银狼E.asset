@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 130c01d5f1f0f6a4884f6ec4910e4539, type: 3}
+  m_Name: "\u94F6\u72FCE"
+  m_EditorClassIdentifier: 
+  skillID: 1032
+  elementType: 5
+  target: 0
+  attackType: 0
+  damageType: 1
+  skillType: 0200000000000000
+  dependProperties: 
+  toughDamage:
+  - 20
+  rates:
+  - 1.96
+  skillPointConsumed: 1
+  skillPointProvide: 0
+  energyConsumed: 0
+  RandomAttackNumber: 0
+  restoreEnergy: 30
+  ignoreWeakness: 0
+  basePercent:
+  - 0.72
+  - 0.85
+  - 1
+  BrokenEffect: 5
+  hasDamageIncrease: 0
+  otherDamageIncrease: []
+  addStatus:
+  - {fileID: 11400000, guid: 00c73ddedf9418b49872241824383a4a, type: 2}
+  - {fileID: 11400000, guid: 52126155446ea6d4a984e4980341f18a, type: 2}
+  - {fileID: 11400000, guid: cc7a7c6d0a84b6d45b411fc8c6b5af26, type: 2}
+  addactions:
+  - addaction: 3
+    element: 7
+    value: 0
+    AfterDamage: 0

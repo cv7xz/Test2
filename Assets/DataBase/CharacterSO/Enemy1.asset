@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44445eb083536174b815ff064a82a69c, type: 3}
+  m_Name: Enemy1
+  m_EditorClassIdentifier: 
+  baseAttack: 10
+  AttackPercentBonus: 0
+  fixAttackBonus: 0
+  currentAttack: 0
+  baseHealth: 200
+  healthPercentBonus: 0
+  currentHealth: 0
+  maxHealth: 0
+  fixHealthBonus: 0
+  baseDefend: 0
+  DefendPercentBonus: 0
+  currentDefend: 0
+  fixDefendBonus: 0
+  criticalPercent: 0
+  criticalDamage: 0
+  baseSpeed: 100
+  speedPercentBonus: 0
+  fixSpeedBonus: 0
+  currentSpeed: 0
+  effectPercent: 0
+  effectDefend: 0
+  damageIncrease: 0
+  BrokensFocus: 0
+  energyCollectEfficiency: 0
+  currentEnergyValue: 0
+  maxEnergyValue: 0
+  BrokenEfficiencyBonus: 0
+  elementType: 0
+  currentBINGDefend: 0
+  BINGDefend: 0.2
+  currentHUODefend: 0
+  HUODefend: 0.2
+  currentFENGDefend: 0
+  FENGDefend: 0.2
+  currentLEIDefend: 0
+  LEIDefend: 0.2
+  currentLIANGZIDefend: 0
+  LIANGZIDefend: 0
+  currentXUSHUDefend: 0
+  XUSHUDefend: 0.2
+  currentWULIDefend: 0
+  WULIDefend: 0.2
+  maxToughShield: 100
+  currentToughShield: 0
+  weakness: 05000000
+  actionValue: 0
+  Level: 0

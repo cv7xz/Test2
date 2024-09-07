@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44445eb083536174b815ff064a82a69c, type: 3}
+  m_Name: "\u94F6\u72FC"
+  m_EditorClassIdentifier: 
+  baseAttack: 640
+  AttackPercentBonus: 0
+  fixAttackBonus: 0
+  currentAttack: 0
+  baseHealth: 1047
+  healthPercentBonus: 0
+  currentHealth: 0
+  maxHealth: 0
+  fixHealthBonus: 0
+  baseDefend: 460
+  DefendPercentBonus: 0
+  currentDefend: 0
+  fixDefendBonus: 0
+  criticalPercent: 0.05
+  criticalDamage: 0.5
+  baseSpeed: 107
+  speedPercentBonus: 0
+  fixSpeedBonus: 0
+  currentSpeed: 0
+  effectPercent: 0
+  effectDefend: 0
+  damageIncrease: 0
+  BrokensFocus: 0
+  energyCollectEfficiency: 0
+  currentEnergyValue: 110
+  maxEnergyValue: 110
+  BrokenEfficiencyBonus: 0
+  elementType: 5
+  weaknessDefend: 0
+  maxToughShield: 0
+  currentToughShield: 0
+  weakness: 
+  actionValue: 0
+  Level: 80
