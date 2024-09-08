@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44445eb083536174b815ff064a82a69c, type: 3}
-  m_Name: Enemy2
+  m_Name: "\u7B26\u7384"
   m_EditorClassIdentifier: 
-  baseAttack: 180
+  baseAttack: 465
   AttackPercentBonus: 0
   fixAttackBonus: 0
   currentAttack: 0
-  baseHealth: 3000
+  baseHealth: 1474
   healthPercentBonus: 0
   currentHealth: 0
   maxHealth: 0
   fixHealthBonus: 0
-  baseDefend: 0
+  baseDefend: 606
   DefendPercentBonus: 0
   currentDefend: 0
   fixDefendBonus: 0
-  criticalPercent: 0
-  criticalDamage: 0
-  baseSpeed: 250
+  criticalPercent: 0.05
+  criticalDamage: 0.5
+  baseSpeed: 100
   speedPercentBonus: 0
   fixSpeedBonus: 0
   currentSpeed: 0
@@ -36,26 +36,26 @@ MonoBehaviour:
   damageIncrease: 0
   BrokensFocus: 0
   energyCollectEfficiency: 0
-  currentEnergyValue: 0
-  maxEnergyValue: 0
+  currentEnergyValue: 135
+  maxEnergyValue: 135
   BrokenEfficiencyBonus: 0
-  elementType: 0
+  elementType: 5
   currentBINGDefend: 0
   BINGDefend: 0
   currentHUODefend: 0
   HUODefend: 0
   currentFENGDefend: 0
-  FENGDefend: 0.2
+  FENGDefend: 0
   currentLEIDefend: 0
-  LEIDefend: 0.2
+  LEIDefend: 0
   currentLIANGZIDefend: 0
-  LIANGZIDefend: 0.2
+  LIANGZIDefend: 0
   currentXUSHUDefend: 0
-  XUSHUDefend: 0.2
+  XUSHUDefend: 0
   currentWULIDefend: 0
-  WULIDefend: 0.2
-  maxToughShield: 150
+  WULIDefend: 0
+  maxToughShield: 0
   currentToughShield: 0
-  weakness: 0000000001000000
+  weakness: 
   actionValue: 0
-  Level: 0
+  Level: 80

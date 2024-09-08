@@ -36,5 +36,6 @@ MonoBehaviour:
   hasDamageIncrease: 0
   otherDamageIncrease: []
   addStatus:
-  - {fileID: 11400000, guid: 983bac51bbb43554fa18c4311121ea63, type: 2}
+  - status: {fileID: 11400000, guid: 983bac51bbb43554fa18c4311121ea63, type: 2}
+    statusTarget: 0
   addactions: []

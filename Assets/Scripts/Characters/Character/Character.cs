@@ -254,6 +254,10 @@ public class Character : MonoBehaviour
                 {
                     dependValue += depend.values[0] * s.Caster.characterData.criticalDamage + depend.correctValues;  //加爆伤buff  依存施法者24% + 45%爆伤
                 }
+                else if(depend.property == Status.InvolvedProperty.HealthValue)
+                {
+                    dependValue += depend.values[0] * s.Caster.characterData.maxHealth + depend.correctValues;  //加符玄最大生命值的6%
+                }
             }
             else if(depend.dependTarget == Status.DependTarget.Global)
             {

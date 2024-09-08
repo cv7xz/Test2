@@ -103,5 +103,21 @@ public static class StatusAction
         }
     }
 
-
+    public static void AddStatusAllOtherFriend(Character source, Status status, CharacterData_SO.weaknessType type = CharacterData_SO.weaknessType.NONE)
+    {
+        foreach (var player in GameManager.Instance.players)
+        {
+            if (player != null)
+            {
+                if (player.characterData.elementType == type || type == CharacterData_SO.weaknessType.NONE)
+                {
+                    if(player != source)
+                    {
+                        var cloneStatus = GameObject.Instantiate(status);
+                        AddStatusAction(source, player, cloneStatus);
+                    }
+                }
+            }
+        }
+    }
 }

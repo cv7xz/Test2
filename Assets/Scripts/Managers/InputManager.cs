@@ -459,6 +459,10 @@ public class InputManager : MonoBehaviour
         newEnmey8.GetComponent<Player>().currentIndex = 2;
         newEnmey8.transform.position = GameManager.Instance.playerSlots[2].position;
 
+        GameObject newEnmey9 = Instantiate(GameManager.Instance.AllPlayers[3]);
+        newEnmey9.GetComponent<Player>().currentIndex = 3;
+        newEnmey9.transform.position = GameManager.Instance.playerSlots[3].position;
+
         #endregion
 
         FreshAction();
@@ -641,12 +645,12 @@ public class InputManager : MonoBehaviour
                     foreach(var s in skill.addStatus)
                     {
                         int StatusIndex = skill.addStatus.IndexOf(s);
-                        if (skill.attackType == Skill_SO.TargetType.SingleTarget)
+                        if (s.statusTarget == Skill_SO.TargetType.SingleTarget)
                         {
                             if (skill.basePercent[StatusIndex] * (currentActionCharacter.characterData.effectPercent + 1) * (1 - currentSelectEnemy.characterData.effectDefend) > Random.Range(0f, 1f))
                             {
-                                var cloneStatus = Instantiate(s);
-                                if (s.StatusName == "1035")
+                                var cloneStatus = Instantiate(s.status);
+                                if (s.status.StatusName == "1035")
                                 {
                                     cloneStatus.involvedElement = tempType;
                                 }
@@ -657,6 +661,7 @@ public class InputManager : MonoBehaviour
                                 GameManager.Instance.ShowPanelText("Ð§¹ûµÖ¿¹ !");
                             }
                         }
+
                     }
                 }
             }
@@ -667,14 +672,22 @@ public class InputManager : MonoBehaviour
             {
                 if (skillType == Skill_SO.SkillType.AddStatus)
                 {
-                    if (skill.attackType == Skill_SO.TargetType.SingleTarget)
+                    foreach(var statusStruct in skill.addStatus)
                     {
-                        var cloneStatus = Instantiate(skill.addStatus[0]);
-                        StatusAction.AddStatusAction(currentActionCharacter, currentSelectPlayer, cloneStatus);
-                    }
-                    else if (skill.attackType == Skill_SO.TargetType.AllTarget)
-                    {
-                        StatusAction.AddStatusAllFriend(currentActionCharacter, skill.addStatus[0]);
+                        int StatusIndex = skill.addStatus.IndexOf(statusStruct);
+                        if (statusStruct.statusTarget == Skill_SO.TargetType.SingleTarget)
+                        {
+                            var cloneStatus = Instantiate(statusStruct.status);
+                            StatusAction.AddStatusAction(currentActionCharacter, currentSelectPlayer, cloneStatus);
+                        }
+                        else if (statusStruct.statusTarget == Skill_SO.TargetType.AllTarget)
+                        {
+                            StatusAction.AddStatusAllFriend(currentActionCharacter, statusStruct.status);
+                        }
+                        else if(statusStruct.statusTarget == Skill_SO.TargetType.AllOtherFriend)
+                        {
+                            StatusAction.AddStatusAllOtherFriend(currentActionCharacter, statusStruct.status);
+                        }
                     }
                 }
             }

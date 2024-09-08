@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44445eb083536174b815ff064a82a69c, type: 3}
   m_Name: Enemy1
   m_EditorClassIdentifier: 
-  baseAttack: 10
+  baseAttack: 400
   AttackPercentBonus: 0
   fixAttackBonus: 0
   currentAttack: 0

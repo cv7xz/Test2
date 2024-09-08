@@ -33,6 +33,8 @@ public class Status : ScriptableObject
         DefendValueBonus,  //防御力
         CriticalPercentBonus,
         TriggerComponent,  //做触发器用
+
+        ShareDamage,  //符玄专属
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();

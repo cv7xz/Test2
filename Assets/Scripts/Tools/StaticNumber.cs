@@ -8,16 +8,17 @@ public static class StaticNumber
 
     public static float ActionTime = 0.5f; //行动后 怪物下一次行动cd
 
-    //攻击 生命 增伤 击破特攻 爆伤 命中 抵抗
+      
     public static Dictionary<(string, string), float> propertyDict = new Dictionary<(string, string), float>()
     {
-        {("XUEYI", "101_BD"),0 },
-        {("XUEYI", "102_BD"),0.18f },
-        {("XUEYI", "103_BD"),0.08f },
-        {("XUEYI", "104_BD"),37.3f },
-        {("XUEYI", "105_BD"),0 },
-        {("XUEYI", "106_BD"),0 },
-        {("XUEYI", "107_BD"),0 },
+        {("XUEYI", "101_BD"),0 },     //攻击
+        {("XUEYI", "102_BD"),0.18f }, //生命
+        {("XUEYI", "103_BD"),0.08f }, //增伤
+        {("XUEYI", "104_BD"),37.3f }, //击破特攻
+        {("XUEYI", "105_BD"),0 },     //爆伤
+        {("XUEYI", "106_BD"),0 },     //命中
+        {("XUEYI", "107_BD"),0 },     //抵抗
+        {("XUEYI", "108_BD"),0 },
 
         {("HUAHUO", "101_BD"),0 },
         {("HUAHUO", "102_BD"),0.28f },
@@ -26,6 +27,7 @@ public static class StaticNumber
         {("HUAHUO", "105_BD"),0.24f },
         {("HUAHUO", "106_BD"),0 },
         {("HUAHUO", "107_BD"),0.1f },
+        {("HUAHUO", "108_BD"),0 },
 
         {("YINLANG", "101_BD"),0.28f },
         {("YINLANG", "102_BD"),0 },
@@ -34,7 +36,16 @@ public static class StaticNumber
         {("YINLANG", "105_BD"),0.08f },
         {("YINLANG", "106_BD"),0.18f },
         {("YINLANG", "107_BD"),0 },
+        {("YINLANG", "108_BD"),0 },
 
+        {("FUXUAN", "101_BD"),0 },
+        {("FUXUAN", "102_BD"),0.18f },
+        {("FUXUAN", "103_BD"),0 },
+        {("FUXUAN", "104_BD"),0 },
+        {("FUXUAN", "105_BD"),0 },
+        {("FUXUAN", "106_BD"),0 },
+        {("FUXUAN", "107_BD"),0.1f },
+        {("FUXUAN", "108_BD"),0.187f },
         //{(XUEYI, "101_BD"),0 },
         //{(XUEYI, "102_BD"),0 },
         //{(XUEYI, "103_BD"),0 },

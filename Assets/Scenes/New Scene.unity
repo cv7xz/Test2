@@ -2279,6 +2279,7 @@ MonoBehaviour:
   - {fileID: 6944729479761336542, guid: 224ff9edbda9ee84bbbc4edf84082f25, type: 3}
   - {fileID: 3212461478109040733, guid: e0292a81e083394459e31cb3d99d880a, type: 3}
   - {fileID: 3212461478109040733, guid: 97f45824707fa63409b4372aa67a32bd, type: 3}
+  - {fileID: 6944729479761336542, guid: ed4d469ad5350a74da795c79ad7914b2, type: 3}
   AllEquip_HUIMIE: []
   AllEquip_ZHISHI: []
   AllEquip_XUWU: []

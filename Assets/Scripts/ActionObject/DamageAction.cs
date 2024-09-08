@@ -34,9 +34,18 @@ public static class DamageAction
         }
         #endregion
         context += "<color=blue>" + attacker.name + " Attack " + attacked.name + "</color>"+" !\n";
-        #region 伤害计算
+
         float damageValue = attackerData.currentAttack;
-        context += "当前攻击力: " + attackerData.currentAttack.ToString()+ "\n";
+        #region 伤害计算
+        if (skill.dependProperties.Count == 0)
+        {
+            context += "当前攻击力: " + attackerData.currentAttack.ToString() + "\n";
+        }
+        else if(skill.dependProperties[0] == Skill_SO.DependProperty.CurrentHealth)
+        {
+            damageValue = attackerData.currentHealth;
+            context += "当前生命值: " + attackerData.currentHealth.ToString() + "\n";
+        }
 
 
         bool isCritical = attackerData.criticalPercent >= Random.Range(0f, 1f);
@@ -165,6 +174,23 @@ public static class DamageAction
         damageValue *= (1 + attackerData.damageIncrease);
 
         damageValue = Mathf.Max(damageValue, 1f);
+
+        #region 分摊伤害
+        foreach (var status in attacked.currentStatus)
+        {
+            if(status.statusType == Status.StatusType.ShareDamage)
+            {
+                attackedData.currentHealth -= damageValue * (1 - status.StatusValue[0]);
+                GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue * (1 - status.StatusValue[0]));
+
+
+                status.Caster.characterData.currentHealth -= damageValue * (status.StatusValue[0]);
+                GameManager.Instance.DamageAppearFunc(attacker, status.Caster, damageValue * (status.StatusValue[0]));
+                return;   //暂时只考虑一层分摊伤害Status存在
+            }
+        }
+        #endregion
+
         attackedData.currentHealth -= damageValue;
 
         GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);

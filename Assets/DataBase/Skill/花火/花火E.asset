@@ -32,7 +32,8 @@ MonoBehaviour:
   hasDamageIncrease: 0
   otherDamageIncrease: []
   addStatus:
-  - {fileID: 11400000, guid: fc7f78f7d7b7edb489cbfd14f8b3e0f4, type: 2}
+  - status: {fileID: 11400000, guid: fc7f78f7d7b7edb489cbfd14f8b3e0f4, type: 2}
+    statusTarget: 0
   addactions:
   - addaction: 0
     element: 0

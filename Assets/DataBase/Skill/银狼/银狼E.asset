@@ -37,9 +37,12 @@ MonoBehaviour:
   hasDamageIncrease: 0
   otherDamageIncrease: []
   addStatus:
-  - {fileID: 11400000, guid: 00c73ddedf9418b49872241824383a4a, type: 2}
-  - {fileID: 11400000, guid: 52126155446ea6d4a984e4980341f18a, type: 2}
-  - {fileID: 11400000, guid: cc7a7c6d0a84b6d45b411fc8c6b5af26, type: 2}
+  - status: {fileID: 11400000, guid: 00c73ddedf9418b49872241824383a4a, type: 2}
+    statusTarget: 0
+  - status: {fileID: 11400000, guid: cc7a7c6d0a84b6d45b411fc8c6b5af26, type: 2}
+    statusTarget: 0
+  - status: {fileID: 11400000, guid: 52126155446ea6d4a984e4980341f18a, type: 2}
+    statusTarget: 0
   addactions:
   - addaction: 3
     element: 7

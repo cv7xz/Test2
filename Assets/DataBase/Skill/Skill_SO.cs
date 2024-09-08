@@ -20,6 +20,7 @@ public class Skill_SO : ScriptableObject
         AllTarget,
         NeighborTarget,
         RandomTarget,
+        AllOtherFriend,
     }
     public TargetType attackType;
     
@@ -78,7 +79,15 @@ public class Skill_SO : ScriptableObject
         public List<float> rates;
     }
     public List<OtherDamageIncrease> otherDamageIncrease = new List<OtherDamageIncrease>();
-    public List<Status> addStatus = new List<Status>();
+
+
+    [System.Serializable]
+    public struct AddStatus
+    {
+        public Status status;
+        public TargetType statusTarget;
+    }
+    public List<AddStatus> addStatus = new List<AddStatus>();
 
     public enum AddAction
     {
