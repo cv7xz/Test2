@@ -7,7 +7,16 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public Transform canvas;
-    public List<GameObject> AllCharacters = new List<GameObject>(); //预制体
+    public List<GameObject> AllEnemy = new List<GameObject>(); //预制体
+
+    public List<GameObject> AllPlayers = new List<GameObject>();
+
+    public List<GameObject> AllEquip_HUIMIE = new List<GameObject>();
+    public List<GameObject> AllEquip_ZHISHI = new List<GameObject>();
+    public List<GameObject> AllEquip_XUWU = new List<GameObject>();
+    public List<GameObject> AllEquip_XUNLIE = new List<GameObject>();
+    public List<GameObject> AllEquip_CUNHU = new List<GameObject>();
+
     public List<Status> AllStatus = new List<Status>();
 
     public List<Character> enemies = new List<Character>(5);

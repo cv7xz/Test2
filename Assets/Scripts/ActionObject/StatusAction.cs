@@ -51,13 +51,13 @@ public static class StatusAction
         {
             int randomIndex = Random.Range(0, status.childStatus.Count);
             var cloneChildStatus = GameObject.Instantiate(status.childStatus[randomIndex]);
-            target.currentStatus.Add(cloneChildStatus);
+            //target.currentStatus.Add(cloneChildStatus);
             target.FreshProperty(cloneChildStatus);
             cloneChildStatus.AddCounterAbility();
         }
         else
         {
-            target.currentStatus.Add(status);
+            //target.currentStatus.Add(status);
             target.FreshProperty(status);
             status.AddCounterAbility();
         }

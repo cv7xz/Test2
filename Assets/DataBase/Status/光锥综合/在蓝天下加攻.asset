@@ -10,34 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
-  m_Name: "\u82B1\u706B\u591C\u60F3\u66F22"
+  m_Name: "\u5728\u84DD\u5929\u4E0B\u52A0\u653B"
   m_EditorClassIdentifier: 
   Caster: {fileID: 0}
   Owner: {fileID: 0}
-  StatusName: 1018
-  description: "\u6839\u636E\u91CF\u5B50\u89D2\u8272\u6570\u91CF\u52A0\u653B"
+  StatusName: 10001_BD
+  description: 
   duration: -1
   NotAutoDelete: 0
   turnStartDuration: 0
   statusType: 0
-  StatusValue: []
+  StatusValue:
+  - 0.32
   involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
   StatusLayer: 1
   LayerLimited: 1
   ValueLimited: 0
-  IsDepend: 1
-  dependValues:
-  - property: 5
-    dependTarget: 2
-    certainElement: 5
-    values:
-    - 0.05
-    - 0.15
-    - 0.3
-    - 0.3
-    correctValues: 0
+  IsDepend: 0
+  dependValues: []
   InvolvedName: 00000000
   isField: 0
   fieldEffects: []

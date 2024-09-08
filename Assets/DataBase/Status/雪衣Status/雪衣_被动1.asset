@@ -15,11 +15,13 @@ MonoBehaviour:
   Caster: {fileID: 0}
   Owner: {fileID: 0}
   StatusName: 1001
-  description: "\u96EA\u8863\u88AB\u52A81"
+  description: "\u51FB\u7834\u8F6C\u589E\u4F24"
   duration: -1
   NotAutoDelete: 0
+  turnStartDuration: 0
   statusType: 2
   StatusValue: []
+  involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
   StatusLayer: 0
@@ -29,6 +31,7 @@ MonoBehaviour:
   dependValues:
   - property: 3
     dependTarget: 0
+    certainElement: 0
     values:
     - 1
     correctValues: 0
@@ -44,7 +47,10 @@ MonoBehaviour:
     counterType: 0
     addLayer: 
   trigger:
-    hasTrigger: 0
     triggerCondition: 0
     triggerLayer: 0
+    triggerEffect: 0
+    triggerStatus: []
     triggerSkill: {fileID: 0}
+  StatusGroup: 0
+  childStatus: []

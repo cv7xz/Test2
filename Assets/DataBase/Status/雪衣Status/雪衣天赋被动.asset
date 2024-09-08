@@ -12,23 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
   m_Name: "\u96EA\u8863\u5929\u8D4B\u88AB\u52A8"
   m_EditorClassIdentifier: 
+  Caster: {fileID: 0}
   Owner: {fileID: 0}
   StatusName: 1002
-  description: "\u96EA\u8863\u5929\u8D4B\u88AB\u52A8"
+  description: "\u8FFD\u52A0\u653B\u51FB\u88AB\u52A8"
   duration: -1
+  NotAutoDelete: 0
+  turnStartDuration: 0
   statusType: 4
   StatusValue: []
+  involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
   StatusLayer: 0
   LayerLimited: 0
   ValueLimited: 0
-  dependValue:
-    IsDepend: 0
-    property: 
-    values: []
-    correctValues: []
+  IsDepend: 0
+  dependValues: []
   InvolvedName: 
+  isField: 0
+  fieldEffects: []
+  IsAttached: 0
+  attachOtherStatus:
+    StatusName: 
+    AddValue: 0
   counter:
     hasCounter: 1
     counterType: 100
@@ -37,4 +44,8 @@ MonoBehaviour:
     hasTrigger: 1
     triggerCondition: 0
     triggerLayer: 6
+    triggerEffect: 0
+    triggerStatus: []
     triggerSkill: {fileID: 11400000, guid: c8d5ec1bd2fd30342b9acb5c4b627462, type: 2}
+  StatusGroup: 0
+  childStatus: []

@@ -15,13 +15,14 @@ MonoBehaviour:
   Caster: {fileID: 0}
   Owner: {fileID: 0}
   StatusName: 1017
-  description: 
+  description: "\u5168\u4F53\u52A015%\u653B"
   duration: -1
   NotAutoDelete: 0
   turnStartDuration: 0
   statusType: 0
   StatusValue:
   - 0.15
+  involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
   StatusLayer: 1
@@ -41,7 +42,10 @@ MonoBehaviour:
     counterType: 0
     addLayer: 
   trigger:
-    hasTrigger: 0
     triggerCondition: 0
     triggerLayer: 0
+    triggerEffect: 0
+    triggerStatus: []
     triggerSkill: {fileID: 0}
+  StatusGroup: 0
+  childStatus: []

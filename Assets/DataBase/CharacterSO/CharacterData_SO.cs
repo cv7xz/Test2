@@ -14,6 +14,8 @@ public class CharacterData_SO : ScriptableObject
     public float effectPercent, effectDefend;
 
     #region Player
+
+
     public float damageIncrease;
     public float BrokensFocus;
     public float energyCollectEfficiency;

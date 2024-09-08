@@ -13,10 +13,35 @@ public class Player : Character
         skillFinal = Instantiate(SKILLFINALObject);
 
         friend_SO = Instantiate(FriendObject);
+        
         for (int i = 0; i < friend_SO.InitStatusObject.Count; i++)
         {
             friend_SO.InitStatus.Add(Instantiate(friend_SO.InitStatusObject[i]));
         }
+        
+
+        //角色属性初始化顺序: 读武器 刷新base属性 读武器Buff和角色被动buff
+        if(equipObject != null)
+        {
+            equip = Instantiate(equipObject);
+        }
+
+        if(equip != null)
+        {
+            characterData.baseAttack += equip.baseAttackValue;
+            characterData.baseHealth += equip.baseHealthValue;
+            characterData.baseDefend += equip.baseDefendValue;
+
+            if (equip.initStatus != null && equip.initStatus.Count != 0)
+            {
+                foreach (var status in equip.initStatus)
+                {
+                    StatusAction.AddStatusAction(this, this, status);
+                }
+            }
+        }
+
+
 
         if (friend_SO != null)
         {

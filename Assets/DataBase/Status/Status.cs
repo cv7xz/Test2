@@ -27,10 +27,12 @@ public class Status : ScriptableObject
         ChangeSkillPointLimited,
         EffectPercentBonus,
         EffectDefendBonus,
-        DefendPercentBonus,
+        DefendPercentBonus,   //这个是抗性
         SpeedPercentBonus,
 
-
+        DefendValueBonus,  //防御力
+        CriticalPercentBonus,
+        TriggerComponent,  //做触发器用
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();
@@ -85,6 +87,9 @@ public class Status : ScriptableObject
         EffectDefendValue,
         DefendValue,
         SpeedValue,
+
+        PureDefendValue,
+        CriticalPercentValue,
     }
     public List<InvolvedProperty> InvolvedName;
 
@@ -129,15 +134,22 @@ public class Status : ScriptableObject
     {
         LayerEnough,
     }
+
+    public enum TriggerEffect
+    {
+        ExecuteSkill,
+        AddStatus,
+    }
     [System.Serializable]
-    public struct Trigger
+    public struct Trigger   //触发器 
     {
         public bool hasTrigger;
 
-        
         public TriggerCondition triggerCondition;
         public int triggerLayer;
 
+        public TriggerEffect triggerEffect;
+        public List<Status> triggerStatus;
         public Skill_SO triggerSkill;
     }
     public Trigger trigger;
@@ -156,22 +168,35 @@ public class Status : ScriptableObject
                 case Messenger.EventType.SkillPointChange:
                     Messenger.Instance.AddListener<int>(Messenger.EventType.SkillPointChange, ConsumeSkillPointAction);
                     break;
+                case Messenger.EventType.KillTarget:
+                    Messenger.Instance.AddListener<Character,Character>(Messenger.EventType.KillTarget, KillTargetAction);
+                    break;
             }
         }
     }
-
     public void TryApplyTrigger()
     {
-        if(trigger.triggerCondition == TriggerCondition.LayerEnough)
+        if(trigger.hasTrigger && trigger.triggerCondition == TriggerCondition.LayerEnough)
         {
             if(StatusLayer >= trigger.triggerLayer)
             {
-                InputManager.Instance.SkillExecute(trigger.triggerSkill, Owner);
+                if(trigger.triggerEffect == TriggerEffect.ExecuteSkill)
+                {
+                    InputManager.Instance.SkillExecute(trigger.triggerSkill, Owner);
+                }
+                else if(trigger.triggerEffect == TriggerEffect.AddStatus)
+                {
+                    foreach(var status in trigger.triggerStatus)
+                    {
+                        StatusAction.AddStatusAction(Caster, Owner, status);
+                    }
+                }
                 StatusLayer -= trigger.triggerLayer;
             }
         }
     }
 
+    #region 计数器回调
     private void ToughDamageAction(DamageInfo damage)
     {
         if(damage.skill.skillID == "1013")
@@ -190,7 +215,7 @@ public class Status : ScriptableObject
         TryApplyTrigger();
     }
 
-    private void ConsumeSkillPointAction(int changeNumber)
+    private void ConsumeSkillPointAction(int changeNumber)  //花火天赋被动Status
     {
         if(changeNumber < 0)   //小于0说明消耗了战技点
         {
@@ -198,6 +223,17 @@ public class Status : ScriptableObject
         }
         Owner.FreshProperty(this);
     }
+
+    private void KillTargetAction(Character attacter,Character killed)  //在蓝天下
+    {
+        if (attacter.currentStatus.Contains(this))
+        {
+            StatusLayer = 1;
+        }
+
+        TryApplyTrigger();
+    }
+    #endregion
     public void OnDestroy()
     {
 

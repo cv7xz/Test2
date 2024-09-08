@@ -33,7 +33,7 @@ public static class DamageAction
 
         }
         #endregion
-        context += attacker.name + " Attack " + attacked.name + " !\n";
+        context += "<color=blue>" + attacker.name + " Attack " + attacked.name + "</color>"+" !\n";
         #region 伤害计算
         float damageValue = attackerData.currentAttack;
         context += "当前攻击力: " + attackerData.currentAttack.ToString()+ "\n";
@@ -119,7 +119,7 @@ public static class DamageAction
         #endregion
 
         damageValue *= (1 - weaknessDefend);
-        context += "  抗性: "+ weaknessDefend + " 处理后伤害: " + damageValue.ToString() + "\n"; ;
+        context += "  抗性: "+ weaknessDefend + " 处理后伤害: " + "<color=red>"+ damageValue.ToString()+ "</color>" + "\n"; ;
         context += "-------------------------------------\n";
         damageValue = Mathf.Max(damageValue, 1f);
 
@@ -127,6 +127,10 @@ public static class DamageAction
         attackedData.currentHealth -= damageValue;
         #endregion
 
+        if(damageValue >= attackedData.currentHealth)
+        {
+            Messenger.Instance.BroadCast(Messenger.EventType.KillTarget, attacker,attacked);
+        }
         damageInfo.damageValue = damageValue;
         damageInfo.isBrokenDamage = false;
         damageInfo.elementType = skill.elementType;

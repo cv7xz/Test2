@@ -15,7 +15,7 @@ MonoBehaviour:
   Caster: {fileID: 0}
   Owner: {fileID: 0}
   StatusName: 1032
-  description: 
+  description: "\u94F6\u72FC\u51CF\u9632\u7F3A\u9677"
   duration: 3
   NotAutoDelete: 0
   turnStartDuration: 0
@@ -42,9 +42,10 @@ MonoBehaviour:
     counterType: 0
     addLayer: 
   trigger:
-    hasTrigger: 0
     triggerCondition: 0
     triggerLayer: 0
+    triggerEffect: 0
+    triggerStatus: []
     triggerSkill: {fileID: 0}
   StatusGroup: 0
   childStatus: []

@@ -207,6 +207,7 @@ public class Messenger : MonoBehaviour
         ToughDamage = 100,
 
         TurnStart,
+        KillTarget,
 
     };
 }

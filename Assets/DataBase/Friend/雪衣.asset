@@ -15,7 +15,7 @@ MonoBehaviour:
   CharacterName: XUEYI
   InitStatus: []
   InitStatusObject:
-  - {fileID: 11400000, guid: 291e1717c7ef60248976ff0bc89302a7, type: 2}
+  - {fileID: 11400000, guid: d0a574e6a182c3747adc5a87684e00df, type: 2}
   - {fileID: 11400000, guid: ae9cb9f0da1c9a44cb3724cbde86181a, type: 2}
   - {fileID: 11400000, guid: e1350bcf4b228fc459b898c9c98cf636, type: 2}
   - {fileID: 11400000, guid: 3c4f860c52630054abfa1e5286188b21, type: 2}

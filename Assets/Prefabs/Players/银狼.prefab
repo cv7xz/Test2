@@ -185,18 +185,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  characterName: HUAHUO
+  characterName: YINLANG
   CurrentIndex: 0
   sprite: {fileID: 21300000, guid: 7e014759b47794e55b8a8ec42ab79f18, type: 3}
   TargetFlag: {fileID: 781060075477137280}
   HealthBarPrefab: {fileID: 6441210317514940679, guid: d4570dbc69d800b4d8470136132e6340, type: 3}
   healthBar: {fileID: 0}
   HealthPos: {fileID: 4943939297669878547}
+  equipObject: {fileID: 0}
   characterData: {fileID: 0}
   QSKILLObject: {fileID: 11400000, guid: c9c824739a29a214faea6d44eef70c6f, type: 2}
   ESKILLObject: {fileID: 11400000, guid: ff91e7fb46126a64f8e3dfdd381d8a85, type: 2}
   SKILLFINALObject: {fileID: 11400000, guid: 54e1f601274572946ba20a462943416b, type: 2}
   FriendObject: {fileID: 11400000, guid: fd87b87ddb8607e4992d5fd9ce703e00, type: 2}
+  equip: {fileID: 0}
   data: {fileID: 11400000, guid: b8e3ff9a969846549b366e4cf4e746a6, type: 2}
   skillQ: {fileID: 0}
   skillE: {fileID: 0}

@@ -39,11 +39,12 @@ public class Character : MonoBehaviour
     public Transform HealthPos;
     #endregion
 
+    public Equip equipObject;
     public CharacterData_SO characterData;
     public Skill_SO QSKILLObject, ESKILLObject, SKILLFINALObject;
     public Friend_SO FriendObject;
 
-
+    public Equip equip;
     public CharacterData_SO data;
     public Skill_SO skillQ, skillE,skillFinal;
     public Friend_SO friend_SO;
@@ -437,7 +438,7 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.BINGDefend = BINGDefendBonus;
+                characterData.currentBINGDefend = characterData.BINGDefend + BINGDefendBonus;
 
                 float HUODefendBonus = 0;
                 foreach (var s in currentStatus)
@@ -450,7 +451,7 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.HUODefend = HUODefendBonus;
+                characterData.currentHUODefend = characterData.HUODefend + HUODefendBonus;
 
                 float FENGDefendBonus = 0;
                 foreach (var s in currentStatus)
@@ -463,7 +464,7 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.FENGDefend = FENGDefendBonus;
+                characterData.currentFENGDefend = characterData.FENGDefend + FENGDefendBonus;
 
                 float LEIDefendBonus = 0;
                 foreach (var s in currentStatus)
@@ -476,7 +477,7 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.LEIDefend = LEIDefendBonus;
+                characterData.currentLEIDefend = characterData.LEIDefend + LEIDefendBonus;
 
                 float WULIDefendBonus = 0;
                 foreach (var s in currentStatus)
@@ -489,7 +490,7 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.WULIDefend = WULIDefendBonus;
+                characterData.currentWULIDefend = characterData.WULIDefend + WULIDefendBonus;
 
                 float XUSHUDefendBonus = 0;
                 foreach (var s in currentStatus)
@@ -502,7 +503,7 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.XUSHUDefend = XUSHUDefendBonus;
+                characterData.currentXUSHUDefend = characterData.XUSHUDefend + XUSHUDefendBonus;
 
                 float LIANGZIDefendBonus = 0;
                 foreach (var s in currentStatus)
@@ -515,8 +516,52 @@ public class Character : MonoBehaviour
                         }
                     }
                 }
-                characterData.LIANGZIDefend = LIANGZIDefendBonus;
+                characterData.currentLIANGZIDefend = characterData.LIANGZIDefend + LIANGZIDefendBonus;
                 #endregion
+            }
+            else if (type == Status.InvolvedProperty.PureDefendValue)
+            {
+                float tempDefendBonus = 0;
+                foreach (var s in currentStatus)
+                {
+                    if (s.statusType == Status.StatusType.DefendValueBonus)
+                    {
+                        tempDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                    }
+                }
+
+                if (status.ValueLimited > 1e-6)
+                {
+                    tempDefendBonus = Mathf.Min(tempDefendBonus, status.ValueLimited);
+                }
+
+                characterData.DefendPercentBonus = tempDefendBonus;
+                characterData.currentDefend = characterData.baseDefend * (1 + tempDefendBonus);
+            }
+            else if (type == Status.InvolvedProperty.CriticalPercentValue)
+            {
+                float tempCriticalPercentBonus = 0;
+                foreach (var s in currentStatus)
+                {
+                    if (s.statusType == Status.StatusType.CriticalPercentBonus)
+                    {
+                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                        {
+                            tempCriticalPercentBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                        }
+                        else
+                        {
+                            tempCriticalPercentBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0]) * s.StatusLayer);
+                        }
+                    }
+                }
+
+                if (status.ValueLimited > 1e-6)
+                {
+                    tempCriticalPercentBonus = Mathf.Min(tempCriticalPercentBonus, status.ValueLimited);
+                }
+
+                characterData.criticalPercent = tempCriticalPercentBonus + 0.05f;
             }
         }
     }
@@ -582,7 +627,23 @@ public class Character : MonoBehaviour
 
         foreach (var status in currentStatus)
         {
-            context += status.name + " 持续: " + status.duration.ToString() + " 层数: " + status.StatusLayer + " \n";
+            //context += status.description + "\n";
+            context += status.name + " 持续: " + status.duration.ToString() + " 层数: " + status.StatusLayer + " 数值:";
+
+            if(status.dependValues.Count > 0)
+            {
+                context += GetDependValue(status).ToString() +"(依存) ";
+            }
+            else
+            {
+                foreach (var value in status.StatusValue)
+                {
+                    context += value.ToString() + "  ";
+                }
+            }
+
+            context +=  "\n";
+
         }
         GameManager.Instance.CharacterInfomText.text = context;
     }

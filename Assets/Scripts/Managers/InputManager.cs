@@ -18,6 +18,13 @@ public class InputManager : MonoBehaviour
         R,
         None,
     }
+    public enum CurrentGameState
+    {
+        Outside,
+        Inside,
+        None,
+    }
+    public CurrentGameState currentGameState = CurrentGameState.Outside;
     private CurrentInputStateEnum currentInputState;
     public CurrentInputStateEnum CurrentInputState
     {
@@ -55,6 +62,9 @@ public class InputManager : MonoBehaviour
     public CounterDown<Skill_SO, Character> enemyActionCounterDown;
     public Text ActionCounterDownText;
 
+
+    public Transform SelectPanel;
+    public GameObject SpritePrefab;
     private void Awake()
     {
         if(Instance == null)
@@ -73,7 +83,11 @@ public class InputManager : MonoBehaviour
     public Queue<Character> SpecialActionQueue = new Queue<Character>();
     void Update()
     {
-        ActionCounterDownText.text = "当前人物行动\n动画倒计时: " + enemyActionCounterDown.currentTime.ToString("f2");
+        //if(currentGameState == CurrentGameState.Outside)
+        //{
+        //    return;
+        //}
+        ActionCounterDownText.text = "当前人物" + currentActionCharacter.characterName +  "行动\n动画倒计时: " + enemyActionCounterDown.currentTime.ToString("f2");
         enemyActionCounterDown.Update();
         ActionExecute();
         ChangeTarget();
@@ -399,37 +413,53 @@ public class InputManager : MonoBehaviour
     }
     public void Init()
     {
-        GameObject newEnmey = Instantiate(GameManager.Instance.AllCharacters[0]);
+        foreach(var player in GameManager.Instance.AllPlayers)
+        {
+            GameObject newImage = Instantiate(SpritePrefab,SelectPanel.GetChild(0));
+            newImage.GetComponent<Image>().sprite = player.GetComponent<Player>().sprite;
+            newImage.transform.GetChild(1).GetComponent<Image>().sprite = GameManager.Instance.Elements[(int)player.GetComponent<Player>().data.elementType].GetComponent<SpriteRenderer>().sprite;
+
+            var component = newImage.GetComponent<SelectPlayer>();
+
+            component.PlayerName = player.GetComponent<Player>().characterName;
+            component.playerIndex = GameManager.Instance.AllPlayers.IndexOf(player);
+            
+        }
+        #region
+
+        GameObject newEnmey = Instantiate(GameManager.Instance.AllEnemy[0]);
         newEnmey.GetComponent<Enemy>().currentIndex = 0;
         newEnmey.transform.position = GameManager.Instance.enemySlots[0].position;
 
-        GameObject newEnmey2 = Instantiate(GameManager.Instance.AllCharacters[2]);
+        GameObject newEnmey2 = Instantiate(GameManager.Instance.AllEnemy[1]);
         newEnmey2.GetComponent<Enemy>().currentIndex = 1;
         newEnmey2.transform.position = GameManager.Instance.enemySlots[1].position;
 
-        GameObject newEnmey3 = Instantiate(GameManager.Instance.AllCharacters[2]);
+        GameObject newEnmey3 = Instantiate(GameManager.Instance.AllEnemy[1]);
         newEnmey3.GetComponent<Enemy>().currentIndex = 2;
         newEnmey3.transform.position = GameManager.Instance.enemySlots[2].position;
 
-        GameObject newEnmey4 = Instantiate(GameManager.Instance.AllCharacters[2]);
+        GameObject newEnmey4 = Instantiate(GameManager.Instance.AllEnemy[0]);
         newEnmey4.GetComponent<Enemy>().currentIndex = 3;
         newEnmey4.transform.position = GameManager.Instance.enemySlots[3].position;
 
-        GameObject newEnmey5 = Instantiate(GameManager.Instance.AllCharacters[0]);
+        GameObject newEnmey5 = Instantiate(GameManager.Instance.AllEnemy[1]);
         newEnmey5.GetComponent<Enemy>().currentIndex = 4;
         newEnmey5.transform.position = GameManager.Instance.enemySlots[4].position;
 
-        GameObject newEnmey6 = Instantiate(GameManager.Instance.AllCharacters[1]);
+        GameObject newEnmey6 = Instantiate(GameManager.Instance.AllPlayers[0]);
         newEnmey6.GetComponent<Player>().currentIndex = 0;
         newEnmey6.transform.position = GameManager.Instance.playerSlots[0].position;
 
-        GameObject newEnmey7 = Instantiate(GameManager.Instance.AllCharacters[4]);
+        GameObject newEnmey7 = Instantiate(GameManager.Instance.AllPlayers[1]);
         newEnmey7.GetComponent<Player>().currentIndex = 1;
         newEnmey7.transform.position = GameManager.Instance.playerSlots[1].position;
 
-        GameObject newEnmey8 = Instantiate(GameManager.Instance.AllCharacters[3]);
+        GameObject newEnmey8 = Instantiate(GameManager.Instance.AllPlayers[2]);
         newEnmey8.GetComponent<Player>().currentIndex = 2;
         newEnmey8.transform.position = GameManager.Instance.playerSlots[2].position;
+
+        #endregion
 
         FreshAction();
 
@@ -476,6 +506,7 @@ public class InputManager : MonoBehaviour
             }
         }
         #endregion
+
     }
     [HideInInspector]
     public bool TryingCastFinalSkill = false;

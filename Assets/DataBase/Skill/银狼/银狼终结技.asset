@@ -17,11 +17,12 @@ MonoBehaviour:
   target: 0
   attackType: 0
   damageType: 2
-  skillType: 0000000002000000
+  skillType: 0200000000000000
   dependProperties: 
   toughDamage:
   - 30
-  rates: []
+  rates:
+  - 3.8
   skillPointConsumed: 0
   skillPointProvide: 0
   energyConsumed: 110
@@ -34,5 +35,6 @@ MonoBehaviour:
   BrokenEffect: 0
   hasDamageIncrease: 0
   otherDamageIncrease: []
-  addStatus: []
+  addStatus:
+  - {fileID: 11400000, guid: 983bac51bbb43554fa18c4311121ea63, type: 2}
   addactions: []
