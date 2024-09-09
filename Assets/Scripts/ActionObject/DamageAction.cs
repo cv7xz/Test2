@@ -182,17 +182,18 @@ public static class DamageAction
             {
                 attackedData.currentHealth -= damageValue * (1 - status.StatusValue[0]);
                 GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue * (1 - status.StatusValue[0]));
-
+                Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
 
                 status.Caster.characterData.currentHealth -= damageValue * (status.StatusValue[0]);
                 GameManager.Instance.DamageAppearFunc(attacker, status.Caster, damageValue * (status.StatusValue[0]));
+                Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, status.Caster, damageValue);
                 return;   //暂时只考虑一层分摊伤害Status存在
             }
         }
         #endregion
 
         attackedData.currentHealth -= damageValue;
-
+        Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
         GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);
     }
     public static float BrokenDamageAction(Character source, Character attacked)

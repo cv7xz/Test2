@@ -135,6 +135,7 @@ public class Status : ScriptableObject
     public enum TriggerCondition
     {
         LayerEnough,
+        HealthLimit,
     }
 
     public enum TriggerEffect
@@ -150,6 +151,8 @@ public class Status : ScriptableObject
         public TriggerCondition triggerCondition;
         public int triggerLayer;
 
+        public Compare limitRelation;
+        public float limitValue;  //血量小于50%时
         public TriggerEffect triggerEffect;
         public List<Status> triggerStatus;
         public Skill_SO triggerSkill;
@@ -158,6 +161,17 @@ public class Status : ScriptableObject
 
     public bool StatusGroup;
     public List<Status> childStatus = new List<Status>();
+
+
+
+    public enum Compare
+    {
+        Less,
+        LessOrEqual,
+        Equal,
+        MoreOrEqual,
+        More,
+    }
     public void AddCounterAbility()
     {
         if (this.counter.hasCounter)
@@ -173,6 +187,24 @@ public class Status : ScriptableObject
                 case Messenger.EventType.KillTarget:
                     Messenger.Instance.AddListener<Character,Character>(Messenger.EventType.KillTarget, KillTargetAction);
                     break;
+                case Messenger.EventType.DealDamage:
+                    Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, HealthCheckAction);
+                    break;
+            }
+        }
+    }
+
+    public void ApplyTrigger()
+    {
+        if (trigger.triggerEffect == TriggerEffect.ExecuteSkill)
+        {
+            InputManager.Instance.SkillExecute(trigger.triggerSkill, Owner);
+        }
+        else if (trigger.triggerEffect == TriggerEffect.AddStatus)
+        {
+            foreach (var status in trigger.triggerStatus)
+            {
+                StatusAction.AddStatusAction(Caster, Owner, status);
             }
         }
     }
@@ -182,18 +214,19 @@ public class Status : ScriptableObject
         {
             if(StatusLayer >= trigger.triggerLayer)
             {
-                if(trigger.triggerEffect == TriggerEffect.ExecuteSkill)
-                {
-                    InputManager.Instance.SkillExecute(trigger.triggerSkill, Owner);
-                }
-                else if(trigger.triggerEffect == TriggerEffect.AddStatus)
-                {
-                    foreach(var status in trigger.triggerStatus)
-                    {
-                        StatusAction.AddStatusAction(Caster, Owner, status);
-                    }
-                }
+                ApplyTrigger();
                 StatusLayer -= trigger.triggerLayer;
+            }
+        }
+        else if(trigger.hasTrigger && trigger.triggerCondition == TriggerCondition.HealthLimit)   //符玄半血触发器
+        {
+            if (StatusLayer >= trigger.triggerLayer)
+            {
+                if(trigger.limitRelation == Compare.Less && Owner.characterData.currentHealth < Owner.characterData.maxHealth * trigger.limitValue)
+                {
+                    ApplyTrigger(); 
+                    StatusLayer -= trigger.triggerLayer;
+                }
             }
         }
     }
@@ -233,6 +266,11 @@ public class Status : ScriptableObject
             StatusLayer = 1;
         }
 
+        TryApplyTrigger();
+    }
+
+    private void HealthCheckAction(Character a, Character b,float c)
+    {
         TryApplyTrigger();
     }
     #endregion

@@ -21,6 +21,7 @@ public class Skill_SO : ScriptableObject
         NeighborTarget,
         RandomTarget,
         AllOtherFriend,
+        Self,
     }
     public TargetType attackType;
     
@@ -43,6 +44,8 @@ public class Skill_SO : ScriptableObject
         CurrentAttack,
         CurrentHealth,
         CurrentDefend,
+        CurrentLossHealh,
+        maxHealth,
     }
 
     public List<DependProperty> dependProperties = new List<DependProperty>();

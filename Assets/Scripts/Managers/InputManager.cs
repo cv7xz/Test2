@@ -690,6 +690,17 @@ public class InputManager : MonoBehaviour
                         }
                     }
                 }
+                else if(skillType == Skill_SO.SkillType.Healing)
+                {
+                    if(skill.attackType == Skill_SO.TargetType.Self)
+                    {
+                        HealingAction.DealHealingAction(executeCharacter, executeCharacter, skill);
+                    }
+                    else if(skill.attackType == Skill_SO.TargetType.AllTarget)
+                    {
+                        HealingAction.DealHealingAllAction(executeCharacter, skill);
+                    }
+                }
             }
         }
         foreach (var action in skill.addactions)
