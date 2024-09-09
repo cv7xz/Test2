@@ -98,6 +98,7 @@ public class Skill_SO : ScriptableObject
         GetEnergy,
         GetSkillPoint,
         AddWeakness,
+        AddStatusLayer,  //符玄终结技加层数
     }
 
     [System.Serializable]
@@ -106,14 +107,16 @@ public class Skill_SO : ScriptableObject
         public AddAction addaction;
         public CharacterData_SO.weaknessType element;  //银狼专用 添加弱点Action 
         public float value;
+        public string statusName;
         public bool AfterDamage;  //一些Action需要具体作用于伤害前/后
 
-        public Actions(AddAction a, CharacterData_SO.weaknessType b, float c,bool d)
+        public Actions(AddAction a, CharacterData_SO.weaknessType b, float c,bool d,string e)
         {
             addaction = a;
             element = b;
             value = c;
             AfterDamage = d;
+            statusName = e;
         }
     }
     public List<Actions> addactions = new List<Actions>();

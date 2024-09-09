@@ -36,14 +36,16 @@ MonoBehaviour:
   attachOtherStatus:
     StatusName: 
     AddValue: 0
+  hasCounter: 1
   counter:
-    hasCounter: 1
     counterType: 100
     addLayer: 0100000001000000
+  hasTrigger: 1
   trigger:
-    hasTrigger: 1
     triggerCondition: 0
     triggerLayer: 6
+    limitRelation: 0
+    limitValue: 0
     triggerEffect: 0
     triggerStatus: []
     triggerSkill: {fileID: 11400000, guid: c8d5ec1bd2fd30342b9acb5c4b627462, type: 2}

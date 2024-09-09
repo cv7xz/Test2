@@ -12,24 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 130c01d5f1f0f6a4884f6ec4910e4539, type: 3}
   m_Name: "\u7B26\u7384\u7EC8\u7ED3\u6280"
   m_EditorClassIdentifier: 
-  skillID: 
-  elementType: 0
+  skillID: 1044
+  elementType: 5
   target: 0
-  attackType: 0
-  damageType: 0
-  skillType: 
-  dependProperties: 
-  toughDamage: []
-  rates: []
+  attackType: 1
+  damageType: 2
+  skillType: 00000000
+  dependProperties: 01000000
+  toughDamage:
+  - 20
+  rates:
+  - 1
   skillPointConsumed: 0
   skillPointProvide: 0
   energyConsumed: 0
   RandomAttackNumber: 0
-  restoreEnergy: 0
+  restoreEnergy: 5
   ignoreWeakness: 0
   basePercent: []
   BrokenEffect: 0
   hasDamageIncrease: 0
   otherDamageIncrease: []
   addStatus: []
-  addactions: []
+  addactions:
+  - addaction: 4
+    element: 0
+    value: 1
+    statusName: 1044
+    AfterDamage: 1

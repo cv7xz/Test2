@@ -121,11 +121,10 @@ public class Status : ScriptableObject
     }
     public AttachOtherStatus attachOtherStatus;
 
+    public bool hasCounter;
     [System.Serializable]
     public struct Counter
     {
-        public bool hasCounter;
-
         public Messenger.EventType counterType; //计数方式类型
         public List<int> addLayer;  //主要层数放第一位
     }
@@ -143,11 +142,11 @@ public class Status : ScriptableObject
         ExecuteSkill,
         AddStatus,
     }
+
+    public bool hasTrigger;
     [System.Serializable]
     public struct Trigger   //触发器 
     {
-        public bool hasTrigger;
-
         public TriggerCondition triggerCondition;
         public int triggerLayer;
 
@@ -172,9 +171,15 @@ public class Status : ScriptableObject
         MoreOrEqual,
         More,
     }
-    public void AddCounterAbility()
+    //以下两个Ability是 某些Status的层数会因为 事件 而变动，此外，还有一些Status有 达到某个条件时触发效果的能力  两个Ability都是添加事件  (拥有计数或触发效果的能力)
+    //有计数器能力的Status  会涉及层数的变动  但不一定会触发事件  (花火使用战技点 全队加增伤buff层数增加)
+
+    //有触发器能力的Status  不一定有计数器 (符玄半血回血触发器  其层数是Skill中配置AddAction实现)
+    public void AddCounterAbility()   
     {
-        if (this.counter.hasCounter)
+        AddTriggerAbility();  //无论有没有计数器  都会进入AddCounterAbility函数 是否添加计数器是由hasCounter判断
+
+        if (this.hasCounter)
         {
             switch (this.counter.counterType)
             {
@@ -187,7 +192,16 @@ public class Status : ScriptableObject
                 case Messenger.EventType.KillTarget:
                     Messenger.Instance.AddListener<Character,Character>(Messenger.EventType.KillTarget, KillTargetAction);
                     break;
-                case Messenger.EventType.DealDamage:
+            }
+        }
+    }
+    public void AddTriggerAbility()
+    {
+        if (this.hasTrigger)
+        {
+            switch (this.trigger.triggerCondition)
+            {
+                case TriggerCondition.HealthLimit:
                     Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, HealthCheckAction);
                     break;
             }
@@ -210,7 +224,7 @@ public class Status : ScriptableObject
     }
     public void TryApplyTrigger()
     {
-        if(trigger.hasTrigger && trigger.triggerCondition == TriggerCondition.LayerEnough)
+        if(hasTrigger && trigger.triggerCondition == TriggerCondition.LayerEnough)
         {
             if(StatusLayer >= trigger.triggerLayer)
             {
@@ -218,7 +232,7 @@ public class Status : ScriptableObject
                 StatusLayer -= trigger.triggerLayer;
             }
         }
-        else if(trigger.hasTrigger && trigger.triggerCondition == TriggerCondition.HealthLimit)   //符玄半血触发器
+        else if(hasTrigger && trigger.triggerCondition == TriggerCondition.HealthLimit)   //符玄半血触发器
         {
             if (StatusLayer >= trigger.triggerLayer)
             {

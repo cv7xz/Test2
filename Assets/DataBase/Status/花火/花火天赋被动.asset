@@ -18,9 +18,11 @@ MonoBehaviour:
   description: "\u82B1\u706B\u5929\u8D4B\u88AB\u52A8"
   duration: 2
   NotAutoDelete: 1
+  turnStartDuration: 0
   statusType: 2
   StatusValue:
   - 0.06
+  involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 1
   StatusLayer: 0
@@ -35,12 +37,18 @@ MonoBehaviour:
   attachOtherStatus:
     StatusName: 1013
     AddValue: 0.1
+  hasCounter: 1
   counter:
-    hasCounter: 1
     counterType: 8
     addLayer: 01000000
+  hasTrigger: 0
   trigger:
-    hasTrigger: 0
     triggerCondition: 0
     triggerLayer: 0
+    limitRelation: 0
+    limitValue: 0
+    triggerEffect: 0
+    triggerStatus: []
     triggerSkill: {fileID: 0}
+  StatusGroup: 0
+  childStatus: []

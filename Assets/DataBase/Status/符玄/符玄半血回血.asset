@@ -36,12 +36,12 @@ MonoBehaviour:
   attachOtherStatus:
     StatusName: 
     AddValue: 0
+  hasCounter: 0
   counter:
-    hasCounter: 1
-    counterType: 2
+    counterType: 0
     addLayer: 
+  hasTrigger: 1
   trigger:
-    hasTrigger: 1
     triggerCondition: 1
     triggerLayer: 1
     limitRelation: 0

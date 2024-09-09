@@ -578,7 +578,7 @@ public class InputManager : MonoBehaviour
         {
             if (action.AfterDamage == false)
             {
-                ExecuteAction(action);
+                ExecuteAction(action, executeCharacter);
             }
         }
 
@@ -707,7 +707,7 @@ public class InputManager : MonoBehaviour
         {
             if (action.AfterDamage == true)
             {
-                ExecuteAction(action);
+                ExecuteAction(action, executeCharacter);
             }
         }
         if (skill.damageType != Skill_SO.DamageType.FinalAttack)
@@ -717,23 +717,31 @@ public class InputManager : MonoBehaviour
         enemyActionCounterDown.ResetTimer();
     }
     
-    public void ExecuteAction(Skill_SO.Actions action)
+    public void ExecuteAction(Skill_SO.Actions action,Character executeCharacter)
     {
         if (action.addaction == Skill_SO.AddAction.PushActon)
         {
             PushActionValueAction.PushActionValue(currentSelectPlayer, action.value);
         }
-        if (action.addaction == Skill_SO.AddAction.GetSkillPoint)
+        else if (action.addaction == Skill_SO.AddAction.GetSkillPoint)
         {
             GameManager.Instance.skillPoint = GameManager.Instance.skillPoint + 4;
             Messenger.Instance.BroadCast(Messenger.EventType.SkillPointChange, GameManager.Instance.skillPoint);
         }
-        if (action.addaction == Skill_SO.AddAction.AddWeakness)
+        else if (action.addaction == Skill_SO.AddAction.AddWeakness)
         {
             if (currentSelectEnemy != null)
             {
                 currentSelectEnemy.characterData.weakness.Add(tempType);
                 currentSelectEnemy.ShowSelfWeakness();
+            }
+        }
+        else if(action.addaction == Skill_SO.AddAction.AddStatusLayer)
+        {
+            Status s = executeCharacter.currentStatus.Find(e => e.StatusName == action.statusName);
+            if(s != null)
+            {
+                StatusAction.AddStatusLayerAction(s.Caster, s.Owner, s, (int)action.value);
             }
         }
     }
