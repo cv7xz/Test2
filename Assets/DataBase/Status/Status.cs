@@ -35,6 +35,7 @@ public class Status : ScriptableObject
         TriggerComponent,  //做触发器用
 
         ShareDamage,  //符玄专属
+        DamageDecreseBonus,  //百分比减伤
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();
@@ -92,6 +93,8 @@ public class Status : ScriptableObject
 
         PureDefendValue,
         CriticalPercentValue,
+
+        DamageDecreseValue,
     }
     public List<InvolvedProperty> InvolvedName;
 
@@ -135,12 +138,15 @@ public class Status : ScriptableObject
     {
         LayerEnough,
         HealthLimit,
+        CastFinalSkill,
+        DamageDefendLessEnemy,
     }
 
     public enum TriggerEffect
     {
         ExecuteSkill,
         AddStatus,
+        ExecuteAction,
     }
 
     public bool hasTrigger;
@@ -153,8 +159,10 @@ public class Status : ScriptableObject
         public Compare limitRelation;
         public float limitValue;  //血量小于50%时
         public TriggerEffect triggerEffect;
-        public List<Status> triggerStatus;
+
+        public List<Status> triggerStatus;   //在蓝天下击杀触发加暴击率效果
         public Skill_SO triggerSkill;
+        public Skill_SO.Actions triggerAction;
     }
     public Trigger trigger;
 
@@ -202,7 +210,14 @@ public class Status : ScriptableObject
             switch (this.trigger.triggerCondition)
             {
                 case TriggerCondition.HealthLimit:
-                    Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, HealthCheckAction);
+                    Messenger.Instance.AddListener<float,Character>(Messenger.EventType.TakeDamage, CheckCondition);
+                    Messenger.Instance.AddListener(Messenger.EventType.CastFinalSkill, CheckCondition);
+                    break;
+                case TriggerCondition.CastFinalSkill:
+                    Messenger.Instance.AddListener(Messenger.EventType.CastFinalSkill, CheckCondition);
+                    break;
+                case TriggerCondition.DamageDefendLessEnemy:
+                    Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, CheckCondition);
                     break;
             }
         }
@@ -212,35 +227,85 @@ public class Status : ScriptableObject
     {
         if (trigger.triggerEffect == TriggerEffect.ExecuteSkill)
         {
-            InputManager.Instance.SkillExecute(trigger.triggerSkill, Owner);
+            InputManager.Instance.SpecialActionQueue.Enqueue(new InputManager.SpecialAction(Owner, trigger.triggerSkill));
+            InputManager.Instance.FreshSpecialAction();
+            InputManager.Instance.enemyActionCounterDown.ResetTimer();
         }
-        else if (trigger.triggerEffect == TriggerEffect.AddStatus)
+        else if (trigger.triggerEffect == TriggerEffect.AddStatus)   //在蓝天下击杀触发加暴击率效果
         {
             foreach (var status in trigger.triggerStatus)
             {
                 StatusAction.AddStatusAction(Caster, Owner, status);
             }
         }
-    }
-    public void TryApplyTrigger()
-    {
-        if(hasTrigger && trigger.triggerCondition == TriggerCondition.LayerEnough)
+        else if(trigger.triggerEffect == TriggerEffect.ExecuteAction)
         {
-            if(StatusLayer >= trigger.triggerLayer)
+            InputManager.Instance.ExecuteAction(trigger.triggerAction, Owner, null);
+        }
+    }
+    public void CheckCondition()
+    {
+        if(hasTrigger == false)
+        {
+            return;
+        }
+        if(trigger.triggerLayer == 0)
+        {
+            if (trigger.triggerCondition == TriggerCondition.HealthLimit)   //符玄半血触发器
+            {
+                if (trigger.limitRelation == Compare.Less && Owner.characterData.currentHealth < Owner.characterData.maxHealth * trigger.limitValue)
+                {
+                    ApplyTrigger();
+                }
+            }
+            else if (trigger.triggerCondition == TriggerCondition.CastFinalSkill)
             {
                 ApplyTrigger();
-                StatusLayer -= trigger.triggerLayer;
             }
         }
-        else if(hasTrigger && trigger.triggerCondition == TriggerCondition.HealthLimit)   //符玄半血触发器
+        else
         {
-            if (StatusLayer >= trigger.triggerLayer)
+            if (trigger.triggerCondition == TriggerCondition.LayerEnough)
             {
-                if(trigger.limitRelation == Compare.Less && Owner.characterData.currentHealth < Owner.characterData.maxHealth * trigger.limitValue)
+                if (StatusLayer >= trigger.triggerLayer)
                 {
-                    ApplyTrigger(); 
+                    ApplyTrigger();
                     StatusLayer -= trigger.triggerLayer;
                 }
+            }
+            else if (trigger.triggerCondition == TriggerCondition.HealthLimit)  
+            {
+                if (StatusLayer >= trigger.triggerLayer)
+                {
+                    if (trigger.limitRelation == Compare.Less && Owner.characterData.currentHealth < Owner.characterData.maxHealth * trigger.limitValue)
+                    {
+                        ApplyTrigger();
+                        StatusLayer -= trigger.triggerLayer;
+                    }
+                }
+            }
+            else if (trigger.triggerCondition == TriggerCondition.CastFinalSkill)
+            {
+                if (StatusLayer >= trigger.triggerLayer)
+                {
+                    ApplyTrigger();
+                    StatusLayer -= trigger.triggerLayer;
+                }
+            }
+        }
+    }
+
+    public void CheckCondition(float _,Character a)
+    {
+        CheckCondition();
+    }
+    public void CheckCondition(Character attacker,Character attacked,float damageValue)  //新手任务开始前  装备者攻击防御被降低的敌方目标后恢复能量
+    {
+        foreach(var status in attacked.currentStatus)
+        {
+            if(status.statusType == StatusType.DefendValueBonus && status.StatusValue[0] < 0)
+            {
+                ApplyTrigger();
             }
         }
     }
@@ -261,7 +326,7 @@ public class Status : ScriptableObject
             StatusLayer += counter.addLayer[1] * (damage.toughDamage > 0 ? 1 : 0);
         }
 
-        TryApplyTrigger();
+        CheckCondition();
     }
 
     private void ConsumeSkillPointAction(int changeNumber)  //花火天赋被动Status
@@ -280,13 +345,9 @@ public class Status : ScriptableObject
             StatusLayer = 1;
         }
 
-        TryApplyTrigger();
+        CheckCondition();
     }
 
-    private void HealthCheckAction(Character a, Character b,float c)
-    {
-        TryApplyTrigger();
-    }
     #endregion
     public void OnDestroy()
     {

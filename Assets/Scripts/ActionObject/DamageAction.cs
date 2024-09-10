@@ -69,7 +69,7 @@ public static class DamageAction
             {
                 if(increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.toughDamage)
                 {
-                    tempDamageIncrease += realToughDamage * increase.rates[0];
+                    tempDamageIncrease += realToughDamage * increase.rates[0] * 0.01f;
                 }
                 else if(increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetToughRate)
                 {
@@ -152,6 +152,7 @@ public static class DamageAction
        
 
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage,attacker,attacked, damageValue);
+        Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue,attacked);
         return damageInfo;
     }
 
@@ -164,14 +165,21 @@ public static class DamageAction
         CharacterData_SO attackerData = attacker.characterData;
         CharacterData_SO attackedData = attacked.characterData;
 
+        context += "<color=green>" + attacker.name + " Attack " + attacked.name + "</color>" + " !\n";
+
         float damageValue = attackerData.currentAttack;
 
-        bool isCritical = attackerData.criticalPercent > Random.Range(0f, 1f);
-        if (isCritical)
-        {
-            damageValue *= (1 + attackerData.criticalDamage);
-        }
+        context += "当前攻击力: " + attackerData.currentAttack.ToString() + "\n";
+
         damageValue *= (1 + attackerData.damageIncrease);
+
+        damageValue *= attackedData.currentDefend / (attackerData.Level * 10 + 200 + attackedData.currentDefend);
+
+        context += "  防御减伤: " + attackedData.currentDefend / (attackerData.Level * 10 + 200 + attackedData.currentDefend) + " 处理后伤害: " + damageValue.ToString() + "\n";
+
+        damageValue *= (1 - attackedData.damageDecrease);
+
+        context += "  百分比减伤: " + attackedData.damageDecrease.ToString() + " 处理后伤害: " + damageValue.ToString() + "\n";
 
         damageValue = Mathf.Max(damageValue, 1f);
 
@@ -183,10 +191,16 @@ public static class DamageAction
                 attackedData.currentHealth -= damageValue * (1 - status.StatusValue[0]);
                 GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue * (1 - status.StatusValue[0]));
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
+                Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue,attacked);
 
                 status.Caster.characterData.currentHealth -= damageValue * (status.StatusValue[0]);
                 GameManager.Instance.DamageAppearFunc(attacker, status.Caster, damageValue * (status.StatusValue[0]));
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, status.Caster, damageValue);
+                Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
+
+                context += "分摊伤害: " + attackedData.name + "takes " + (damageValue * (1 - status.StatusValue[0])).ToString() + "damage";
+                context += "分摊伤害: " + status.Caster.name + "takes " + (damageValue * (status.StatusValue[0])).ToString() + "damage";
+
                 return;   //暂时只考虑一层分摊伤害Status存在
             }
         }
@@ -194,6 +208,7 @@ public static class DamageAction
 
         attackedData.currentHealth -= damageValue;
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
+        Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
         GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);
     }
     public static float BrokenDamageAction(Character source, Character attacked)

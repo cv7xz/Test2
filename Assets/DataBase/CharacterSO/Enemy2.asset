@@ -27,7 +27,7 @@ MonoBehaviour:
   fixDefendBonus: 0
   criticalPercent: 0
   criticalDamage: 0
-  baseSpeed: 250
+  baseSpeed: 150
   speedPercentBonus: 0
   fixSpeedBonus: 0
   currentSpeed: 0

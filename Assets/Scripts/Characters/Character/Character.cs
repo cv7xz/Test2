@@ -567,6 +567,31 @@ public class Character : MonoBehaviour
 
                 characterData.criticalPercent = tempCriticalPercentBonus + 0.05f;
             }
+            else if (type == Status.InvolvedProperty.DamageDecreseValue)
+            {
+                float tempDamageDecreaseBonus = 0;
+
+                foreach (var s in currentStatus)
+                {
+                    if (s.statusType == Status.StatusType.DamageDecreseBonus)
+                    {
+                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                        {
+                            tempDamageDecreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                        }
+                        else
+                        {
+                            tempDamageDecreaseBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                    }
+                }
+
+                if (status.ValueLimited > 1e-6)
+                {
+                    tempDamageDecreaseBonus = Mathf.Min(tempDamageDecreaseBonus, status.ValueLimited);
+                }
+                characterData.damageDecrease = tempDamageDecreaseBonus;
+            }
         }
     }
     public void FreshProperty(Status.InvolvedProperty str)
@@ -606,20 +631,25 @@ public class Character : MonoBehaviour
         string context = "";
 
         context += "基础攻击力:" + characterData.baseAttack.ToString() + "\n";
-        context += "攻击力加成:" + ((characterData.AttackPercentBonus * 100).ToString() + "%") + " + " + characterData.fixAttackBonus + "\n";
+        context += "攻击力加成:" + (characterData.AttackPercentBonus * 100).ToString() + "%" + " + " + characterData.fixAttackBonus + "\n";
         context += "当前攻击力:" + characterData.currentAttack.ToString() + "\n";
 
         context += "基础生命值:" + characterData.baseHealth.ToString() + "\n";
-        context += "生命值加成:" + ((characterData.healthPercentBonus * 100).ToString() + "%") + " + " + characterData.fixHealthBonus + "\n";
+        context += "生命值加成:" + (characterData.healthPercentBonus * 100).ToString() + "%" + " + " + characterData.fixHealthBonus + "\n";
         context += "当前生命值:" + characterData.currentHealth.ToString() + "\n";
+        context += "最大生命值:" + characterData.maxHealth.ToString() + "\n";
+
 
         context += "基础防御值:" + characterData.baseDefend.ToString() + "\n";
-        context += "防御值加成:" + ((characterData.DefendPercentBonus * 100).ToString() + "%") + " + " + characterData.fixDefendBonus + "\n";
+        context += "防御值加成:" + (characterData.DefendPercentBonus * 100).ToString() + "%" + " + " + characterData.fixDefendBonus + "\n";
         context += "当前防御值:" + characterData.currentDefend.ToString() + "\n";
 
         context += "基础速度:" + characterData.baseSpeed.ToString() + "\n";
-        context += "速度加成:" + ((characterData.speedPercentBonus * 100).ToString() + "%") + " + " + characterData.fixSpeedBonus + "\n";
+        context += "速度加成:" + (characterData.speedPercentBonus * 100).ToString() + "%" + " + " + characterData.fixSpeedBonus + "\n";
         context += "当前速度:" + characterData.currentSpeed.ToString() + "\n";
+
+        context += "效果命中:" + (characterData.effectPercent * 100).ToString() + "%" + "\n";
+        context += "效果抵抗:" + (characterData.effectDefend * 100).ToString() + "%" + " + " + characterData.fixSpeedBonus + "\n";
 
         context += "伤害加成:" + (characterData.damageIncrease * 100).ToString() + "%" + "\n";
         context += "击破特攻:" + (characterData.BrokensFocus).ToString() + "%" + "\n";
@@ -631,6 +661,10 @@ public class Character : MonoBehaviour
 
         foreach (var status in currentStatus)
         {
+            //if (status.StatusName.Contains("BD"))
+            //{
+            //    continue;
+            //}
             //context += status.description + "\n";
             context += status.name + " 持续: " + status.duration.ToString() + " 层数: " + status.StatusLayer + " 数值:";
 

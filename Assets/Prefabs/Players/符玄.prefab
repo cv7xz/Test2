@@ -223,8 +223,8 @@ MonoBehaviour:
   HealthBarPrefab: {fileID: 6441210317514940679, guid: d4570dbc69d800b4d8470136132e6340, type: 3}
   healthBar: {fileID: 0}
   HealthPos: {fileID: 605787492095777680}
-  equipObject: {fileID: 0}
-  characterData: {fileID: 11400000, guid: e29327d7076529b4cb82dcc2af63db07, type: 2}
+  equipObject: {fileID: 11400000, guid: c17514fc89d1a9d49bf2b1cb2463c062, type: 2}
+  characterData: {fileID: 0}
   QSKILLObject: {fileID: 11400000, guid: 4de5c5c756755fd4ca56708c5427bf8d, type: 2}
   ESKILLObject: {fileID: 11400000, guid: 609abc8b340de42448be93cc813d35ac, type: 2}
   SKILLFINALObject: {fileID: 11400000, guid: 71eb88da326897e4cb6cdf347b985112, type: 2}

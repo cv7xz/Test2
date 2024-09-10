@@ -25,6 +25,8 @@ public class CharacterData_SO : ScriptableObject
     public weaknessType elementType;
     #endregion
 
+    public float damageDecrease;
+    [Header("Enemy ElementDefend")]
     public float currentBINGDefend, BINGDefend;  //¿¹ÐÔ
     public float currentHUODefend, HUODefend;
     public float currentFENGDefend, FENGDefend;

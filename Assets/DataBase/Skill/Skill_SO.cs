@@ -102,22 +102,14 @@ public class Skill_SO : ScriptableObject
     }
 
     [System.Serializable]
-    public struct Actions
+    public struct Actions    //该结构体完全可以写成一个ScirptableObject 较为复杂 应用有: 555全体友军拉条  某敌军添加某属性弱点  
     {
         public AddAction addaction;
         public CharacterData_SO.weaknessType element;  //银狼专用 添加弱点Action 
         public float value;
         public string statusName;
+        public TargetType targetType;
         public bool AfterDamage;  //一些Action需要具体作用于伤害前/后
-
-        public Actions(AddAction a, CharacterData_SO.weaknessType b, float c,bool d,string e)
-        {
-            addaction = a;
-            element = b;
-            value = c;
-            AfterDamage = d;
-            statusName = e;
-        }
     }
     public List<Actions> addactions = new List<Actions>();
 }

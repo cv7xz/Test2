@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
-  m_Name: "\u82B1\u706BE"
+  m_Name: "\u7B26\u7384\u5929\u8D4B\u5728\u573A"
   m_EditorClassIdentifier: 
   Caster: {fileID: 0}
   Owner: {fileID: 0}
-  StatusName: 1021
-  description: "\u82B1\u706B\u6218\u6280\u7206\u4F24\u589E\u52A0"
-  duration: 2
+  StatusName: 1045
+  description: 
+  duration: -1
   NotAutoDelete: 0
-  turnStartDuration: 1
-  statusType: 5
+  turnStartDuration: 0
+  statusType: 7
   StatusValue: []
   involvedElement: 0
   repeatRule: 0
@@ -27,17 +27,15 @@ MonoBehaviour:
   StatusLayer: 1
   LayerLimited: 1
   ValueLimited: 0
-  IsDepend: 1
-  dependValues:
-  - property: 4
-    dependTarget: 1
-    certainElement: 0
-    values:
-    - 0.24
-    correctValues: 0.45
-  InvolvedName: 04000000
-  isField: 0
-  fieldEffects: []
+  IsDepend: 0
+  dependValues: []
+  InvolvedName: 
+  isField: 1
+  fieldEffects:
+  - field: 0
+    limit: 0
+    ElementType: 0
+    status: {fileID: 11400000, guid: 25b85221e4dd004419076aa02efd2e0d, type: 2}
   IsAttached: 0
   attachOtherStatus:
     StatusName: 
@@ -58,7 +56,7 @@ MonoBehaviour:
     triggerAction:
       addaction: 0
       element: 0
-      value: 5000
+      value: 0
       statusName: 
       targetType: 0
       AfterDamage: 0

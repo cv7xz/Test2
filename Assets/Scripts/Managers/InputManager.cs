@@ -80,7 +80,19 @@ public class InputManager : MonoBehaviour
     }
 
     //维护一个特殊行动条队列   终结技 追加攻击等，其优先于行动条
-    public Queue<Character> SpecialActionQueue = new Queue<Character>();
+    public struct SpecialAction
+    {
+        public Character executeCharacter;
+        public Skill_SO skill;
+
+        public SpecialAction(Character a,Skill_SO b)
+        {
+            executeCharacter = a;
+            skill = b;
+        }
+    }
+
+    public Queue<SpecialAction> SpecialActionQueue = new Queue<SpecialAction>();
     void Update()
     {
         //if(currentGameState == CurrentGameState.Outside)
@@ -95,7 +107,7 @@ public class InputManager : MonoBehaviour
         #region 终结技前置条件通过  输入进入"是否释放终结技"状态
         if (TryingCastFinalSkill)
         {
-            Character player = SpecialActionQueue.Peek();
+            Character player = SpecialActionQueue.Peek().executeCharacter;
             if (player.skillFinal.target == Skill_SO.Target.Enemy)
             {
                 if (currentSelectEnemy == null)
@@ -154,8 +166,15 @@ public class InputManager : MonoBehaviour
         foreach(var player in SpecialActionQueue)
         {
             GameObject newActionBar = Instantiate(actionBar, SpecialActionPanel.transform);
-            newActionBar.transform.GetChild(0).GetComponent<Image>().sprite = player.sprite;
-            newActionBar.transform.GetChild(1).GetComponent<Text>().text = "FinalSkill";
+            newActionBar.transform.GetChild(0).GetComponent<Image>().sprite = player.executeCharacter.sprite;
+            if(player.skill.damageType == Skill_SO.DamageType.FinalAttack)
+            {
+                newActionBar.transform.GetChild(1).GetComponent<Text>().text = "FinalSkill";
+            }
+            else if(player.skill.damageType == Skill_SO.DamageType.ExtraAttack)
+            {
+                newActionBar.transform.GetChild(1).GetComponent<Text>().text = "ExtraSkill";
+            }
         }
     }
     /// <summary>
@@ -201,6 +220,12 @@ public class InputManager : MonoBehaviour
     public List<KeyCode> finalSkillKeyCodes = new List<KeyCode> { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4};
     public void ActionExecute()
     {
+
+        if (currentSelectEnemy == null && currentSelectPlayer == null)
+        {
+            FindFirstTarget();
+        }
+
         #region FinalSkill开启 不需要知道当前谁在行动
         for (int i = 0; i <= 3; i++)
         {
@@ -210,7 +235,7 @@ public class InputManager : MonoBehaviour
                 var skill = player.skillFinal;
                 if (player != null)
                 {
-                    if(SpecialActionQueue.Contains(player))
+                    if(SpecialActionQueue.Contains(new SpecialAction(player,skill)))
                     {
                         GameManager.Instance.ShowPanelText("casting finalSkill now!");
                         return;
@@ -222,7 +247,7 @@ public class InputManager : MonoBehaviour
                     }
 
                     CurrentInputState = CurrentInputStateEnum.R;
-                    SpecialActionQueue.Enqueue(player);
+                    SpecialActionQueue.Enqueue(new SpecialAction(player, skill));
                     FreshSpecialAction();
                     TryCastFinalSkill(skill, player);
                 }
@@ -230,8 +255,17 @@ public class InputManager : MonoBehaviour
         }
         #endregion
 
-        #region 敌人回合行动
-        if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0)
+        //当额外行动条有行动时 先处理额外  若为追加则直接执行 若终结技则根据输入执行
+        #region 敌人回合 或者追加类型行动
+
+        if (SpecialActionQueue.Count != 0 && SpecialActionQueue.Peek().skill.damageType == Skill_SO.DamageType.ExtraAttack && enemyActionCounterDown.currentTime <= 0)
+        {
+            SkillExecute(SpecialActionQueue.Peek().skill, SpecialActionQueue.Peek().executeCharacter);
+            SpecialActionQueue.Dequeue();
+            FreshSpecialAction();
+        }
+
+        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0)
         {
             List<Character> player = new List<Character>();
             foreach (var p in GameManager.Instance.players)
@@ -254,12 +288,9 @@ public class InputManager : MonoBehaviour
         }
 
         #endregion
-        if (currentSelectEnemy == null && currentSelectPlayer == null)
-        {
-            FindFirstTarget();
-        }
 
-        if(currentActionCharacter.type == Character.CharaterType.Player && CurrentInputState != CurrentInputStateEnum.R)
+
+        else if(currentActionCharacter.type == Character.CharaterType.Player && SpecialActionQueue.Count == 0 &&  CurrentInputState != CurrentInputStateEnum.R)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -574,19 +605,21 @@ public class InputManager : MonoBehaviour
             int randomIndex = Random.Range(0, temp.Count);
             tempType = temp[randomIndex];
         }
-        foreach (var action in skill.addactions)
-        {
-            if (action.AfterDamage == false)
-            {
-                ExecuteAction(action, executeCharacter);
-            }
-        }
-
-
 
         if (skill.target == Skill_SO.Target.Enemy)
         {
-            foreach(var skillType in skill.skillType)   //一个技能涉及优先级时(先添加buff还是先造成伤害  可以通过填表顺序实现)
+            #region 效果执行前Action
+            foreach (var action in skill.addactions)
+            {
+                if (action.AfterDamage == false)
+                {
+                    ExecuteAction(action, executeCharacter, currentSelectEnemy);
+                }
+            }
+            #endregion
+
+            #region 效果执行
+            foreach (var skillType in skill.skillType)   //一个技能涉及优先级时(先添加buff还是先造成伤害  可以通过填表顺序实现)
             {
                 if (skillType == Skill_SO.SkillType.DealDamage)   //造成伤害可能涉及多个倍率  索引与读表人为规定
                 {
@@ -665,10 +698,33 @@ public class InputManager : MonoBehaviour
                     }
                 }
             }
+
+            #endregion
+
+            #region 效果执行后Action
+            foreach (var action in skill.addactions)
+            {
+                if (action.AfterDamage == true)
+                {
+                    ExecuteAction(action, executeCharacter, currentSelectEnemy);
+                }
+            }
+            #endregion
         }
         else if(skill.target == Skill_SO.Target.Friend)
         {
-            foreach(var skillType in skill.skillType)
+            #region 效果执行前Action
+            foreach (var action in skill.addactions)
+            {
+                if (action.AfterDamage == false)
+                {
+                    ExecuteAction(action, executeCharacter, currentSelectPlayer);
+                }
+            }
+            #endregion
+
+            #region 效果执行
+            foreach (var skillType in skill.skillType)
             {
                 if (skillType == Skill_SO.SkillType.AddStatus)
                 {
@@ -702,14 +758,19 @@ public class InputManager : MonoBehaviour
                     }
                 }
             }
-        }
-        foreach (var action in skill.addactions)
-        {
-            if (action.AfterDamage == true)
+            #endregion
+
+            #region 效果执行后Action
+            foreach (var action in skill.addactions)
             {
-                ExecuteAction(action, executeCharacter);
+                if (action.AfterDamage)
+                {
+                    ExecuteAction(action, executeCharacter, currentSelectPlayer);
+                }
             }
+            #endregion
         }
+
         if (skill.damageType != Skill_SO.DamageType.FinalAttack)
         {
             FreshAction();
@@ -717,11 +778,18 @@ public class InputManager : MonoBehaviour
         enemyActionCounterDown.ResetTimer();
     }
     
-    public void ExecuteAction(Skill_SO.Actions action,Character executeCharacter)
+    public void ExecuteAction(Skill_SO.Actions action,Character executeCharacter,Character target)
     {
         if (action.addaction == Skill_SO.AddAction.PushActon)
         {
-            PushActionValueAction.PushActionValue(currentSelectPlayer, action.value);
+            if(action.targetType == Skill_SO.TargetType.SingleTarget)
+            {
+                PushActionValueAction.PushActionValue(target, action.value);
+            }
+            else if(action.targetType == Skill_SO.TargetType.AllTarget)  //555拉条触发器
+            {
+                PushActionValueAction.PushAllActionValue(action.value);
+            }
         }
         else if (action.addaction == Skill_SO.AddAction.GetSkillPoint)
         {
@@ -730,10 +798,10 @@ public class InputManager : MonoBehaviour
         }
         else if (action.addaction == Skill_SO.AddAction.AddWeakness)
         {
-            if (currentSelectEnemy != null)
+            if (target != null)
             {
-                currentSelectEnemy.characterData.weakness.Add(tempType);
-                currentSelectEnemy.ShowSelfWeakness();
+                target.characterData.weakness.Add(tempType);
+                target.ShowSelfWeakness();
             }
         }
         else if(action.addaction == Skill_SO.AddAction.AddStatusLayer)
@@ -742,6 +810,13 @@ public class InputManager : MonoBehaviour
             if(s != null)
             {
                 StatusAction.AddStatusLayerAction(s.Caster, s.Owner, s, (int)action.value);
+            }
+        }
+        else if(action.addaction == Skill_SO.AddAction.GetEnergy)
+        {
+            if(action.targetType == Skill_SO.TargetType.Self)
+            {
+                EnergyChangeAction.AddEnergyAction(executeCharacter, action.value);
             }
         }
     }

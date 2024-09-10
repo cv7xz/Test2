@@ -209,5 +209,7 @@ public class Messenger : MonoBehaviour
         TurnStart,
         KillTarget,
 
+        TakeDamage,
+
     };
 }
