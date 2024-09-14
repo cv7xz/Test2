@@ -210,6 +210,6 @@ public class Messenger : MonoBehaviour
         KillTarget,
 
         TakeDamage,
-
+        TargetAndAttackEnemy,
     };
 }

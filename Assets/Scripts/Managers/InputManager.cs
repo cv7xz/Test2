@@ -92,6 +92,8 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    private bool FeiXiaoFinalSkillState;
+    private int FeiXiaoFinalSkillCount = 0;
     public Queue<SpecialAction> SpecialActionQueue = new Queue<SpecialAction>();
     void Update()
     {
@@ -105,54 +107,94 @@ public class InputManager : MonoBehaviour
         ChangeTarget();
 
         #region 终结技前置条件通过  输入进入"是否释放终结技"状态
-        if (TryingCastFinalSkill)
+        if (TryingCastFinalSkill && FeiXiaoFinalSkillState == false)
         {
             Character player = SpecialActionQueue.Peek().executeCharacter;
-            if (player.skillFinal.target == Skill_SO.Target.Enemy)
+            if(player.skillFinal.specialFinalSkill == Skill_SO.SpecialFinalSkill.None)
             {
-                if (currentSelectEnemy == null)
+                ChangeTargetFirstCharacter(player.skillFinal);
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
-                    FindFirstTarget();
+                    SpecialActionQueue.Dequeue();
+                    FreshSpecialAction();
+
+
+                    if (SpecialActionQueue.Count == 0)
+                    {
+                        CurrentInputState = CurrentInputStateEnum.None;
+                        TryingCastFinalSkill = false;
+                        enemyActionCounterDown.ResetTimer();
+                        enemyActionCounterDown.pauseFlag = false;
+                    }
+                }
+
+                else if (Input.GetKeyDown(KeyCode.Space))
+                {
+
+                    SpecialActionQueue.Dequeue();
+                    SkillExecute(player.skillFinal, player, currentSelectEnemy);
+                    FreshSpecialAction();
+
+
+                    if (SpecialActionQueue.Count == 0)
+                    {
+                        CurrentInputState = CurrentInputStateEnum.None;
+                        TryingCastFinalSkill = false;
+                        enemyActionCounterDown.ResetTimer();
+                        enemyActionCounterDown.pauseFlag = false;
+                    }
+
                 }
             }
-            else
+            else if(player.skillFinal.specialFinalSkill == Skill_SO.SpecialFinalSkill.FEIXIAO)
             {
-                if (currentSelectPlayer == null)
+                ChangeTargetFirstCharacter(player.skillFinal);
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
-                    FindFirstFriend();
+                    SpecialActionQueue.Dequeue();
+                    FreshSpecialAction();
+
+
+                    if (SpecialActionQueue.Count == 0)
+                    {
+                        CurrentInputState = CurrentInputStateEnum.None;
+                        TryingCastFinalSkill = false;
+                        enemyActionCounterDown.ResetTimer();
+                        enemyActionCounterDown.pauseFlag = false;
+                    }
                 }
+
+                else if (Input.GetKeyDown(KeyCode.Space))
+                {
+
+                    SpecialActionQueue.Dequeue();
+                    SkillExecute(player.skillFinal, player, currentSelectEnemy);
+                    FreshSpecialAction();
+
+
+                    if (SpecialActionQueue.Count == 0)
+                    {
+                        CurrentInputState = CurrentInputStateEnum.None;
+                        TryingCastFinalSkill = false;
+                        enemyActionCounterDown.ResetTimer();
+                        enemyActionCounterDown.pauseFlag = false;
+                    }
+                }
+                FeiXiaoFinalSkillState = true;
             }
-            if (Input.GetKeyDown(KeyCode.Escape))
+        }
+
+        if(FeiXiaoFinalSkillState == true)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
             {
-                SpecialActionQueue.Dequeue();
-                FreshSpecialAction();
-
-
-                if (SpecialActionQueue.Count == 0)
-                {
-                    CurrentInputState = CurrentInputStateEnum.None;
-                    TryingCastFinalSkill = false;
-                    enemyActionCounterDown.ResetTimer();
-                    enemyActionCounterDown.pauseFlag = false;
-                }
+                FeiXiaoFinalSkillCount += 1;
+                SkillExecute();
             }
 
-            else if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.E))
             {
-
-                SpecialActionQueue.Dequeue();
-                SkillExecute(player.skillFinal, player);
-                FreshSpecialAction();
-
-
-                if (SpecialActionQueue.Count == 0)
-                {
-                    CurrentInputState = CurrentInputStateEnum.None;
-                    TryingCastFinalSkill = false;
-                    enemyActionCounterDown.ResetTimer();
-                    enemyActionCounterDown.pauseFlag = false;
-                }
-
+                FeiXiaoFinalSkillCount += 1;
             }
         }
         #endregion
@@ -260,7 +302,7 @@ public class InputManager : MonoBehaviour
 
         if (SpecialActionQueue.Count != 0 && SpecialActionQueue.Peek().skill.damageType == Skill_SO.DamageType.ExtraAttack && enemyActionCounterDown.currentTime <= 0)
         {
-            SkillExecute(SpecialActionQueue.Peek().skill, SpecialActionQueue.Peek().executeCharacter);
+            SkillExecute(SpecialActionQueue.Peek().skill, SpecialActionQueue.Peek().executeCharacter,currentSelectEnemy);
             SpecialActionQueue.Dequeue();
             FreshSpecialAction();
         }
@@ -297,7 +339,7 @@ public class InputManager : MonoBehaviour
                 Skill_SO skill = currentActionCharacter.skillQ;
                 if (CurrentInputState == CurrentInputStateEnum.Q)
                 {
-                    SkillExecute(skill, currentActionCharacter);
+                    SkillExecute(skill, currentActionCharacter, currentSelectEnemy);
                     CurrentInputState = CurrentInputStateEnum.None;
                 }
                 else
@@ -325,7 +367,7 @@ public class InputManager : MonoBehaviour
                 Skill_SO skill = currentActionCharacter.skillE;
                 if (CurrentInputState == CurrentInputStateEnum.E)
                 {
-                    SkillExecute(skill, currentActionCharacter);
+                    SkillExecute(skill, currentActionCharacter, currentSelectEnemy);
                     CurrentInputState = CurrentInputStateEnum.None;
                 }
                 else
@@ -486,7 +528,7 @@ public class InputManager : MonoBehaviour
         newEnmey7.GetComponent<Player>().currentIndex = 1;
         newEnmey7.transform.position = GameManager.Instance.playerSlots[1].position;
 
-        GameObject newEnmey8 = Instantiate(GameManager.Instance.AllPlayers[2]);
+        GameObject newEnmey8 = Instantiate(GameManager.Instance.AllPlayers[4]);
         newEnmey8.GetComponent<Player>().currentIndex = 2;
         newEnmey8.transform.position = GameManager.Instance.playerSlots[2].position;
 
@@ -497,7 +539,6 @@ public class InputManager : MonoBehaviour
         #endregion
 
         FreshAction();
-
         // Player Instantiate后 Awake紧跟着调用 然后这一帧代码调用 最后调用Start
 
         #region 角色在场光环效果
@@ -557,7 +598,7 @@ public class InputManager : MonoBehaviour
         }
     }
     private CharacterData_SO.weaknessType tempType;
-    public void SkillExecute(Skill_SO skill, Character executeCharacter)
+    public void SkillExecute(Skill_SO skill, Character executeCharacter, Character targetCharacter)
     {
         #region 技能释放前时点
 
@@ -613,7 +654,7 @@ public class InputManager : MonoBehaviour
             {
                 if (action.AfterDamage == false)
                 {
-                    ExecuteAction(action, executeCharacter, currentSelectEnemy);
+                    ExecuteAction(action, executeCharacter, targetCharacter);
                 }
             }
             #endregion
@@ -624,18 +665,34 @@ public class InputManager : MonoBehaviour
                 if (skillType == Skill_SO.SkillType.DealDamage)   //造成伤害可能涉及多个倍率  索引与读表人为规定
                 {
                     #region 不同伤害类型
-                    if (skill.attackType == Skill_SO.TargetType.SingleTarget)
+                    if (skill.attackType == Skill_SO.TargetType.SingleTarget)    //飞霄追加 主目标不存在时 随机选取
                     {
-                        DamageInfo info = DamageAction.DealDamageAction(executeCharacter, skill, currentSelectEnemy, 0);
-                        Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, info);
+                        if(targetCharacter == null)
+                        {
+                            var enemy = GameManager.Instance.GetRandomEnemy();
+                            DamageInfo info = DamageAction.DealDamageAction(executeCharacter, skill, enemy, 0);
+
+                            Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, info);
+                            Messenger.Instance.BroadCast(Messenger.EventType.TargetAndAttackEnemy, executeCharacter, enemy, skill);   //技能攻击
+                        }
+                        else
+                        {
+                            DamageInfo info = DamageAction.DealDamageAction(executeCharacter, skill, targetCharacter, 0);
+
+                            Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, info);
+                            Messenger.Instance.BroadCast(Messenger.EventType.TargetAndAttackEnemy, executeCharacter, targetCharacter, skill);   //技能攻击
+                        }
+
                     }
                     else if (skill.attackType == Skill_SO.TargetType.NeighborTarget)
                     {
                         DamageInfo info = new DamageInfo(executeCharacter, null, skill);
-                        info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, currentSelectEnemy, 0).toughDamage;
-                        info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, currentSelectEnemy.FindLeftTarget(), 1).toughDamage;
-                        info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, currentSelectEnemy.FindRightTarget(), 1).toughDamage;
+                        info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, targetCharacter, 0).toughDamage;
+                        info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, targetCharacter.FindLeftTarget(), 1).toughDamage;
+                        info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, targetCharacter.FindRightTarget(), 1).toughDamage;
 
+
+                        Messenger.Instance.BroadCast(Messenger.EventType.TargetAndAttackEnemy, executeCharacter, targetCharacter, skill);
                         Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, info);
                     }
                     else if (skill.attackType == Skill_SO.TargetType.AllTarget)
@@ -645,11 +702,13 @@ public class InputManager : MonoBehaviour
                         {
                             info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, enemy, 0).toughDamage;
                         }
+
                         Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, info);
+                        Messenger.Instance.BroadCast(Messenger.EventType.TargetAndAttackEnemy, executeCharacter, (Character)null, skill);  
                     }
                     else if (skill.attackType == Skill_SO.TargetType.RandomTarget)
                     {
-
+                        DamageInfo info = new DamageInfo(executeCharacter, null, skill);
                         string attackTarget = "攻击目标为 :";
                         for (int i = 0; i < skill.RandomAttackNumber; i++)
                         {
@@ -664,13 +723,16 @@ public class InputManager : MonoBehaviour
 
                             int randomIndex = Random.Range(0, enemies.Count);
                             attackTarget += randomIndex.ToString() + "  ,";
-                            DamageAction.DealDamageAction(executeCharacter, skill, enemies[randomIndex], 0);
+                            info.toughDamage += DamageAction.DealDamageAction(executeCharacter, skill, enemies[randomIndex], 0).toughDamage;
                         }
 
+                        Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, info);
+                        Messenger.Instance.BroadCast(Messenger.EventType.TargetAndAttackEnemy, executeCharacter, targetCharacter, skill);
 
                         GameManager.Instance.ShowPanelText(attackTarget);
                     }
                     #endregion
+
                     Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
                 }
                 else if(skillType == Skill_SO.SkillType.AddStatus)  //暂时只有对敌人添加buff时涉及 命中概率计算
@@ -680,14 +742,14 @@ public class InputManager : MonoBehaviour
                         int StatusIndex = skill.addStatus.IndexOf(s);
                         if (s.statusTarget == Skill_SO.TargetType.SingleTarget)
                         {
-                            if (skill.basePercent[StatusIndex] * (currentActionCharacter.characterData.effectPercent + 1) * (1 - currentSelectEnemy.characterData.effectDefend) > Random.Range(0f, 1f))
+                            if (skill.basePercent[StatusIndex] * (currentActionCharacter.characterData.effectPercent + 1) * (1 - targetCharacter.characterData.effectDefend) > Random.Range(0f, 1f))
                             {
                                 var cloneStatus = Instantiate(s.status);
                                 if (s.status.StatusName == "1035")
                                 {
                                     cloneStatus.involvedElement = tempType;
                                 }
-                                StatusAction.AddStatusAction(currentActionCharacter, currentSelectEnemy, cloneStatus);
+                                StatusAction.AddStatusAction(currentActionCharacter, targetCharacter, cloneStatus);
                             }
                             else
                             {
@@ -706,7 +768,7 @@ public class InputManager : MonoBehaviour
             {
                 if (action.AfterDamage == true)
                 {
-                    ExecuteAction(action, executeCharacter, currentSelectEnemy);
+                    ExecuteAction(action, executeCharacter, targetCharacter);
                 }
             }
             #endregion
@@ -726,9 +788,9 @@ public class InputManager : MonoBehaviour
             #region 效果执行
             foreach (var skillType in skill.skillType)
             {
-                if (skillType == Skill_SO.SkillType.AddStatus)
+                if (skillType == Skill_SO.SkillType.AddStatus)  //注意每个Status要先克隆出来(否则一会影响原始值  二回导致各角色之间Status混淆 变成一致)
                 {
-                    foreach(var statusStruct in skill.addStatus)
+                    foreach(var statusStruct in skill.addStatus)  
                     {
                         int StatusIndex = skill.addStatus.IndexOf(statusStruct);
                         if (statusStruct.statusTarget == Skill_SO.TargetType.SingleTarget)
@@ -736,13 +798,18 @@ public class InputManager : MonoBehaviour
                             var cloneStatus = Instantiate(statusStruct.status);
                             StatusAction.AddStatusAction(currentActionCharacter, currentSelectPlayer, cloneStatus);
                         }
-                        else if (statusStruct.statusTarget == Skill_SO.TargetType.AllTarget)
+                        else if (statusStruct.statusTarget == Skill_SO.TargetType.AllTarget)   //如全队减伤
                         {
                             StatusAction.AddStatusAllFriend(currentActionCharacter, statusStruct.status);
                         }
-                        else if(statusStruct.statusTarget == Skill_SO.TargetType.AllOtherFriend)
+                        else if(statusStruct.statusTarget == Skill_SO.TargetType.AllOtherFriend)  //符玄给队友加分摊伤害Status
                         {
                             StatusAction.AddStatusAllOtherFriend(currentActionCharacter, statusStruct.status);
+                        }
+                        else if(statusStruct.statusTarget == Skill_SO.TargetType.Self)
+                        {
+                            var cloneStatus = Instantiate(statusStruct.status);
+                            StatusAction.AddStatusAction(currentActionCharacter, currentActionCharacter, statusStruct.status);
                         }
                     }
                 }
@@ -771,13 +838,31 @@ public class InputManager : MonoBehaviour
             #endregion
         }
 
-        if (skill.damageType != Skill_SO.DamageType.FinalAttack)
+        if (skill.damageType == Skill_SO.DamageType.SkillAttack)   
         {
+            Debug.Log("行动条移动");
             FreshAction();
         }
         enemyActionCounterDown.ResetTimer();
     }
-    
+    public void ChangeTargetFirstCharacter(Skill_SO skill)
+    {
+        if (skill.target == Skill_SO.Target.Enemy)
+        {
+            if (currentSelectEnemy == null)
+            {
+                FindFirstTarget();
+            }
+        }
+        else
+        {
+            if (currentSelectPlayer == null)
+            {
+                FindFirstFriend();
+            }
+        } 
+    }
+
     public void ExecuteAction(Skill_SO.Actions action,Character executeCharacter,Character target)
     {
         if (action.addaction == Skill_SO.AddAction.PushActon)
@@ -817,6 +902,15 @@ public class InputManager : MonoBehaviour
             if(action.targetType == Skill_SO.TargetType.Self)
             {
                 EnergyChangeAction.AddEnergyAction(executeCharacter, action.value);
+            }
+        }
+        else if(action.addaction == Skill_SO.AddAction.ExecuteSkill)
+        {
+            if(action.targetType == Skill_SO.TargetType.SingleTarget)
+            {
+                SpecialActionQueue.Enqueue(new SpecialAction(executeCharacter, action.skill));
+                FreshSpecialAction();
+                enemyActionCounterDown.ResetTimer();
             }
         }
     }

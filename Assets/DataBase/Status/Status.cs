@@ -49,6 +49,7 @@ public class Status : ScriptableObject
     public RepeatRule repeatRule;
     public bool ReapetFreshDuration;
     public int StatusLayer;
+
     public int LayerLimited;
     public float ValueLimited;
 
@@ -124,6 +125,14 @@ public class Status : ScriptableObject
     }
     public AttachOtherStatus attachOtherStatus;
 
+    public bool isSpecialStatus;
+    public enum SpecialType   //用于显示角色身上的特殊Status 如雪衣追加攻击触发器 符玄回血次数
+    {
+        LimitedLayer,
+        TriggerLayer,
+    }
+    public SpecialType specialType;
+
     public bool hasCounter;
     [System.Serializable]
     public struct Counter
@@ -140,6 +149,7 @@ public class Status : ScriptableObject
         HealthLimit,
         CastFinalSkill,
         DamageDefendLessEnemy,
+        FriendDealDamage,
     }
 
     public enum TriggerEffect
@@ -169,8 +179,7 @@ public class Status : ScriptableObject
     public bool StatusGroup;
     public List<Status> childStatus = new List<Status>();
 
-
-
+    public bool FeiXiaoExtraSkillPoint;   //超级特判之飞霄  每回合触发一次 回合开始时重置触发次数
     public enum Compare
     {
         Less,
@@ -187,6 +196,11 @@ public class Status : ScriptableObject
     {
         AddTriggerAbility();  //无论有没有计数器  都会进入AddCounterAbility函数 是否添加计数器是由hasCounter判断
 
+        if (FeiXiaoExtraSkillPoint)
+        {
+            Messenger.Instance.AddListener<Character>(Messenger.EventType.TurnStart, FreshStatusTurnStart);
+        }
+
         if (this.hasCounter)
         {
             switch (this.counter.counterType)
@@ -199,6 +213,9 @@ public class Status : ScriptableObject
                     break;
                 case Messenger.EventType.KillTarget:
                     Messenger.Instance.AddListener<Character,Character>(Messenger.EventType.KillTarget, KillTargetAction);
+                    break;
+                case Messenger.EventType.TargetAndAttackEnemy:                                        //飞霄被动叠飞黄层数  DealDamage一次行动可能多次触发  该信号是一次SKill广播一次
+                    Messenger.Instance.AddListener<Character, Character, Skill_SO>(Messenger.EventType.TargetAndAttackEnemy, DealDamageToEnemyCounterAction);
                     break;
             }
         }
@@ -218,6 +235,9 @@ public class Status : ScriptableObject
                     break;
                 case TriggerCondition.DamageDefendLessEnemy:
                     Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, CheckCondition);
+                    break;
+                case TriggerCondition.FriendDealDamage:
+                    Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, DealDamageToEnemyTriggerAction);
                     break;
             }
         }
@@ -243,13 +263,16 @@ public class Status : ScriptableObject
             InputManager.Instance.ExecuteAction(trigger.triggerAction, Owner, null);
         }
     }
+
+    #region 触发器回调
     public void CheckCondition()
     {
         if(hasTrigger == false)
         {
             return;
         }
-        if(trigger.triggerLayer == 0)
+
+        if (trigger.triggerLayer == 0)
         {
             if (trigger.triggerCondition == TriggerCondition.HealthLimit)   //符玄半血触发器
             {
@@ -259,6 +282,10 @@ public class Status : ScriptableObject
                 }
             }
             else if (trigger.triggerCondition == TriggerCondition.CastFinalSkill)
+            {
+                ApplyTrigger();
+            }
+            else if (trigger.triggerCondition == TriggerCondition.FriendDealDamage)
             {
                 ApplyTrigger();
             }
@@ -292,9 +319,16 @@ public class Status : ScriptableObject
                     StatusLayer -= trigger.triggerLayer;
                 }
             }
+            else if (trigger.triggerCondition == TriggerCondition.FriendDealDamage)
+            {
+                if (StatusLayer >= trigger.triggerLayer)
+                {
+                    ApplyTrigger();
+                    StatusLayer -= trigger.triggerLayer;
+                }
+            }
         }
     }
-
     public void CheckCondition(float _,Character a)
     {
         CheckCondition();
@@ -309,6 +343,14 @@ public class Status : ScriptableObject
             }
         }
     }
+    private void DealDamageToEnemyTriggerAction(Character attacker, Character attacked, float damageValue)   //一回合一次  队友攻击触发追加攻击
+    {
+        if(attacker.type == Character.CharaterType.Player && attacker != Owner)
+        {
+            CheckCondition();
+        }
+    }
+    #endregion
 
     #region 计数器回调
     private void ToughDamageAction(DamageInfo damage)
@@ -325,11 +367,10 @@ public class Status : ScriptableObject
         {
             StatusLayer += counter.addLayer[1] * (damage.toughDamage > 0 ? 1 : 0);
         }
-
         CheckCondition();
     }
 
-    private void ConsumeSkillPointAction(int changeNumber)  //花火天赋被动Status
+    private void ConsumeSkillPointAction(int changeNumber)  //花火天赋被动Status  消耗战技点
     {
         if(changeNumber < 0)   //小于0说明消耗了战技点
         {
@@ -338,7 +379,7 @@ public class Status : ScriptableObject
         Owner.FreshProperty(this);
     }
 
-    private void KillTargetAction(Character attacter,Character killed)  //在蓝天下
+    private void KillTargetAction(Character attacter,Character killed)     //在蓝天下 击杀
     {
         if (attacter.currentStatus.Contains(this))
         {
@@ -348,10 +389,33 @@ public class Status : ScriptableObject
         CheckCondition();
     }
 
-    #endregion
-    public void OnDestroy()
+    private void DealDamageToEnemyCounterAction(Character attacker,Character attacked,Skill_SO skill)   //飞霄 友军攻击加层数
     {
+        Debug.Log($"{this}");
+        if(attacker.type == Character.CharaterType.Player)
+        {
+            StatusLayer += 1;
+        }
+    }
 
+    #endregion
+
+    public void FreshStatusTurnStart(Character player)   //飞霄追加攻击 回合刷新回调
+    {
+        if(player.characterName != "FEIXIAO")   //因为信号的全局机制  没有Status的 敌人也会进入该回调
+        {
+            return;
+        }
+        if (FeiXiaoExtraSkillPoint)
+        {
+            if(StatusLayer == 1)   //天赋页中效果
+            {
+                var skillPointStatus = player.currentStatus.Find(e => e.StatusName == "1051");
+                skillPointStatus.StatusLayer = Mathf.Min(skillPointStatus.LayerLimited, skillPointStatus.StatusLayer + 1);
+            }
+            StatusLayer = 1;
+        }
+        
     }
 }
 

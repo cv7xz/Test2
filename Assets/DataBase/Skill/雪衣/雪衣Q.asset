@@ -16,7 +16,7 @@ MonoBehaviour:
   elementType: 5
   target: 0
   attackType: 0
-  damageType: 0
+  damageType: 1
   skillType: 00000000
   dependProperties: 
   toughDamage:

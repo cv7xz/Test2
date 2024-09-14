@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 927323480648581109}
   - component: {fileID: 6068197128002341842}
   - component: {fileID: 581589319407599609}
-  - component: {fileID: 1127918803182158039}
+  - component: {fileID: -355325317183866799}
   m_Layer: 0
   m_Name: TestLiangZi
   m_TagString: Untagged
@@ -224,11 +224,13 @@ MonoBehaviour:
   HealthBarPrefab: {fileID: 6441210317514940679, guid: d4570dbc69d800b4d8470136132e6340, type: 3}
   healthBar: {fileID: 0}
   HealthPos: {fileID: 5634297488161407776}
+  equipObject: {fileID: 0}
   characterData: {fileID: 0}
   QSKILLObject: {fileID: 0}
   ESKILLObject: {fileID: 0}
   SKILLFINALObject: {fileID: 0}
   FriendObject: {fileID: 0}
+  equip: {fileID: 0}
   data: {fileID: 11400000, guid: 875c61bdc4bf13c4982df09d448b18cb, type: 2}
   skillQ: {fileID: 0}
   skillE: {fileID: 0}
@@ -238,19 +240,32 @@ MonoBehaviour:
   ToughBarPrefab: {fileID: 9035676374410566509, guid: f5cb2846837f6384982e2940230f4b05, type: 3}
   ToughBar: {fileID: 0}
   ToughPos: {fileID: 1118951193249591379}
---- !u!65 &1127918803182158039
-BoxCollider:
+--- !u!61 &-355325317183866799
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6443040336716190468}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.9, y: 0.9}
+    newSize: {x: 0.9, y: 0.9}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.9, y: 0.9, z: 0.2}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.9, y: 0.9}
+  m_EdgeRadius: 0
 --- !u!1 &8675249656558538388
 GameObject:
   m_ObjectHideFlags: 0

@@ -661,14 +661,21 @@ public class Character : MonoBehaviour
 
         foreach (var status in currentStatus)
         {
+            if (status.isSpecialStatus)
+            {
+                context += "<color=red>";
+            }
             //if (status.StatusName.Contains("BD"))
             //{
             //    continue;
             //}
             //context += status.description + "\n";
             context += status.name + " 持续: " + status.duration.ToString() + " 层数: " + status.StatusLayer + " 数值:";
-
-            if(status.dependValues.Count > 0)
+            if (status.isSpecialStatus)
+            {
+                context += "</color>";
+            }
+            if (status.dependValues.Count > 0)
             {
                 context += GetDependValue(status).ToString() +"(依存) ";
             }
@@ -707,4 +714,6 @@ public class Character : MonoBehaviour
         GameManager.Instance.InformingCharacterFlag.transform.position = transform.position + new Vector3(5f,-5f,0) ;
         GameManager.Instance.InformingCharacterFlag.SetActive(true);
     }
+
+
 }

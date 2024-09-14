@@ -18,7 +18,8 @@ public static class StaticNumber
         {("XUEYI", "105_BD"),0 },     //±¬ÉË
         {("XUEYI", "106_BD"),0 },     //ÃüÖÐ
         {("XUEYI", "107_BD"),0 },     //µÖ¿¹
-        {("XUEYI", "108_BD"),0 },
+        {("XUEYI", "108_BD"),0 },     //±©»÷
+        {("XUEYI", "109_BD"),0 },     //·ÀÓù
 
         {("HUAHUO", "101_BD"),0 },
         {("HUAHUO", "102_BD"),0.28f },
@@ -28,6 +29,7 @@ public static class StaticNumber
         {("HUAHUO", "106_BD"),0 },
         {("HUAHUO", "107_BD"),0.1f },
         {("HUAHUO", "108_BD"),0 },
+        {("HUAHUO", "109_BD"),0 },
 
         {("YINLANG", "101_BD"),0.28f },
         {("YINLANG", "102_BD"),0 },
@@ -37,6 +39,7 @@ public static class StaticNumber
         {("YINLANG", "106_BD"),0.18f },
         {("YINLANG", "107_BD"),0 },
         {("YINLANG", "108_BD"),0 },
+        {("YINLANG", "109_BD"),0 },
 
         {("FUXUAN", "101_BD"),0 },
         {("FUXUAN", "102_BD"),0.18f },
@@ -46,6 +49,19 @@ public static class StaticNumber
         {("FUXUAN", "106_BD"),0 },
         {("FUXUAN", "107_BD"),0.1f },
         {("FUXUAN", "108_BD"),0.187f },
+        {("FUXUAN", "109_BD"),0 },
+
+
+        {("FEIXIAO", "101_BD"),0.28f },
+        {("FEIXIAO", "102_BD"),0 },
+        {("FEIXIAO", "103_BD"),0 },
+        {("FEIXIAO", "104_BD"),0 },
+        {("FEIXIAO", "105_BD"),0 },
+        {("FEIXIAO", "106_BD"),0 },
+        {("FEIXIAO", "107_BD"),0 },
+        {("FEIXIAO", "108_BD"),0.12f },
+        {("FEIXIAO", "109_BD"),0.125f },
+
         //{(XUEYI, "101_BD"),0 },
         //{(XUEYI, "102_BD"),0 },
         //{(XUEYI, "103_BD"),0 },

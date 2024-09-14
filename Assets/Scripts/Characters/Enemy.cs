@@ -62,4 +62,12 @@ public class Enemy :Character
         Destroy(ToughBar);
         Messenger.Instance.RemoveListener<Character,Skill_SO>(Messenger.EventType.ToughShieldBroken, ShieldBroken);
     }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.name.Contains("Player"))
+        {
+            Destroy(other.gameObject);
+        }
+    }
 }

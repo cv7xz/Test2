@@ -16,7 +16,12 @@ public class Player : Character
         
         for (int i = 0; i < friend_SO.InitStatusObject.Count; i++)
         {
-            friend_SO.InitStatus.Add(Instantiate(friend_SO.InitStatusObject[i]));
+            var status = Instantiate(friend_SO.InitStatusObject[i]);
+            friend_SO.InitStatus.Add(status);
+            if (friend_SO.InitStatusObject[i].isSpecialStatus)
+            {
+                GameManager.Instance.SpecialStatus.Add(status);
+            }
         }
         
 
@@ -40,7 +45,6 @@ public class Player : Character
                 }
             }
         }
-
 
 
         if (friend_SO != null)
@@ -76,5 +80,12 @@ public class Player : Character
         FreshProperty(Status.InvolvedProperty.DamageIncreaseValue);
         FreshProperty(Status.InvolvedProperty.BrokenFocus);
         FreshProperty(Status.InvolvedProperty.CriticalDamageValue);
+    }
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.name.Contains("Enemy"))
+        {
+            Destroy(other.gameObject);
+        }
     }
 }

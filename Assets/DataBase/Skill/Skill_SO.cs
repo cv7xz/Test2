@@ -99,6 +99,7 @@ public class Skill_SO : ScriptableObject
         GetSkillPoint,
         AddWeakness,
         AddStatusLayer,  //符玄终结技加层数
+        ExecuteSkill,   //飞霄技能 跟一次追加 (子技能)
     }
 
     [System.Serializable]
@@ -108,8 +109,16 @@ public class Skill_SO : ScriptableObject
         public CharacterData_SO.weaknessType element;  //银狼专用 添加弱点Action 
         public float value;
         public string statusName;
+        public Skill_SO skill;
         public TargetType targetType;
         public bool AfterDamage;  //一些Action需要具体作用于伤害前/后
     }
     public List<Actions> addactions = new List<Actions>();
+
+    public enum SpecialFinalSkill
+    {
+        None,
+        FEIXIAO,
+    }
+    public SpecialFinalSkill specialFinalSkill;
 }

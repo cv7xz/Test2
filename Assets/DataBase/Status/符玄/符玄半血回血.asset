@@ -36,6 +36,7 @@ MonoBehaviour:
   attachOtherStatus:
     StatusName: 
     AddValue: 0
+  isSpecialStatus: 1
   hasCounter: 0
   counter:
     counterType: 0
@@ -49,5 +50,12 @@ MonoBehaviour:
     triggerEffect: 0
     triggerStatus: []
     triggerSkill: {fileID: 11400000, guid: a87d39784f65dd14b92ccc37ab73eded, type: 2}
+    triggerAction:
+      addaction: 0
+      element: 0
+      value: 0
+      statusName: 
+      targetType: 0
+      AfterDamage: 0
   StatusGroup: 0
   childStatus: []

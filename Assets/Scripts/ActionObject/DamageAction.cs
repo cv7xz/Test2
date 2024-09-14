@@ -146,13 +146,8 @@ public static class DamageAction
         damageInfo.skill = skill;
         damageInfo.toughDamage = realToughDamage;
 
+        DealDamageAddress(attacker, attacked, skill, damageValue);
 
-        GameManager.Instance.DamageAppearFunc(attacker,attacked,damageValue);
-
-       
-
-        Messenger.Instance.BroadCast(Messenger.EventType.DealDamage,attacker,attacked, damageValue);
-        Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue,attacked);
         return damageInfo;
     }
 
@@ -190,26 +185,30 @@ public static class DamageAction
             {
                 attackedData.currentHealth -= damageValue * (1 - status.StatusValue[0]);
                 GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue * (1 - status.StatusValue[0]));
+                GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue,attacked);
 
                 status.Caster.characterData.currentHealth -= damageValue * (status.StatusValue[0]);
                 GameManager.Instance.DamageAppearFunc(attacker, status.Caster, damageValue * (status.StatusValue[0]));
+                GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, status.Caster, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
 
                 context += "∑÷ÃØ…À∫¶: " + attackedData.name + "takes " + (damageValue * (1 - status.StatusValue[0])).ToString() + "damage";
                 context += "∑÷ÃØ…À∫¶: " + status.Caster.name + "takes " + (damageValue * (status.StatusValue[0])).ToString() + "damage";
-
+                GameManager.Instance.statusText.text = context;
                 return;   //‘› ±÷ªøº¬«“ª≤„∑÷ÃØ…À∫¶Status¥Ê‘⁄
             }
         }
         #endregion
+        GameManager.Instance.statusText.text = context;
 
         attackedData.currentHealth -= damageValue;
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
         Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
         GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);
+        GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
     }
     public static float BrokenDamageAction(Character source, Character attacked)
     {
@@ -243,5 +242,15 @@ public static class DamageAction
 
         damageValue *= 0.9f;
         return damageValue;
+    }
+
+
+    public static void DealDamageAddress(Character attacker,Character attacked,Skill_SO skill,float damageValue)
+    {
+        GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);
+        GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
+
+        Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);      //π•ª˜∑Ω‘Ï≥……À∫¶
+        Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);                //≥– ‹…À∫¶
     }
 }

@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
-  m_Name: "\u65B0\u624B\u4EFB\u52A1\u56DE\u80FD"
+  m_Name: "\u98DE\u9704\u5929\u8D4B\u8FFD\u52A0"
   m_EditorClassIdentifier: 
   Caster: {fileID: 0}
   Owner: {fileID: 0}
-  StatusName: 10042
-  description: 
+  StatusName: 1052
+  description: "\u8FFD\u52A0\u653B\u51FBStatus"
   duration: -1
   NotAutoDelete: 0
   turnStartDuration: 0
@@ -44,21 +44,22 @@ MonoBehaviour:
     addLayer: 
   hasTrigger: 1
   trigger:
-    triggerCondition: 3
-    triggerLayer: 0
+    triggerCondition: 4
+    triggerLayer: 1
     limitRelation: 0
     limitValue: 0
-    triggerEffect: 2
+    triggerEffect: 0
     triggerStatus: []
-    triggerSkill: {fileID: 0}
+    triggerSkill: {fileID: 11400000, guid: 61ac65a3232800643abc306fe2549f6b, type: 2}
     triggerAction:
-      addaction: 1
+      addaction: 0
       element: 0
-      value: 8
+      value: 0
       statusName: 
       skill: {fileID: 0}
-      targetType: 5
+      targetType: 0
       AfterDamage: 0
   StatusGroup: 0
   childStatus: []
   changeFinalSkill: 0
+  FeiXiaoExtraSkillPoint: 1

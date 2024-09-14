@@ -63,6 +63,8 @@ public class GameManager : MonoBehaviour
         {
             mouseDownCharacter?.FreshInformation();
         }
+
+        FreshSpecialPanel();
     }
     private void Start()
     {
@@ -103,6 +105,40 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public GameObject SpecialStatusPanel;
+    public Text SpecialStatusText;
+    public List<Status> SpecialStatus = new List<Status>();
+    public void FreshSpecialPanel()
+    {
+        SpecialStatusText.text = "";
+        foreach (var status in SpecialStatus)
+        {
+            if(status.specialType == Status.SpecialType.LimitedLayer)   //一些Status按层数限制显示
+            {
+                SpecialStatusText.text += $"{status.name}  {status.StatusLayer}/{status.LayerLimited}\n";
+            }
+            else if(status.specialType == Status.SpecialType.TriggerLayer)   //一些Status显示触发层数
+            {
+                SpecialStatusText.text += $"{status.name}  {status.StatusLayer}/{status.trigger.triggerLayer}\n";
+            }
+        }
+    }
+
+    public Character GetRandomEnemy()
+    {
+        List<Character> enemies = new List<Character>();
+        foreach (var enemy in enemies)
+        {
+            if (enemy != null && enemy.characterData.currentHealth > 0)
+            {
+                enemies.Add(enemy);
+            }
+        }
+
+        int randomIndex = Random.Range(0, enemies.Count);
+        return enemies[randomIndex];
+    }
+
     #region 伤害显示函数
     public void DamageAppearFunc(Character source, Character target,float damage)
     {
@@ -115,6 +151,7 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(DamageAppear(damageText,1.5f));
     }
+
     public IEnumerator DamageAppear(Text text, float time)
     {
         while (time >= 0)
@@ -127,6 +164,36 @@ public class GameManager : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    public GameObject PlayerDamageBall,EnemyDamageBall;
+    public void DamageBallAppear(Character source, Character target, float damage)
+    {
+        GameObject newBall;
+        if (source.type == Character.CharaterType.Player)
+        {
+            newBall = Instantiate(PlayerDamageBall);
+        }
+        else
+        {
+            newBall = Instantiate(EnemyDamageBall);
+        }
+        newBall.transform.position = source.transform.position;
+        StartCoroutine(DamageBallMoving(source, target, newBall));
+    }
+    public IEnumerator DamageBallMoving(Character source, Character target, GameObject GO)
+    {
+        Vector3 endpos = new Vector3(target.transform.position.x, target.transform.position.y, 0);
+        while (GO != null && Vector3.Distance(GO.transform.position, endpos) >= 1f)
+        {
+            if(target == null)
+            {
+                Destroy(GO.gameObject);
+            }
+            GO.transform.position = Vector3.Lerp(GO.transform.position, endpos, 4f * Time.deltaTime);
+            yield return null;
+        }
+        yield return null; 
     }
     #endregion
 }
