@@ -15,7 +15,7 @@ public static class PushActionValueAction
         }
         DamageAction.context += $"{character.characterData.actionValue}\n";
 
-        GameManager.Instance.statusText.text = DamageAction.context;
+        GameManager.Instance.FreshBattleInfor(DamageAction.context);
     }
     public static void PushAllActionValue(float distance)
     {

@@ -10,29 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
-  m_Name: "555\u89E6\u53D1\u5668"
+  m_Name: "E\u52A0\u653B"
   m_EditorClassIdentifier: 
   Caster: {fileID: 0}
   Owner: {fileID: 0}
-  StatusName: 10011
+  StatusName: 1054
   description: 
-  duration: -1
+  duration: 3
   NotAutoDelete: 0
   turnStartDuration: 0
   HasBonusLimit: 0
   limitType:
     BonusAttackType: 0
-  statusType: 15
-  StatusValue: []
+  statusType: 0
+  StatusValue:
+  - 0.48
   involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
-  StatusLayer: 0
-  LayerLimited: 0
+  StatusLayer: 1
+  LayerLimited: 1
   ValueLimited: 0
   IsDepend: 0
   dependValues: []
-  InvolvedName: 
+  InvolvedName: 00000000
   isField: 0
   fieldEffects: []
   IsAttached: 0
@@ -49,23 +50,22 @@ MonoBehaviour:
   counter:
     counterType: 0
     addLayer: 
-  hasTrigger: 1
+  hasTrigger: 0
   trigger:
-    triggerCondition: 2
+    triggerCondition: 0
     triggerLayer: 0
-    SelfLimit: 1
     limitRelation: 0
     limitValue: 0
-    triggerEffect: 2
+    triggerEffect: 0
     triggerStatus: []
     triggerSkill: {fileID: 0}
     triggerAction:
       addaction: 0
       element: 0
-      value: 2400
+      value: 0
       statusName: 
       skill: {fileID: 0}
-      targetType: 1
+      targetType: 0
       AfterDamage: 0
   StatusGroup: 0
   childStatus: []

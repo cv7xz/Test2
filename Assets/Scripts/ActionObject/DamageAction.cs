@@ -18,10 +18,125 @@ public static class DamageAction
         float toughDamage = 0;
         float realToughDamage = 0;
         float overToughDamage = 0;
+
+        float tempDamageIncrease = 0f;
+        float tempSkillRateIncrease = 0f;
+        float tempToughDamageEfficiency = 0f;
+
+        #region 技能增伤
+        if (skill.hasDamageIncrease)
+        {
+            foreach (var increase in skill.otherDamageIncrease)
+            {
+                if (increase.damageIncreaseType == Skill_SO.DamageIncreaseType.DamageIncreaseProperty)
+                {
+                    if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.toughDamage)
+                    {
+                        tempDamageIncrease += realToughDamage * increase.rates[0] * 0.01f;
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetToughRate)
+                    {
+                        if (attackedData.currentToughShield >= attackedData.maxToughShield * increase.conditionValue)
+                        {
+                            tempDamageIncrease += increase.rates[0];
+                        }
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetBroken)
+                    {
+                        if (attackedData.currentToughShield <= 1e-6)
+                        {
+                            tempDamageIncrease += increase.rates[0];
+                        }
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetNotBroken)
+                    {
+                        if (attackedData.currentToughShield > 1e-6)
+                        {
+                            tempDamageIncrease += increase.rates[0];
+                        }
+                    }
+                }
+                else if (increase.damageIncreaseType == Skill_SO.DamageIncreaseType.SkillRate)
+                {
+                    if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.toughDamage)
+                    {
+                        tempSkillRateIncrease += realToughDamage * increase.rates[0] * 0.01f;
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetToughRate)
+                    {
+                        if (attackedData.currentToughShield >= attackedData.maxToughShield * increase.conditionValue)
+                        {
+                            tempSkillRateIncrease += increase.rates[0];
+                        }
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetBroken)
+                    {
+                        if (attackedData.currentToughShield <= 1e-6)
+                        {
+                            tempSkillRateIncrease += increase.rates[0];
+                        }
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetNotBroken)
+                    {
+                        if (attackedData.currentToughShield > 1e-6)
+                        {
+                            tempSkillRateIncrease += increase.rates[0];
+                        }
+                    }
+                }
+                else if (increase.damageIncreaseType == Skill_SO.DamageIncreaseType.ToughEfficiency)
+                {
+                    if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.toughDamage)
+                    {
+                        tempToughDamageEfficiency += realToughDamage * increase.rates[0] * 0.01f;
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetToughRate)
+                    {
+                        if (attackedData.currentToughShield >= attackedData.maxToughShield * increase.conditionValue)
+                        {
+                            tempToughDamageEfficiency += increase.rates[0];
+                        }
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetBroken)
+                    {
+                        if (attackedData.currentToughShield <= 1e-6)
+                        {
+                            tempToughDamageEfficiency += increase.rates[0];
+                        }
+                    }
+                    else if (increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetNotBroken)
+                    {
+                        if (attackedData.currentToughShield > 1e-6)
+                        {
+                            tempToughDamageEfficiency += increase.rates[0];
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region  Status 特定增伤 如追加攻击的爆伤增加
+        float tempCriticalDamageIncrease = 0f;
+        foreach(var status in attacker.currentStatus)
+        {
+            if (status.HasBonusLimit)
+            {
+                if(skill.damageType == status.limitType.BonusAttackType)
+                {
+                    if(status.statusType == Status.StatusType.CriticalDamageBonus)
+                    {
+                        tempCriticalDamageIncrease += status.StatusValue[0];
+                    }
+                }
+            }
+        }
+        #endregion
+
         #region 削韧计算
         if (attackedData.weakness.Contains(skill.elementType) || skill.ignoreWeakness)
         {
-            toughDamage = skill.toughDamage[Index] * (1 + attackerData.BrokenEfficiencyBonus);
+            toughDamage = skill.toughDamage[Index] * (1 + (attackerData.BrokenEfficiencyBonus + tempToughDamageEfficiency));
             realToughDamage = Mathf.Min(toughDamage, attackedData.currentToughShield);
             overToughDamage = toughDamage - realToughDamage;
 
@@ -51,35 +166,20 @@ public static class DamageAction
         bool isCritical = attackerData.criticalPercent >= Random.Range(0f, 1f);
         if (isCritical)
         {
-            damageValue *= (1 + attackerData.criticalDamage);
-            context += "  是否暴击: " + "<color=red>" + isCritical.ToString() +"</color>" + " 处理后伤害: " + damageValue.ToString() + "\n";
+            damageValue *= (1 + attackerData.criticalDamage + tempCriticalDamageIncrease);
+            context += "  是否暴击: " + "<color=red>" + isCritical.ToString() +"</color>" + "爆伤: " + (attackerData.criticalDamage + tempCriticalDamageIncrease).ToString() + " 处理后伤害: " + damageValue.ToString() + "\n";
         }
         else
         {
             context += "  是否暴击: " + isCritical.ToString() + " 处理后伤害: " + damageValue.ToString() + "\n";
         }
 
-        damageValue *= skill.rates[Index];
-        context += "  技能倍率: " + skill.rates[Index].ToString() + " 处理后伤害: " + damageValue.ToString() + "\n";
 
-        float tempDamageIncrease = 0f;
-        if (skill.hasDamageIncrease)
-        {
-            foreach(var increase in skill.otherDamageIncrease)
-            {
-                if(increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.toughDamage)
-                {
-                    tempDamageIncrease += realToughDamage * increase.rates[0] * 0.01f;
-                }
-                else if(increase.damageIncreaseConditions == Skill_SO.DamageIncreaseCondition.targetToughRate)
-                {
-                    if(attackedData.currentToughShield >= attackedData.maxToughShield * increase.conditionValue)
-                    {
-                        tempDamageIncrease += increase.rates[0];
-                    }
-                }
-            }
-        }
+
+       
+        damageValue *= (skill.rates[Index] + tempSkillRateIncrease);
+        context += "  技能倍率: " + (skill.rates[Index] + tempSkillRateIncrease).ToString() + " 处理后伤害: " + damageValue.ToString() + "\n";
+
         damageValue *= (1 + attackerData.damageIncrease + tempDamageIncrease);
         context += "  增伤处理: " + attackerData.damageIncrease.ToString() + "  临时增伤: " + tempDamageIncrease.ToString() + " 处理后伤害: " + damageValue.ToString() + "\n";
 
@@ -132,7 +232,7 @@ public static class DamageAction
         context += "-------------------------------------\n";
         damageValue = Mathf.Max(damageValue, 1f);
 
-        GameManager.Instance.statusText.text = context;
+        GameManager.Instance.FreshBattleInfor(context);
         attackedData.currentHealth -= damageValue;
         #endregion
 
@@ -195,14 +295,14 @@ public static class DamageAction
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, status.Caster, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
 
-                context += "分摊伤害: " + attackedData.name + "takes " + (damageValue * (1 - status.StatusValue[0])).ToString() + "damage";
-                context += "分摊伤害: " + status.Caster.name + "takes " + (damageValue * (status.StatusValue[0])).ToString() + "damage";
-                GameManager.Instance.statusText.text = context;
+                context += "分摊伤害: " + attackedData.name + "takes " + (damageValue * (1 - status.StatusValue[0])).ToString() + "damage\n";
+                context += "分摊伤害: " + status.Caster.name + "takes " + (damageValue * (status.StatusValue[0])).ToString() + "damage\n";
+                GameManager.Instance.FreshBattleInfor(context);
                 return;   //暂时只考虑一层分摊伤害Status存在
             }
         }
         #endregion
-        GameManager.Instance.statusText.text = context;
+        GameManager.Instance.FreshBattleInfor(context);
 
         attackedData.currentHealth -= damageValue;
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);

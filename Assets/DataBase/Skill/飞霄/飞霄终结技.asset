@@ -26,10 +26,11 @@ MonoBehaviour:
   energyConsumed: 0
   RandomAttackNumber: 0
   restoreEnergy: 0
-  ignoreWeakness: 0
+  ignoreWeakness: 1
   basePercent: []
   BrokenEffect: 0
   hasDamageIncrease: 0
   otherDamageIncrease: []
   addStatus: []
   addactions: []
+  specialFinalSkill: 1

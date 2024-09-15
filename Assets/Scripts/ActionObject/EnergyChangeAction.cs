@@ -20,6 +20,6 @@ public static class EnergyChangeAction
         }
 
 
-        GameManager.Instance.statusText.text = DamageAction.context;
+        GameManager.Instance.FreshBattleInfor(DamageAction.context);
     }
 }

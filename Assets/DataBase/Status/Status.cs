@@ -14,6 +14,15 @@ public class Status : ScriptableObject
     public bool NotAutoDelete;
 
     public bool turnStartDuration;  //buff的消失时间变为回合开始时
+
+    public bool HasBonusLimit;
+    [System.Serializable]
+    public struct BonusLimitType
+    {
+        public Skill_SO.DamageType BonusAttackType;
+    }
+    public BonusLimitType limitType;
+
     public enum StatusType
     {
         AttackPercentBonus,
@@ -125,6 +134,15 @@ public class Status : ScriptableObject
     }
     public AttachOtherStatus attachOtherStatus;
 
+    public bool IsAttachSkill;  //该Status与一个Skill有联动  如飞霄释放终结技被视为追加攻击
+    [System.Serializable]
+    public struct AttachOtherSkill
+    {
+        public List<string> SkillName;
+        public Skill_SO.DamageType damageType;
+    }
+    public AttachOtherSkill attachOtherSkill;
+
     public bool isSpecialStatus;
     public enum SpecialType   //用于显示角色身上的特殊Status 如雪衣追加攻击触发器 符玄回血次数
     {
@@ -150,6 +168,7 @@ public class Status : ScriptableObject
         CastFinalSkill,
         DamageDefendLessEnemy,
         FriendDealDamage,
+        CastSkillE,
     }
 
     public enum TriggerEffect
@@ -166,6 +185,7 @@ public class Status : ScriptableObject
         public TriggerCondition triggerCondition;
         public int triggerLayer;
 
+        public bool SelfLimit;  //信号的监听（如释放终结技）是全局的  一些触发器触发条件限定为自己
         public Compare limitRelation;
         public float limitValue;  //血量小于50%时
         public TriggerEffect triggerEffect;
@@ -228,16 +248,19 @@ public class Status : ScriptableObject
             {
                 case TriggerCondition.HealthLimit:
                     Messenger.Instance.AddListener<float,Character>(Messenger.EventType.TakeDamage, CheckCondition);
-                    Messenger.Instance.AddListener(Messenger.EventType.CastFinalSkill, CheckCondition);
+                    Messenger.Instance.AddListener<Character>(Messenger.EventType.CastFinalSkill, CheckCondition);
                     break;
                 case TriggerCondition.CastFinalSkill:
-                    Messenger.Instance.AddListener(Messenger.EventType.CastFinalSkill, CheckCondition);
+                    Messenger.Instance.AddListener<Character>(Messenger.EventType.CastFinalSkill, CheckCondition);
                     break;
                 case TriggerCondition.DamageDefendLessEnemy:
                     Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, CheckCondition);
                     break;
                 case TriggerCondition.FriendDealDamage:
                     Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, DealDamageToEnemyTriggerAction);
+                    break;
+                case TriggerCondition.CastSkillE:
+                    Messenger.Instance.AddListener(Messenger.EventType.CastSkillE,CheckCondition);
                     break;
             }
         }
@@ -247,7 +270,7 @@ public class Status : ScriptableObject
     {
         if (trigger.triggerEffect == TriggerEffect.ExecuteSkill)
         {
-            InputManager.Instance.SpecialActionQueue.Enqueue(new InputManager.SpecialAction(Owner, trigger.triggerSkill));
+            InputManager.Instance.SpecialActionList.AddFirst(new InputManager.SpecialAction(Owner, trigger.triggerSkill));
             InputManager.Instance.FreshSpecialAction();
             InputManager.Instance.enemyActionCounterDown.ResetTimer();
         }
@@ -286,6 +309,10 @@ public class Status : ScriptableObject
                 ApplyTrigger();
             }
             else if (trigger.triggerCondition == TriggerCondition.FriendDealDamage)
+            {
+                ApplyTrigger();
+            }
+            else if(trigger.triggerCondition == TriggerCondition.CastSkillE)
             {
                 ApplyTrigger();
             }
@@ -329,12 +356,41 @@ public class Status : ScriptableObject
             }
         }
     }
+    public void CheckCondition(Character a)
+    {
+        if(this.trigger.SelfLimit)
+        {
+            if(a == this.Owner)
+            {
+                CheckCondition();
+            }
+        }
+        else
+        {
+            CheckCondition();
+        }
+
+    }
     public void CheckCondition(float _,Character a)
     {
-        CheckCondition();
+        if (this.trigger.SelfLimit)
+        {
+            if (a == this.Owner)
+            {
+                CheckCondition();
+            }
+        }
+        else
+        {
+            CheckCondition();
+        }
     }
     public void CheckCondition(Character attacker,Character attacked,float damageValue)  //新手任务开始前  装备者攻击防御被降低的敌方目标后恢复能量
     {
+        if(attacker != this.Owner)
+        {
+            return;
+        }
         foreach(var status in attacked.currentStatus)
         {
             if(status.statusType == StatusType.DefendValueBonus && status.StatusValue[0] < 0)
@@ -350,6 +406,7 @@ public class Status : ScriptableObject
             CheckCondition();
         }
     }
+
     #endregion
 
     #region 计数器回调
@@ -414,8 +471,7 @@ public class Status : ScriptableObject
                 skillPointStatus.StatusLayer = Mathf.Min(skillPointStatus.LayerLimited, skillPointStatus.StatusLayer + 1);
             }
             StatusLayer = 1;
-        }
-        
+        }  
     }
 }
 
@@ -437,5 +493,10 @@ public class DamageInfo
         attacker = Attacker;
         target = Target;
         skill = Skill;
+    }
+    public DamageInfo()
+    {
+        toughDamage = 0f;
+        damageValue = 0f;
     }
 }

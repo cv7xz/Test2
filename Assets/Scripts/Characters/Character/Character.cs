@@ -50,7 +50,6 @@ public class Character : MonoBehaviour
     public Friend_SO friend_SO;
 
     public List<Status> currentStatus;
-
     public virtual void Awake()
     {
 

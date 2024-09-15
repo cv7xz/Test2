@@ -211,5 +211,6 @@ public class Messenger : MonoBehaviour
 
         TakeDamage,
         TargetAndAttackEnemy,
+        CastSkillE,
     };
 }

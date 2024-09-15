@@ -25,7 +25,7 @@ public static class HealingAction
                 DamageAction.context += $"治疗量 {caster.characterData.maxHealth * skill.rates[rateIndex]} 处理后生命值 {target.characterData.currentHealth}\n";
             }
         }
-        GameManager.Instance.statusText.text = DamageAction.context;
+        GameManager.Instance.FreshBattleInfor(DamageAction.context);
     }
 
     public static void DealHealingAllAction(Character caster, Skill_SO skill = null)

@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     public List<GameObject> AllEnemy = new List<GameObject>(); //Ô¤ÖÆÌå
 
     public List<GameObject> AllPlayers = new List<GameObject>();
-
+    
+    public List<GameObject> AllEquip = new List<GameObject>();
     public List<GameObject> AllEquip_HUIMIE = new List<GameObject>();
     public List<GameObject> AllEquip_ZHISHI = new List<GameObject>();
     public List<GameObject> AllEquip_XUWU = new List<GameObject>();
@@ -47,6 +48,8 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> Elements = new List<GameObject>();
     public int maxSkillPoint = 5;
+
+    public float TotalActionValuePass = 0f;
     private void Awake()
     {
         if(Instance == null)
@@ -122,6 +125,11 @@ public class GameManager : MonoBehaviour
                 SpecialStatusText.text += $"{status.name}  {status.StatusLayer}/{status.trigger.triggerLayer}\n";
             }
         }
+    }
+
+    public void FreshBattleInfor(string context)
+    {
+        GameManager.Instance.statusText.text = context;
     }
 
     public Character GetRandomEnemy()

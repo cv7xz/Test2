@@ -70,14 +70,24 @@ public class Skill_SO : ScriptableObject
         toughDamage,
         targetToughRate,
 
+        targetBroken,
+        targetNotBroken,
         XINGHUN,
     }
 
     public bool hasDamageIncrease;
+
+    public enum DamageIncreaseType
+    {
+        DamageIncreaseProperty,
+        SkillRate,
+        ToughEfficiency,
+    }
     [System.Serializable]
     public struct OtherDamageIncrease
     {
         public DamageIncreaseCondition damageIncreaseConditions;
+        public DamageIncreaseType damageIncreaseType;
         public float conditionValue;
         public List<float> rates;
     }

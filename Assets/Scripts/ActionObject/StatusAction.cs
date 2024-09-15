@@ -15,15 +15,11 @@ public static class StatusAction
             {
                 int randomIndex = Random.Range(0, status.childStatus.Count);
                 var cloneChildStatus = GameObject.Instantiate(status.childStatus[randomIndex]);
-                target.currentStatus.Add(cloneChildStatus);
-                target.FreshProperty(cloneChildStatus);
-                cloneChildStatus.AddCounterAbility();
+                AddStatusAddress(target, cloneChildStatus);
             }
             else
             {
-                target.currentStatus.Add(status);
-                target.FreshProperty(status);
-                status.AddCounterAbility();
+                AddStatusAddress(target, status);
             }
             return;
         }
@@ -116,6 +112,32 @@ public static class StatusAction
                         var cloneStatus = GameObject.Instantiate(status);
                         AddStatusAction(source, player, cloneStatus);
                     }
+                }
+            }
+        }
+    }
+
+    public static void AddStatusAddress(Character target, Status status)
+    {
+        target.currentStatus.Add(status);
+        target.FreshProperty(status);
+        status.AddCounterAbility();
+
+        if (status.IsAttachSkill)
+        {
+            if (status.attachOtherSkill.damageType == Skill_SO.DamageType.ExtraAttack)
+            {
+                if(status.attachOtherSkill.SkillName.Contains(InputManager.Instance.FeiXiaoSpecialQ.skillID))
+                {
+                    InputManager.Instance.FeiXiaoSpecialQ.damageType = Skill_SO.DamageType.ExtraAttack;
+                }
+                else if (status.attachOtherSkill.SkillName.Contains(InputManager.Instance.FeiXiaoSpecialE.skillID))
+                {
+                    InputManager.Instance.FeiXiaoSpecialE.damageType = Skill_SO.DamageType.ExtraAttack;
+                }
+                else if (status.attachOtherSkill.SkillName.Contains(InputManager.Instance.FeiXiaoFinalEnd.skillID))
+                {
+                    InputManager.Instance.FeiXiaoFinalEnd.damageType = Skill_SO.DamageType.ExtraAttack;
                 }
             }
         }
