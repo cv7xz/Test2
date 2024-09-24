@@ -8,7 +8,7 @@ public static class StaticNumber
 
     public static float ActionTime = 1.0f; //行动后 怪物下一次行动cd
 
-      
+
     public static Dictionary<(string, string), float> propertyDict = new Dictionary<(string, string), float>()
     {
         {("XUEYI", "101_BD"),0 },     //攻击
@@ -20,6 +20,7 @@ public static class StaticNumber
         {("XUEYI", "107_BD"),0 },     //抵抗
         {("XUEYI", "108_BD"),0 },     //暴击
         {("XUEYI", "109_BD"),0 },     //防御
+        {("XUEYI", "110_BD"),0 },     //速度 fix
 
         {("HUAHUO", "101_BD"),0 },
         {("HUAHUO", "102_BD"),0.28f },
@@ -30,6 +31,7 @@ public static class StaticNumber
         {("HUAHUO", "107_BD"),0.1f },
         {("HUAHUO", "108_BD"),0 },
         {("HUAHUO", "109_BD"),0 },
+        {("HUAHUO", "110_BD"),0 },
 
         {("YINLANG", "101_BD"),0.28f },
         {("YINLANG", "102_BD"),0 },
@@ -40,6 +42,7 @@ public static class StaticNumber
         {("YINLANG", "107_BD"),0 },
         {("YINLANG", "108_BD"),0 },
         {("YINLANG", "109_BD"),0 },
+        {("YINLANG", "110_BD"),0 },
 
         {("FUXUAN", "101_BD"),0 },
         {("FUXUAN", "102_BD"),0.18f },
@@ -50,7 +53,7 @@ public static class StaticNumber
         {("FUXUAN", "107_BD"),0.1f },
         {("FUXUAN", "108_BD"),0.187f },
         {("FUXUAN", "109_BD"),0 },
-
+        {("FUXUAN", "110_BD"),0 },
 
         {("FEIXIAO", "101_BD"),0.28f },
         {("FEIXIAO", "102_BD"),0 },
@@ -61,6 +64,18 @@ public static class StaticNumber
         {("FEIXIAO", "107_BD"),0 },
         {("FEIXIAO", "108_BD"),0.12f },
         {("FEIXIAO", "109_BD"),0.125f },
+        {("FEIXIAO", "110_BD"),0 },
+
+        {("RUANMEI", "101_BD"),0f },
+        {("RUANMEI", "102_BD"),0 },
+        {("RUANMEI", "103_BD"),0 },
+        {("RUANMEI", "104_BD"),37.3f },
+        {("RUANMEI", "105_BD"),0 },
+        {("RUANMEI", "106_BD"),0 },
+        {("RUANMEI", "107_BD"),0 },
+        {("RUANMEI", "108_BD"),0f },
+        {("RUANMEI", "109_BD"),0.225f },
+        {("RUANMEI", "110_BD"),5f },
 
         //{(XUEYI, "101_BD"),0 },
         //{(XUEYI, "102_BD"),0 },

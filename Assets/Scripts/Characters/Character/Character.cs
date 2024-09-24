@@ -591,6 +591,27 @@ public class Character : MonoBehaviour
                 }
                 characterData.damageDecrease = tempDamageDecreaseBonus;
             }
+            else if(type == Status.InvolvedProperty.SpeedValue)
+            {
+                float tempSpeedFixBonus = 0;
+                float tempSpeedPercentBonus = 0f;
+
+                foreach(var s in currentStatus)
+                {
+                    if(s.statusType == Status.StatusType.SpeedFixBouns)
+                    {
+                        tempSpeedFixBonus += s.StatusValue[0];
+                    }
+                    else if(s.statusType == Status.StatusType.SpeedPercentBonus)
+                    {
+                        tempSpeedPercentBonus += s.StatusValue[0];
+                    }
+                }
+
+                characterData.speedPercentBonus = tempSpeedPercentBonus;
+                characterData.fixSpeedBonus = tempSpeedFixBonus;
+                characterData.currentSpeed = (characterData.baseSpeed) * characterData.speedPercentBonus + characterData.fixSpeedBonus;
+            }
         }
     }
     public void FreshProperty(Status.InvolvedProperty str)

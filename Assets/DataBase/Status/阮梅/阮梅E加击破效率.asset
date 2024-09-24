@@ -10,34 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 130c01d5f1f0f6a4884f6ec4910e4539, type: 3}
-  m_Name: "\u7B26\u7384E"
+  m_Name: "\u962E\u6885E\u52A0\u51FB\u7834\u6548\u7387"
   m_EditorClassIdentifier: 
-  skillID: 1042
-  elementType: 5
-  target: 1
-  attackType: 1
-  damageType: 1
-  skillQER: 1
-  skillType: 02000000
+  skillID: 
+  elementType: 0
+  target: 0
+  attackType: 0
+  damageType: 0
+  skillQER: 0
+  skillType: 
   dependProperties: 
   toughDamage: []
   rates: []
-  skillPointConsumed: 1
+  skillPointConsumed: 0
   skillPointProvide: 0
   energyConsumed: 0
   RandomAttackNumber: 0
-  restoreEnergy: 30
+  restoreEnergy: 0
   ignoreWeakness: 0
   basePercent: []
   BrokenEffect: 0
   hasDamageIncrease: 0
   otherDamageIncrease: []
-  addStatus:
-  - status: {fileID: 11400000, guid: 75617a38936a5fb4dbf9bc8f228a7bbe, type: 2}
-    statusTarget: 4
-  - status: {fileID: 11400000, guid: b22ea191361d06d4e9dfa8e71f9a74b9, type: 2}
-    statusTarget: 1
-  - status: {fileID: 11400000, guid: 20672e06c00ea6146a423b6f0a21d18b, type: 2}
-    statusTarget: 1
+  addStatus: []
   addactions: []
   specialFinalSkill: 0

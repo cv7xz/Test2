@@ -17,6 +17,7 @@ MonoBehaviour:
   target: 0
   attackType: 2
   damageType: 1
+  skillQER: 1
   skillType: 00000000
   dependProperties: 
   toughDamage:
@@ -37,3 +38,4 @@ MonoBehaviour:
   otherDamageIncrease: []
   addStatus: []
   addactions: []
+  specialFinalSkill: 0

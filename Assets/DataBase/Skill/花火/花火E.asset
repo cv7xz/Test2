@@ -17,6 +17,7 @@ MonoBehaviour:
   target: 1
   attackType: 0
   damageType: 1
+  skillQER: 1
   skillType: 02000000
   dependProperties: 
   toughDamage: []
@@ -38,4 +39,8 @@ MonoBehaviour:
   - addaction: 0
     element: 0
     value: 5000
+    statusName: 
+    skill: {fileID: 0}
+    targetType: 0
     AfterDamage: 1
+  specialFinalSkill: 0

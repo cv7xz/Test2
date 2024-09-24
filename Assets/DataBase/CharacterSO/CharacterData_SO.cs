@@ -5,12 +5,23 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CharacterData", menuName = "CharacterData")]
 public class CharacterData_SO : ScriptableObject
 {
-    public float baseAttack, AttackPercentBonus, fixAttackBonus,currentAttack;
-    public float baseHealth, healthPercentBonus, currentHealth, maxHealth,fixHealthBonus;
-    public float baseDefend, DefendPercentBonus, currentDefend, fixDefendBonus;
-    public float criticalPercent, criticalDamage;
-    public float baseSpeed, speedPercentBonus, fixSpeedBonus, currentSpeed;
+    [Header("Attack Field")]
+    public float baseAttack;
+    public float AttackPercentBonus, fixAttackBonus,currentAttack;
 
+    [Header("Health Field")]
+    public float baseHealth;
+    public float healthPercentBonus, currentHealth, maxHealth,fixHealthBonus;
+    [Header("Defend Field")]
+    public float baseDefend;
+    public float DefendPercentBonus, currentDefend, fixDefendBonus;
+    [Header("Critical Field")]
+    public float criticalPercent;
+    public float criticalDamage;
+    [Header("Speed Field")]
+    public float baseSpeed;
+    public float speedPercentBonus, fixSpeedBonus, currentSpeed;
+    [Header("Other Field")]
     public float effectPercent, effectDefend;
 
     #region Player

@@ -21,8 +21,8 @@ public class Status : ScriptableObject
     {
         public Skill_SO.DamageType BonusAttackType;
     }
-    public BonusLimitType limitType;
-
+    public BonusLimitType limitType;   //飞霄     追加攻击  有爆伤提升
+ 
     public enum StatusType
     {
         AttackPercentBonus,
@@ -45,6 +45,8 @@ public class Status : ScriptableObject
 
         ShareDamage,  //符玄专属
         DamageDecreseBonus,  //百分比减伤
+
+        SpeedFixBouns,  //天赋被动就有速度fix上升
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();

@@ -25,7 +25,7 @@ public class InputManager : MonoBehaviour
         Inside,
         None,
     }
-    public CurrentGameState currentGameState = CurrentGameState.Outside;
+    public CurrentGameState currentGameState = CurrentGameState.Inside;
     private CurrentInputStateEnum currentInputState;
     public CurrentInputStateEnum CurrentInputState
     {
@@ -889,6 +889,10 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("行动条移动");
             FreshAction();
+        }
+        if(skill.skillQER == Skill_SO.SkillQER.E)
+        {
+            Messenger.Instance.BroadCast(Messenger.EventType.CastSkillE);
         }
         enemyActionCounterDown.ResetTimer();
     }

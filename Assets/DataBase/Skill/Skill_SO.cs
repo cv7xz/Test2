@@ -38,6 +38,14 @@ public class Skill_SO : ScriptableObject
         FinalAttack,
     }
     public DamageType damageType;
+    public enum SkillQER   //强行枚举出 普攻战技终结技
+    {
+        Q,
+        E,
+        R,
+        other,
+    }
+    public SkillQER skillQER;
     public List<SkillType> skillType;
     public enum DependProperty
     {
