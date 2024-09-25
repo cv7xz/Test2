@@ -110,12 +110,12 @@ MonoBehaviour:
   HealthPos: {fileID: 8493637090329648022}
   equipObject: {fileID: 11400000, guid: 6e4aa84c78d60dc47a1cc3962bc72271, type: 2}
   characterData: {fileID: 0}
-  QSKILLObject: {fileID: 11400000, guid: bcb163c357a242d48bbaf0ebd6e825e3, type: 2}
-  ESKILLObject: {fileID: 11400000, guid: 0dac0fcc9e329f348a8d1e6df517d69c, type: 2}
+  QSKILLObject: {fileID: 11400000, guid: fd95356eb56f2ce44b20d25b8384aa0e, type: 2}
+  ESKILLObject: {fileID: 11400000, guid: 3aac9bcd9d2590e41b52d5cb495cd275, type: 2}
   SKILLFINALObject: {fileID: 11400000, guid: 73fb0b7818d8de448953aca2e3b337fc, type: 2}
-  FriendObject: {fileID: 11400000, guid: 3ba496ec89b155748998850b287136ee, type: 2}
+  FriendObject: {fileID: 11400000, guid: 0448ffb9951f1f24b90294fc559b5d17, type: 2}
   equip: {fileID: 0}
-  data: {fileID: 11400000, guid: 19b6cee203e6e1e4bb41b47fdcfefda6, type: 2}
+  data: {fileID: 11400000, guid: def2a9d6d71c64d4ebbc91408c8bf23f, type: 2}
   skillQ: {fileID: 0}
   skillE: {fileID: 0}
   skillFinal: {fileID: 0}

@@ -84,6 +84,22 @@ public static class StatusAction
         }
     }
 
+    public static void AddStatusDurationAction(Character source, Character target, Status status, int addDuration)
+    {
+        Status originStatus = target.currentStatus.Find(e => e.StatusName == status.StatusName);
+        if (originStatus != null)
+        {
+            originStatus.duration = Mathf.Min(originStatus.StatusLayer + addDuration, originStatus.DuartionLimited);
+            target.FreshProperty(status);
+            StatusFieldActive(target, status);   //为光环Status 添加回合数  主动激活
+            return;
+        }
+        else
+        {
+            Debug.LogError("尝试添加回合数 但Buff不存在");
+        }
+    }
+
     public static void AddStatusAllFriend(Character source, Status status,CharacterData_SO.weaknessType type = CharacterData_SO.weaknessType.NONE)
     {
         foreach(var player in GameManager.Instance.players)
@@ -117,12 +133,28 @@ public static class StatusAction
         }
     }
 
+    public static void RemoveStatusAllPlayer(string statusName)
+    {
+        foreach(var player in GameManager.Instance.players)
+        {
+            if (player != null)
+            {
+                var removingStatus = player.currentStatus.Find(e => e.StatusName == statusName);
+                if (removingStatus != null)
+                {
+                    player.currentStatus.Remove(removingStatus);
+                    player.FreshProperty(removingStatus);
+                }
+            }
+        }
+    }
     public static void AddStatusAddress(Character target, Status status)
     {
         target.currentStatus.Add(status);
         target.FreshProperty(status);
         status.AddCounterAbility();
 
+        StatusFieldActive(target, status);
         if (status.IsAttachSkill)
         {
             if (status.attachOtherSkill.damageType == Skill_SO.DamageType.ExtraAttack)
@@ -139,6 +171,17 @@ public static class StatusAction
                 {
                     InputManager.Instance.FeiXiaoFinalEnd.damageType = Skill_SO.DamageType.ExtraAttack;
                 }
+            }
+        }
+    }
+
+    public static void StatusFieldActive(Character target,Status status)
+    {
+        if(status.statusType == Status.StatusType.ExistFieldStatus && status.duration > 0)
+        {
+            foreach (var s in status.fieldStatus)
+            {
+                AddStatusAllFriend(target, s);
             }
         }
     }

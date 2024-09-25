@@ -118,6 +118,7 @@ public class Skill_SO : ScriptableObject
         AddWeakness,
         AddStatusLayer,  //符玄终结技加层数
         ExecuteSkill,   //飞霄技能 跟一次追加 (子技能)
+        AddStatusDuration,
     }
 
     [System.Serializable]

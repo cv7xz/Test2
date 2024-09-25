@@ -538,7 +538,7 @@ public class InputManager : MonoBehaviour
             newEnmey6.GetComponent<Player>().currentIndex = 0;
             newEnmey6.transform.position = GameManager.Instance.playerSlots[0].position;
 
-            GameObject newEnmey7 = Instantiate(GameManager.Instance.AllPlayers[1]);
+            GameObject newEnmey7 = Instantiate(GameManager.Instance.AllPlayers[5]);
             newEnmey7.GetComponent<Player>().currentIndex = 1;
             newEnmey7.transform.position = GameManager.Instance.playerSlots[1].position;
 
@@ -928,6 +928,14 @@ public class InputManager : MonoBehaviour
             if (s != null)
             {
                 StatusAction.AddStatusLayerAction(s.Caster, s.Owner, s, (int)action.value);
+            }
+        }
+        else if (action.addaction == Skill_SO.AddAction.AddStatusDuration)
+        {
+            Status s = executeCharacter.currentStatus.Find(e => e.StatusName == action.statusName);
+            if (s != null)
+            {
+                StatusAction.AddStatusDurationAction(s.Caster, s.Owner, s, (int)action.value);
             }
         }
         else if (action.addaction == Skill_SO.AddAction.GetEnergy)

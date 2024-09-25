@@ -47,6 +47,9 @@ public class Status : ScriptableObject
         DamageDecreseBonus,  //百分比减伤
 
         SpeedFixBouns,  //天赋被动就有速度fix上升
+        BrokenEfficiencyBouns,
+
+        ExistFieldStatus,   //当Status存在时有光环效果
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();
@@ -61,7 +64,7 @@ public class Status : ScriptableObject
     public bool ReapetFreshDuration;
     public int StatusLayer;
 
-    public int LayerLimited;
+    public int LayerLimited,DuartionLimited;
     public float ValueLimited;
 
 
@@ -107,6 +110,7 @@ public class Status : ScriptableObject
         CriticalPercentValue,
 
         DamageDecreseValue,
+        BrokenEfficiencyValue,
     }
     public List<InvolvedProperty> InvolvedName;
 
@@ -150,6 +154,7 @@ public class Status : ScriptableObject
     {
         LimitedLayer,
         TriggerLayer,
+        LimitedDuration,
     }
     public SpecialType specialType;
 
@@ -200,6 +205,8 @@ public class Status : ScriptableObject
 
     public bool StatusGroup;
     public List<Status> childStatus = new List<Status>();
+
+    public List<Status> fieldStatus = new List<Status>();  //Type 特定为 ExistFieldStatus专用  光环产生Status效果
 
     public bool FeiXiaoExtraSkillPoint;   //超级特判之飞霄  每回合触发一次 回合开始时重置触发次数
     public enum Compare
@@ -280,7 +287,8 @@ public class Status : ScriptableObject
         {
             foreach (var status in trigger.triggerStatus)
             {
-                StatusAction.AddStatusAction(Caster, Owner, status);
+                var cloneStatus = Instantiate(status);
+                StatusAction.AddStatusAction(Caster, Owner, cloneStatus);
             }
         }
         else if(trigger.triggerEffect == TriggerEffect.ExecuteAction)

@@ -15,27 +15,30 @@ MonoBehaviour:
   skillID: 1062
   elementType: 0
   target: 1
-  attackType: 1
+  attackType: 5
   damageType: 1
   skillQER: 1
   skillType: 02000000
   dependProperties: 
   toughDamage: []
   rates: []
-  skillPointConsumed: 0
+  skillPointConsumed: 1
   skillPointProvide: 0
   energyConsumed: 0
   RandomAttackNumber: 0
-  restoreEnergy: 0
+  restoreEnergy: 30
   ignoreWeakness: 0
   basePercent: []
   BrokenEffect: 0
   hasDamageIncrease: 0
   otherDamageIncrease: []
-  addStatus:
-  - status: {fileID: 0}
-    statusTarget: 0
-  - status: {fileID: 0}
-    statusTarget: 0
-  addactions: []
+  addStatus: []
+  addactions:
+  - addaction: 6
+    element: 0
+    value: 3
+    statusName: 1063
+    skill: {fileID: 0}
+    targetType: 0
+    AfterDamage: 0
   specialFinalSkill: 0

@@ -124,6 +124,10 @@ public class GameManager : MonoBehaviour
             {
                 SpecialStatusText.text += $"{status.name}  {status.StatusLayer}/{status.trigger.triggerLayer}\n";
             }
+            else if(status.specialType == Status.SpecialType.LimitedDuration)
+            {
+                SpecialStatusText.text += $"{status.name}  {status.duration}/{status.DuartionLimited}\n";
+            }
         }
     }
 

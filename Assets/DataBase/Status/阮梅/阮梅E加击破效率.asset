@@ -9,29 +9,67 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 130c01d5f1f0f6a4884f6ec4910e4539, type: 3}
+  m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
   m_Name: "\u962E\u6885E\u52A0\u51FB\u7834\u6548\u7387"
   m_EditorClassIdentifier: 
-  skillID: 
-  elementType: 0
-  target: 0
-  attackType: 0
-  damageType: 0
-  skillQER: 0
-  skillType: 
-  dependProperties: 
-  toughDamage: []
-  rates: []
-  skillPointConsumed: 0
-  skillPointProvide: 0
-  energyConsumed: 0
-  RandomAttackNumber: 0
-  restoreEnergy: 0
-  ignoreWeakness: 0
-  basePercent: []
-  BrokenEffect: 0
-  hasDamageIncrease: 0
-  otherDamageIncrease: []
-  addStatus: []
-  addactions: []
-  specialFinalSkill: 0
+  Caster: {fileID: 0}
+  Owner: {fileID: 0}
+  StatusName: 1062
+  description: 
+  duration: -1
+  NotAutoDelete: 0
+  turnStartDuration: 0
+  HasBonusLimit: 0
+  limitType:
+    BonusAttackType: 0
+  statusType: 19
+  StatusValue:
+  - 0.5
+  involvedElement: 0
+  repeatRule: 0
+  ReapetFreshDuration: 0
+  StatusLayer: 1
+  LayerLimited: 1
+  DuartionLimited: 0
+  ValueLimited: 0
+  IsDepend: 0
+  dependValues: []
+  InvolvedName: 0d000000
+  isField: 0
+  fieldEffects: []
+  IsAttached: 0
+  attachOtherStatus:
+    StatusName: 
+    AddValue: 0
+  IsAttachSkill: 0
+  attachOtherSkill:
+    SkillName: []
+    damageType: 0
+  isSpecialStatus: 0
+  specialType: 0
+  hasCounter: 0
+  counter:
+    counterType: 0
+    addLayer: 
+  hasTrigger: 0
+  trigger:
+    triggerCondition: 0
+    triggerLayer: 0
+    SelfLimit: 0
+    limitRelation: 0
+    limitValue: 0
+    triggerEffect: 0
+    triggerStatus: []
+    triggerSkill: {fileID: 0}
+    triggerAction:
+      addaction: 0
+      element: 0
+      value: 0
+      statusName: 
+      skill: {fileID: 0}
+      targetType: 0
+      AfterDamage: 0
+  StatusGroup: 0
+  childStatus: []
+  fieldStatus: []
+  FeiXiaoExtraSkillPoint: 0

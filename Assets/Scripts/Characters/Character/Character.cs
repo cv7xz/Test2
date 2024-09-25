@@ -98,17 +98,36 @@ public class Character : MonoBehaviour
         {
             if (currentStatus[i] != null)
             {
+                if (currentStatus[i].duration == -1 || currentStatus[i].turnStartDuration == false)  //持续时间无限 或非回合开始时减少时间
+                {
+                    continue;
+                }
+                if (currentStatus[i].statusType == Status.StatusType.ExistFieldStatus)  //ExistField光环Status  作为自身被动存在 永不消除
+                {
+                    if(currentStatus[i].duration >= 1)
+                    {
+                        currentStatus[i].duration -= 1;
+                    }
+                    if(currentStatus[i].duration == 0)
+                    {
+                        foreach (var status in currentStatus[i].fieldStatus)
+                        {
+                            StatusAction.RemoveStatusAllPlayer(status.StatusName);
+                        }
+                    }
+
+                    continue;
+                }
                 if (currentStatus[i].duration == 0 && currentStatus[i].NotAutoDelete)  //光环类buff 0回合保持存在状态 不起效果但不Remove
                 {
                     continue;
                 }
-                if (currentStatus[i].duration == -1 || currentStatus[i].turnStartDuration == false)  //持续时间无限或回合开始时减少时间
-                {
-                    continue;
-                }
+
                 currentStatus[i].duration -= 1;
                 if (currentStatus[i].duration <= 0)
                 {
+
+
                     var temp = currentStatus[i];
                     currentStatus.Remove(currentStatus[i]);
                     FreshProperty(temp);
@@ -127,11 +146,23 @@ public class Character : MonoBehaviour
         {
             if(currentStatus[i] != null)
             {
-                if(currentStatus[i].duration == 0 && currentStatus[i].NotAutoDelete)  //光环类buff 0回合保持存在状态 不起效果但不Remove
+                if (currentStatus[i].duration == -1 || currentStatus[i].turnStartDuration)  //持续时间无限或回合开始时减少时间
                 {
                     continue;
                 }
-                if(currentStatus[i].duration == -1 || currentStatus[i].turnStartDuration)  //持续时间无限或回合开始时减少时间
+
+                if (currentStatus[i].statusType == Status.StatusType.ExistFieldStatus && currentStatus[i].duration == 0)  //ExistField光环Status  作为自身被动存在 永不消除
+                {
+                    if (currentStatus[i].statusType == Status.StatusType.ExistFieldStatus)
+                    {
+                        foreach (var status in currentStatus[i].fieldStatus)
+                        {
+                            StatusAction.RemoveStatusAllPlayer(status.StatusName);
+                        }
+                    }
+                    continue;
+                }
+                if (currentStatus[i].duration == 0 && currentStatus[i].NotAutoDelete)  //光环类buff 0回合保持存在状态 不起效果但不Remove
                 {
                     continue;
                 }
@@ -591,7 +622,7 @@ public class Character : MonoBehaviour
                 }
                 characterData.damageDecrease = tempDamageDecreaseBonus;
             }
-            else if(type == Status.InvolvedProperty.SpeedValue)
+            else if (type == Status.InvolvedProperty.SpeedValue)
             {
                 float tempSpeedFixBonus = 0;
                 float tempSpeedPercentBonus = 0f;
@@ -600,17 +631,52 @@ public class Character : MonoBehaviour
                 {
                     if(s.statusType == Status.StatusType.SpeedFixBouns)
                     {
-                        tempSpeedFixBonus += s.StatusValue[0];
+                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                        {
+                            tempSpeedFixBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                        }
+                        else
+                        {
+                            tempSpeedFixBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
                     }
                     else if(s.statusType == Status.StatusType.SpeedPercentBonus)
                     {
-                        tempSpeedPercentBonus += s.StatusValue[0];
+                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                        {
+                            tempSpeedPercentBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                        }
+                        else
+                        {
+                            tempSpeedPercentBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
                     }
                 }
 
                 characterData.speedPercentBonus = tempSpeedPercentBonus;
                 characterData.fixSpeedBonus = tempSpeedFixBonus;
                 characterData.currentSpeed = (characterData.baseSpeed) * characterData.speedPercentBonus + characterData.fixSpeedBonus;
+            }
+            else if (type == Status.InvolvedProperty.BrokenEfficiencyValue)
+            {
+                float tempBrokenEfficiencyBonus = 0;
+
+                foreach(var s in currentStatus)
+                {
+                    if(s.statusType == Status.StatusType.BrokenEfficiencyBouns)
+                    {
+                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                        {
+                            tempBrokenEfficiencyBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                        }
+                        else
+                        {
+                            tempBrokenEfficiencyBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                    }
+                }
+
+                characterData.BrokenEfficiencyBonus = tempBrokenEfficiencyBonus;
             }
         }
     }
@@ -673,7 +739,7 @@ public class Character : MonoBehaviour
 
         context += "伤害加成:" + (characterData.damageIncrease * 100).ToString() + "%" + "\n";
         context += "击破特攻:" + (characterData.BrokensFocus).ToString() + "%" + "\n";
-        context += "击破效率:" + (characterData.BrokenEfficiencyBonus * 100).ToString() + "\n";
+        context += "击破效率:" + (characterData.BrokenEfficiencyBonus * 100).ToString() + "%\n";
 
         context += "暴击率:" + (characterData.criticalPercent * 100).ToString() + "%" + "\n";
         context += "暴击伤害:" + (characterData.criticalDamage * 100).ToString() + "%" + "\n";
