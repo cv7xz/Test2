@@ -50,6 +50,9 @@ public class Status : ScriptableObject
         BrokenEfficiencyBouns,
 
         ExistFieldStatus,   //当Status存在时有光环效果
+        DefendPenetration,
+
+        AttackTriggerEffect,
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();
@@ -103,14 +106,16 @@ public class Status : ScriptableObject
         CertainElementPlayerNumber,
         EffectPercentValue,
         EffectDefendValue,
-        DefendValue,
+        DefendValue,  //抗性
         SpeedValue,
 
-        PureDefendValue,
+        PureDefendValue,  //防御
         CriticalPercentValue,
 
         DamageDecreseValue,
         BrokenEfficiencyValue,
+
+        DefendPenetrationValue,
     }
     public List<InvolvedProperty> InvolvedName;
 
@@ -176,6 +181,7 @@ public class Status : ScriptableObject
         DamageDefendLessEnemy,
         FriendDealDamage,
         CastSkillE,
+        AttackEnemy,    //攻击敌人 DealDamage信号  对受击敌人进行Status添加
     }
 
     public enum TriggerEffect
@@ -270,6 +276,9 @@ public class Status : ScriptableObject
                     break;
                 case TriggerCondition.CastSkillE:
                     Messenger.Instance.AddListener(Messenger.EventType.CastSkillE,CheckCondition);
+                    break;
+                case TriggerCondition.AttackEnemy:
+                    Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, AttackTriggerAction);
                     break;
             }
         }
@@ -414,6 +423,16 @@ public class Status : ScriptableObject
         if(attacker.type == Character.CharaterType.Player && attacker != Owner)
         {
             CheckCondition();
+        }
+    }
+    private void AttackTriggerAction(Character attacker,Character attacked,float damageValue)
+    {
+        if(attacker == this.Owner)
+        {
+            foreach(var status in this.trigger.triggerStatus)
+            {
+                StatusAction.AddStatusAction(attacker, attacked, status);
+            }
         }
     }
 

@@ -466,7 +466,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.DefendPercentBonus)
                     {
-                        if(s.involvedElement == CharacterData_SO.weaknessType.BING || s.involvedElement == CharacterData_SO.weaknessType.NONE)
+                        if (s.involvedElement == CharacterData_SO.weaknessType.BING || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
                             BINGDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
                         }
@@ -552,6 +552,66 @@ public class Character : MonoBehaviour
                 }
                 characterData.currentLIANGZIDefend = characterData.LIANGZIDefend + LIANGZIDefendBonus;
                 #endregion
+            }
+            else if (type == Status.InvolvedProperty.DefendPenetrationValue)
+            {
+                
+                float tempAllPentrationBonus = 0;
+                float tempBINGPentrationBonus = 0;
+                float tempHUOPentrationBonus = 0;
+                float tempLEIPentrationBonus = 0;
+                float tempFENGPentrationBonus = 0;
+                float tempWULIPentrationBonus = 0;
+                float tempXUSHUPentrationBonus = 0;
+                float tempLIANGZIPentrationBonus = 0;
+
+                foreach (var s in currentStatus)
+                {
+                    if (s.statusType == Status.StatusType.DefendPenetration)
+                    {
+                        if(s.involvedElement == CharacterData_SO.weaknessType.NONE)
+                        {
+                            tempAllPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if(s.involvedElement == CharacterData_SO.weaknessType.BING)
+                        {
+                            tempBINGPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if (s.involvedElement == CharacterData_SO.weaknessType.HUO)
+                        {
+                            tempHUOPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if (s.involvedElement == CharacterData_SO.weaknessType.FENG)
+                        {
+                            tempFENGPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if (s.involvedElement == CharacterData_SO.weaknessType.LEI)
+                        {
+                            tempLEIPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if (s.involvedElement == CharacterData_SO.weaknessType.WULI)
+                        {
+                            tempWULIPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if (s.involvedElement == CharacterData_SO.weaknessType.XUSHU)
+                        {
+                            tempXUSHUPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                        else if (s.involvedElement == CharacterData_SO.weaknessType.LIANGZI)
+                        {
+                            tempLIANGZIPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        }
+                    }
+                }
+
+                characterData.currentBINGPentration = tempBINGPentrationBonus;
+                characterData.currentHUOPentration = tempHUOPentrationBonus;
+                characterData.currentFENGPentration = tempFENGPentrationBonus;
+                characterData.currentLEIPentration = tempLEIPentrationBonus;
+                characterData.currentWULIPentration = tempWULIPentrationBonus;
+                characterData.currentXUSHUPentration = tempXUSHUPentrationBonus;
+                characterData.currentLIANGZIPentration = tempLIANGZIPentrationBonus;
+                characterData.currentAllPentration = tempAllPentrationBonus;
             }
             else if (type == Status.InvolvedProperty.PureDefendValue)
             {

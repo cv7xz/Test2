@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
+  m_Name: "\u962E\u6885R\u52A0\u7A7F\u900F"
+  m_EditorClassIdentifier: 
+  Caster: {fileID: 0}
+  Owner: {fileID: 0}
+  StatusName: 1065
+  description: 
+  duration: -1
+  NotAutoDelete: 0
+  turnStartDuration: 0
+  HasBonusLimit: 0
+  limitType:
+    BonusAttackType: 0
+  statusType: 0
+  StatusValue:
+  - 0.25
+  involvedElement: 0
+  repeatRule: 0
+  ReapetFreshDuration: 0
+  StatusLayer: 1
+  LayerLimited: 1
+  DuartionLimited: 0
+  ValueLimited: 0
+  IsDepend: 0
+  dependValues: []
+  InvolvedName: 
+  isField: 0
+  fieldEffects: []
+  IsAttached: 0
+  attachOtherStatus:
+    StatusName: 
+    AddValue: 0
+  IsAttachSkill: 0
+  attachOtherSkill:
+    SkillName: []
+    damageType: 0
+  isSpecialStatus: 0
+  specialType: 0
+  hasCounter: 0
+  counter:
+    counterType: 0
+    addLayer: 
+  hasTrigger: 1
+  trigger:
+    triggerCondition: 6
+    triggerLayer: 0
+    SelfLimit: 0
+    limitRelation: 0
+    limitValue: 0
+    triggerEffect: 0
+    triggerStatus:
+    - {fileID: 11400000, guid: 7a8d14c478c3eff4b9e28cbd8bfb258d, type: 2}
+    triggerSkill: {fileID: 0}
+    triggerAction:
+      addaction: 0
+      element: 0
+      value: 0
+      statusName: 
+      skill: {fileID: 0}
+      targetType: 0
+      AfterDamage: 0
+  StatusGroup: 0
+  childStatus: []
+  fieldStatus: []
+  FeiXiaoExtraSkillPoint: 0

@@ -37,6 +37,15 @@ public class CharacterData_SO : ScriptableObject
     #endregion
 
     public float damageDecrease;
+
+    public float currentAllPentration, AllPentration;
+    public float currentBINGPentration, BINGPentration;  //¿¹ÐÔ´©Í¸
+    public float currentHUOPentration, HUOPentration;
+    public float currentFENGPentration, FENGPentration;
+    public float currentLEIPentration, LEIPentration;
+    public float currentLIANGZIPentration, LIANGZIPentration;
+    public float currentXUSHUPentration, XUSHUPentration;
+    public float currentWULIPentration, WULIPentration;
     [Header("Enemy ElementDefend")]
     public float currentBINGDefend, BINGDefend;  //¿¹ÐÔ
     public float currentHUODefend, HUODefend;
