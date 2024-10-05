@@ -19,12 +19,9 @@ public static class CSVToolKit
         }
         sr.Close();
             
-        foreach(var con in content)
+        foreach(var con in content)   //con 是一行 List<string>类型   每一个单元格是string
         {
-            foreach(var c in con)
-            {
-                Debug.Log(c);
-            }
+            StaticNumber.brokenBaseDamage.Add(float.Parse(con[1]));
         }
     }
 }

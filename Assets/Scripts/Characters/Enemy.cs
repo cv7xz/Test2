@@ -35,11 +35,14 @@ public class Enemy :Character
         base.Start();
         ToughBar = Instantiate(ToughBarPrefab, GameManager.Instance.canvas.transform);
         ToughBar.transform.position = ToughPos.transform.position;
+
+        toughText = Instantiate(ToughText, GameManager.Instance.canvas.transform);
+        toughText.transform.position = ToughPos.transform.position;
+
         ShowSelfWeakness();
 
         characterData.currentToughShield = characterData.maxToughShield;
         
-        Messenger.Instance.AddListener<Character,Skill_SO>(Messenger.EventType.ToughShieldBroken, ShieldBroken);
     }
    
     public override void Update()
@@ -52,15 +55,16 @@ public class Enemy :Character
         DamageAction.BrokenDamageAction(source, this);
     }
 
+    public Text ToughText, toughText;
     public void ShowToughBar()
     {
         ToughBar.transform.GetChild(0).GetComponent<Image>().fillAmount = characterData.currentToughShield / characterData.maxToughShield;
+        toughText.text = $"{characterData.currentToughShield}/{characterData.maxToughShield}";
     }
     public override void OnDestroy()
     {
         base.OnDestroy();
         Destroy(ToughBar);
-        Messenger.Instance.RemoveListener<Character,Skill_SO>(Messenger.EventType.ToughShieldBroken, ShieldBroken);
     }
 
     public void OnTriggerEnter2D(Collider2D other)

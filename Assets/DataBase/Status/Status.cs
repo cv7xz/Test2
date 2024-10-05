@@ -53,6 +53,8 @@ public class Status : ScriptableObject
         DefendPenetration,
 
         AttackTriggerEffect,
+
+        ControlStatus,   //控制类Status
     }
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();
@@ -88,6 +90,7 @@ public class Status : ScriptableObject
         public List<float> values;
         public float correctValues;
     }
+    
     public List<DependValue> dependValues;
 
     public enum DependTarget
@@ -120,12 +123,12 @@ public class Status : ScriptableObject
     public List<InvolvedProperty> InvolvedName;
 
     public bool isField;
-
     public enum FieldTarget
     {
         AllFriends,
         Global,
     }
+    #region FieldEffect
     [System.Serializable]
     public struct FieldEffect
     {
@@ -135,7 +138,9 @@ public class Status : ScriptableObject
         public Status status;
     }
     public List<FieldEffect> fieldEffects;
+    #endregion
 
+    #region AttachStatus
     public bool IsAttached;  //某个Status与另外一个有联动   如花火增伤buff在有迷诡buff情况下数值增加  增伤buff的该bool值设true 在Fresh属性时处理
     [System.Serializable]
     public struct AttachOtherStatus
@@ -144,7 +149,9 @@ public class Status : ScriptableObject
         public float AddValue;
     }
     public AttachOtherStatus attachOtherStatus;
+    #endregion
 
+    #region AttachSkill
     public bool IsAttachSkill;  //该Status与一个Skill有联动  如飞霄释放终结技被视为追加攻击
     [System.Serializable]
     public struct AttachOtherSkill
@@ -153,7 +160,9 @@ public class Status : ScriptableObject
         public Skill_SO.DamageType damageType;
     }
     public AttachOtherSkill attachOtherSkill;
+    #endregion
 
+    #region SpecialStatus
     public bool isSpecialStatus;
     public enum SpecialType   //用于显示角色身上的特殊Status 如雪衣追加攻击触发器 符玄回血次数
     {
@@ -162,7 +171,9 @@ public class Status : ScriptableObject
         LimitedDuration,
     }
     public SpecialType specialType;
+    #endregion
 
+    #region Counter
     public bool hasCounter;
     [System.Serializable]
     public struct Counter
@@ -171,8 +182,9 @@ public class Status : ScriptableObject
         public List<int> addLayer;  //主要层数放第一位
     }
     public Counter counter;
+    #endregion
 
-
+    #region Trigger
     public enum TriggerCondition
     {
         LayerEnough,
@@ -192,6 +204,7 @@ public class Status : ScriptableObject
     }
 
     public bool hasTrigger;
+
     [System.Serializable]
     public struct Trigger   //触发器 
     {
@@ -207,7 +220,9 @@ public class Status : ScriptableObject
         public Skill_SO triggerSkill;
         public Skill_SO.Actions triggerAction;
     }
+    [HideInInspector]
     public Trigger trigger;
+    #endregion
 
     public bool StatusGroup;
     public List<Status> childStatus = new List<Status>();

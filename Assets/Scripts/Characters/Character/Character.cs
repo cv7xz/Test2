@@ -60,13 +60,15 @@ public class Character : MonoBehaviour
         TargetFlag.SetActive(false);
         healthBar = Instantiate(HealthBarPrefab, GameManager.Instance.canvas.transform);
         healthBar.transform.position = HealthPos.transform.position;
-
+        healthText = Instantiate(HealthText, GameManager.Instance.canvas.transform);
+        healthText.transform.position = HealthPos.transform.position;
 
         Messenger.Instance.AddListener(Messenger.EventType.SettleDeath, SettleDath);
         Messenger.Instance.AddListener<Character>(Messenger.EventType.TurnEnd, FreshStatusTurnEnd);
         Messenger.Instance.AddListener<Character>(Messenger.EventType.TurnStart, FreshStatusTurnStart);
     }
 
+    public Text HealthText,healthText;
     public virtual void Update()
     {
         FreshHealthBar();
@@ -84,6 +86,7 @@ public class Character : MonoBehaviour
     public void FreshHealthBar()
     {
         healthBar.transform.GetChild(0).GetComponent<Image>().fillAmount = characterData.currentHealth / characterData.maxHealth;
+        healthText.text = $"{characterData.currentHealth}/{characterData.maxHealth}";
     }
 
     #region StatusËæ»ØºÏË¢ÐÂ

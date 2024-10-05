@@ -140,9 +140,11 @@ public static class DamageAction
             realToughDamage = Mathf.Min(toughDamage, attackedData.currentToughShield);
             overToughDamage = toughDamage - realToughDamage;
 
-            if (toughDamage >= attackedData.currentToughShield)
+            if (toughDamage >= attackedData.currentToughShield && attackedData.currentToughShield > 1e-6)
             {
                 Messenger.Instance.BroadCast(Messenger.EventType.ToughShieldBroken, attacker, skill);
+                BrokenDamageAction(attacker, attacked);
+                BrokenTriggerEffect(attacker,attacked);
             }
             attackedData.currentToughShield -= realToughDamage;
 
@@ -284,13 +286,13 @@ public static class DamageAction
             if(status.statusType == Status.StatusType.ShareDamage)
             {
                 attackedData.currentHealth -= damageValue * (1 - status.StatusValue[0]);
-                GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue * (1 - status.StatusValue[0]));
+                GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue * (1 - status.StatusValue[0]),attackerData.elementType);
                 GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue,attacked);
 
                 status.Caster.characterData.currentHealth -= damageValue * (status.StatusValue[0]);
-                GameManager.Instance.DamageAppearFunc(attacker, status.Caster, damageValue * (status.StatusValue[0]));
+                GameManager.Instance.DamageAppearFunc(attacker, status.Caster, damageValue * (status.StatusValue[0]), attackerData.elementType);
                 GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, status.Caster, damageValue);
                 Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
@@ -307,7 +309,7 @@ public static class DamageAction
         attackedData.currentHealth -= damageValue;
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);
         Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);
-        GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);
+        GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue, attackerData.elementType);
         GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
     }
     public static float BrokenDamageAction(Character source, Character attacked)
@@ -315,39 +317,83 @@ public static class DamageAction
         CharacterData_SO attackerData = source.characterData;
         CharacterData_SO attackedData = attacked.characterData;
 
-        float damageValue = 50;
+        context += $"<color=red>击破伤害</color> 来源{source.characterName} 等级 {source.characterData.Level} 击破基础伤害 {StaticNumber.brokenBaseDamage[source.characterData.Level]}\n";
+        float damageValue = StaticNumber.brokenBaseDamage[source.characterData.Level];
 
-        damageValue *= (1 + attackerData.BrokensFocus);
+        damageValue *= (1 + attackerData.BrokensFocus * 0.01f);
+        context += $"击破特攻 {attackerData.BrokensFocus}%  处理后伤害 {damageValue}\n";
+
         if (attackerData.elementType == CharacterData_SO.weaknessType.HUO || attackerData.elementType == CharacterData_SO.weaknessType.WULI)
         {
             damageValue *= 4;
+            context += $"属性系数 4  处理后伤害 {damageValue}\n";
         }
         else if (attackerData.elementType == CharacterData_SO.weaknessType.LEI || attackerData.elementType == CharacterData_SO.weaknessType.BING)
         {
             damageValue *= 2;
+            context += $"属性系数 2  处理后伤害 {damageValue}\n";
         }
         else if (attackerData.elementType == CharacterData_SO.weaknessType.FENG)
         {
             damageValue *= 3;
+            context += $"属性系数 3  处理后伤害 {damageValue}\n";
         }
 
         //量子虚数是1倍
 
         damageValue *= (attackedData.maxToughShield * 0.1f + 2f) / 4f;
 
-
+        context += $"韧性系数 {(attackedData.maxToughShield * 0.1f + 2f) / 4f} 处理后伤害 {damageValue}\n";
 
         float damageDecrease = attackedData.currentDefend / (attackerData.Level * 10 + 200 + attackedData.currentDefend);
         damageValue *= (1 - damageDecrease);
 
+        context += $"防御减伤 {damageDecrease} 处理后伤害 {damageValue}\n";
+
         damageValue *= 0.9f;
+
+        context += $"抗性减伤 {0.9} 处理后伤害 {damageValue}\n";
+
+        GameManager.Instance.DamageAppearFunc(source, attacked, damageValue,attackerData.elementType,true);
         return damageValue;
     }
 
+    public static void BrokenTriggerEffect(Character source, Character attacked)
+    {
+        PushActionValueAction.PushBackActionValue(attacked, 2500);
 
+        if(source.characterData.elementType == CharacterData_SO.weaknessType.BING)
+        {
+            //给冻结Status 
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.HUO)
+        {
+            //给冻结Status 
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.FENG)
+        {
+            //给冻结Status 
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.LEI)
+        {
+            //给冻结Status 
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.WULI)
+        {
+            //给冻结Status 
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.LIANGZI)
+        {
+            //给冻结Status 
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.XUSHU)
+        {
+            //给冻结Status 
+        }
+    }
     public static void DealDamageAddress(Character attacker,Character attacked,Skill_SO skill,float damageValue)
     {
-        GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue);
+        GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue,attacker.characterData.elementType);
         GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
 
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);      //攻击方造成伤害

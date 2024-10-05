@@ -6,6 +6,7 @@ public static class StaticNumber
 {
     public static List<float> brokenBaseDamage = new List<float>();
 
+
     public static float ActionTime = 0.1f; //行动后 怪物下一次行动cd
 
 

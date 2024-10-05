@@ -39,7 +39,24 @@ MonoBehaviour:
   currentEnergyValue: 0
   maxEnergyValue: 0
   BrokenEfficiencyBonus: 0
-  elementType: 0
+  elementType: 7
+  damageDecrease: 0
+  currentAllPentration: 0
+  AllPentration: 0
+  currentBINGPentration: 0
+  BINGPentration: 0
+  currentHUOPentration: 0
+  HUOPentration: 0
+  currentFENGPentration: 0
+  FENGPentration: 0
+  currentLEIPentration: 0
+  LEIPentration: 0
+  currentLIANGZIPentration: 0
+  LIANGZIPentration: 0
+  currentXUSHUPentration: 0
+  XUSHUPentration: 0
+  currentWULIPentration: 0
+  WULIPentration: 0
   currentBINGDefend: 0
   BINGDefend: 0
   currentHUODefend: 0
@@ -54,8 +71,8 @@ MonoBehaviour:
   XUSHUDefend: 0.2
   currentWULIDefend: 0
   WULIDefend: 0.2
-  maxToughShield: 150
+  maxToughShield: 80
   currentToughShield: 0
-  weakness: 0000000001000000
+  weakness: 00000000010000000200000005000000
   actionValue: 0
   Level: 0

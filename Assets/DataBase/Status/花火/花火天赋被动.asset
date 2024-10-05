@@ -19,6 +19,9 @@ MonoBehaviour:
   duration: 2
   NotAutoDelete: 1
   turnStartDuration: 0
+  HasBonusLimit: 0
+  limitType:
+    BonusAttackType: 0
   statusType: 2
   StatusValue:
   - 0.06
@@ -27,6 +30,7 @@ MonoBehaviour:
   ReapetFreshDuration: 1
   StatusLayer: 0
   LayerLimited: 3
+  DuartionLimited: 0
   ValueLimited: 0
   IsDepend: 0
   dependValues: []
@@ -37,6 +41,12 @@ MonoBehaviour:
   attachOtherStatus:
     StatusName: 1013
     AddValue: 0.1
+  IsAttachSkill: 0
+  attachOtherSkill:
+    SkillName: []
+    damageType: 0
+  isSpecialStatus: 0
+  specialType: 0
   hasCounter: 1
   counter:
     counterType: 8
@@ -45,10 +55,21 @@ MonoBehaviour:
   trigger:
     triggerCondition: 0
     triggerLayer: 0
+    SelfLimit: 0
     limitRelation: 0
     limitValue: 0
     triggerEffect: 0
     triggerStatus: []
     triggerSkill: {fileID: 0}
+    triggerAction:
+      addaction: 0
+      element: 0
+      value: 0
+      statusName: 
+      skill: {fileID: 0}
+      targetType: 0
+      AfterDamage: 0
   StatusGroup: 0
   childStatus: []
+  fieldStatus: []
+  FeiXiaoExtraSkillPoint: 0

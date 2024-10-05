@@ -481,6 +481,11 @@ public class InputManager : MonoBehaviour
     }
     public void Init()
     {
+
+        CSVToolKit.LoadFile(Application.streamingAssetsPath + "/brokenDamage.csv");   //¶ÁÊý¾Ý±í
+
+
+
         if (currentGameState == CurrentGameState.Outside)
         {
             foreach (var player in GameManager.Instance.AllPlayers)
@@ -508,7 +513,7 @@ public class InputManager : MonoBehaviour
             }
             SelectPanel.SetAsLastSibling();
 
-            CSVToolKit.LoadFile(Application.streamingAssetsPath + "/player.csv");
+
         }
 
         #region

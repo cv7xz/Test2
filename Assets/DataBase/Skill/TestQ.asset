@@ -16,11 +16,24 @@ MonoBehaviour:
   elementType: 5
   target: 0
   attackType: 0
-  skillType: 0
+  damageType: 0
+  skillQER: 0
+  skillType: 
+  dependProperties: 00000000
   toughDamage:
   - 10
   rates:
   - 1
   skillPointConsumed: 0
   skillPointProvide: 1
-  dependProperties: 00000000
+  energyConsumed: 0
+  RandomAttackNumber: 3
+  restoreEnergy: 0
+  ignoreWeakness: 0
+  basePercent: []
+  BrokenEffect: 0
+  hasDamageIncrease: 0
+  otherDamageIncrease: []
+  addStatus: []
+  addactions: []
+  specialFinalSkill: 0

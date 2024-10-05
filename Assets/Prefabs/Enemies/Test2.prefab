@@ -122,9 +122,13 @@ MonoBehaviour:
   skillFinal: {fileID: 0}
   friend_SO: {fileID: 0}
   currentStatus: []
+  HealthText: {fileID: 6464087834722545584, guid: 25dd99114fe356642ba1c6f35c75e275, type: 3}
+  healthText: {fileID: 0}
   ToughBarPrefab: {fileID: 9035676374410566509, guid: f5cb2846837f6384982e2940230f4b05, type: 3}
   ToughBar: {fileID: 0}
   ToughPos: {fileID: 5618730146637726555}
+  ToughText: {fileID: 6464087834722545584, guid: 25dd99114fe356642ba1c6f35c75e275, type: 3}
+  toughText: {fileID: 0}
 --- !u!61 &1097286462284757472
 BoxCollider2D:
   m_ObjectHideFlags: 0

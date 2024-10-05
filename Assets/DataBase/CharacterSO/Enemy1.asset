@@ -39,7 +39,24 @@ MonoBehaviour:
   currentEnergyValue: 0
   maxEnergyValue: 0
   BrokenEfficiencyBonus: 0
-  elementType: 0
+  elementType: 7
+  damageDecrease: 0
+  currentAllPentration: 0
+  AllPentration: 0
+  currentBINGPentration: 0
+  BINGPentration: 0
+  currentHUOPentration: 0
+  HUOPentration: 0
+  currentFENGPentration: 0
+  FENGPentration: 0
+  currentLEIPentration: 0
+  LEIPentration: 0
+  currentLIANGZIPentration: 0
+  LIANGZIPentration: 0
+  currentXUSHUPentration: 0
+  XUSHUPentration: 0
+  currentWULIPentration: 0
+  WULIPentration: 0
   currentBINGDefend: 0
   BINGDefend: 0.2
   currentHUODefend: 0

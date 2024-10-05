@@ -152,23 +152,37 @@ public class GameManager : MonoBehaviour
     }
 
     #region …À∫¶œ‘ æ∫Ø ˝
-    public void DamageAppearFunc(Character source, Character target,float damage)
+    public void DamageAppearFunc(Character source, Character target,float damage,CharacterData_SO.weaknessType type = CharacterData_SO.weaknessType.NONE,bool Broken = false)
     {
         float rx = Random.Range(1.5f, 5f);
         float ry = Random.Range(4f, 6f);
 
+        List<Color> colors = new List<Color>() { Color.blue, Color.red, Color.green, new Color(80f/255,0,80f/255,1), Color.white, new Color(0,0,0x8b/255f,1), Color.yellow ,Color.black};
+
+
+
         damageText = Instantiate(DamageTextPrefab, canvas.transform);
         damageText.transform.position = target.gameObject.transform.position + new Vector3(rx, ry, 0);
-        damageText.text = damage.ToString();
+        if (Broken)
+        {
+            damageText.text = "Broken! " + damage.ToString();
+        }
+        else
+        {
+            damageText.text = damage.ToString();
+        }
 
-        StartCoroutine(DamageAppear(damageText,1.5f));
+        damageText.color = colors[(int)type];
+
+        StartCoroutine(DamageAppear(damageText,0.8f));
     }
+
 
     public IEnumerator DamageAppear(Text text, float time)
     {
         while (time >= 0)
         {
-            text.transform.Translate(new Vector3(0, 15f, 0) * Time.deltaTime, Space.World);
+            text.transform.Translate(new Vector3(0, 50f, 0) * Time.deltaTime, Space.World);
             time -= Time.deltaTime;
             if (time <= 0)
             {

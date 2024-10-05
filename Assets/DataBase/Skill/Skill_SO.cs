@@ -65,6 +65,7 @@ public class Skill_SO : ScriptableObject
     public int skillPointConsumed;
     public int skillPointProvide;
     public float energyConsumed;
+    [HideInInspector]
     public int RandomAttackNumber;  //适用于目标类型弹射
 
     public float restoreEnergy;

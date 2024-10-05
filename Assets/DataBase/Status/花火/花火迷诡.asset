@@ -18,12 +18,18 @@ MonoBehaviour:
   description: "\u82B1\u706B_\u8FF7\u8BE1"
   duration: 2
   NotAutoDelete: 0
+  turnStartDuration: 0
+  HasBonusLimit: 0
+  limitType:
+    BonusAttackType: 0
   statusType: 6
   StatusValue: []
+  involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
   StatusLayer: 1
   LayerLimited: 1
+  DuartionLimited: 0
   ValueLimited: 0
   IsDepend: 0
   dependValues: []
@@ -34,12 +40,35 @@ MonoBehaviour:
   attachOtherStatus:
     StatusName: 
     AddValue: 0
+  IsAttachSkill: 0
+  attachOtherSkill:
+    SkillName: []
+    damageType: 0
+  isSpecialStatus: 0
+  specialType: 0
+  hasCounter: 0
   counter:
-    hasCounter: 0
     counterType: 0
     addLayer: 
+  hasTrigger: 0
   trigger:
-    hasTrigger: 0
     triggerCondition: 0
     triggerLayer: 0
+    SelfLimit: 0
+    limitRelation: 0
+    limitValue: 0
+    triggerEffect: 0
+    triggerStatus: []
     triggerSkill: {fileID: 0}
+    triggerAction:
+      addaction: 0
+      element: 0
+      value: 0
+      statusName: 
+      skill: {fileID: 0}
+      targetType: 0
+      AfterDamage: 0
+  StatusGroup: 0
+  childStatus: []
+  fieldStatus: []
+  FeiXiaoExtraSkillPoint: 0
