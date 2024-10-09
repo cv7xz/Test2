@@ -8,6 +8,7 @@ public class CounterDown<T1,T2> : MonoBehaviour
     public float maxTime;
 
     public Action<T1,T2> action;
+    public Action actions;
     public T1 param1;
     public T2 param2;
 
@@ -30,9 +31,14 @@ public class CounterDown<T1,T2> : MonoBehaviour
 
         if (action != null && currentTime <= 0)
         {
-
             action?.Invoke(param1,param2);
             action = null;
+        }
+
+        if(actions != null && currentTime <= 0)
+        {
+            actions?.Invoke();
+            actions = null;
         }
     }
     public void ResetTimer()
@@ -47,5 +53,9 @@ public class CounterDown<T1,T2> : MonoBehaviour
     public void ContinueTimer()
     {
         pauseFlag = false;
+    }
+    public void AddEndAction(Action T)
+    {
+        actions += T;
     }
 }

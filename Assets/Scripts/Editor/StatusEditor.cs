@@ -1,82 +1,82 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
+//using UnityEditor;
 
-[CustomEditor(typeof(Status))]
-public class StatusEditor : Editor
-{
-    private SerializedObject test;
+//[CustomEditor(typeof(Status))]
+//public class StatusEditor : Editor
+//{
+//    private SerializedObject test;
 
-    private SerializedProperty isField,isAttachStatus,isAttachSkill,isSpecial,hasCounter,hasTrigger,depend;
-    private SerializedProperty field,attachStatus,attachSkill,Special,Counter,Trigger;
+//    private SerializedProperty isField,isAttachStatus,isAttachSkill,isSpecial,hasCounter,hasTrigger,depend;
+//    private SerializedProperty field,attachStatus,attachSkill,Special,Counter,Trigger;
 
-    private List<SerializedProperty> boolProperty = new List<SerializedProperty>();
-    private List<SerializedProperty> contentProperty = new List<SerializedProperty>();
-    private void OnEnable()
-    {
-        test = new SerializedObject(target);
-
-
-        boolProperty.Add(test.FindProperty("IsAttached"));
-        boolProperty.Add(test.FindProperty("IsAttachSkill"));
-        boolProperty.Add(test.FindProperty("isSpecialStatus"));
-        boolProperty.Add(test.FindProperty("hasCounter"));
+//    private List<SerializedProperty> boolProperty = new List<SerializedProperty>();
+//    private List<SerializedProperty> contentProperty = new List<SerializedProperty>();
+//    private void OnEnable()
+//    {
+//        test = new SerializedObject(target);
 
 
-        contentProperty.Add(test.FindProperty("attachOtherStatus"));
-        contentProperty.Add(test.FindProperty("attachOtherSkill"));
-        contentProperty.Add(test.FindProperty("specialType"));
-        contentProperty.Add(test.FindProperty("counter"));
+//        boolProperty.Add(test.FindProperty("IsAttached"));
+//        boolProperty.Add(test.FindProperty("IsAttachSkill"));
+//        boolProperty.Add(test.FindProperty("isSpecialStatus"));
+//        boolProperty.Add(test.FindProperty("hasCounter"));
 
 
-        isField = test.FindProperty("isField");
-        field = test.FindProperty("fieldEffects");
-        hasTrigger = test.FindProperty("hasTrigger");
-        Trigger = test.FindProperty("trigger");
+//        contentProperty.Add(test.FindProperty("attachOtherStatus"));
+//        contentProperty.Add(test.FindProperty("attachOtherSkill"));
+//        contentProperty.Add(test.FindProperty("specialType"));
+//        contentProperty.Add(test.FindProperty("counter"));
 
-        depend = test.FindProperty("dependValues");
-    }
 
-    private bool showTriggerFoldout = true;
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-        test.Update();
+//        isField = test.FindProperty("isField");
+//        field = test.FindProperty("fieldEffects");
+//        hasTrigger = test.FindProperty("hasTrigger");
+//        Trigger = test.FindProperty("trigger");
 
-        if (hasTrigger.boolValue)
-        {
-            showTriggerFoldout = EditorGUILayout.Foldout(showTriggerFoldout, "Trigger Settings", true);
+//        depend = test.FindProperty("dependValues");
+//    }
 
-            if (showTriggerFoldout)
-            {
-                EditorGUI.indentLevel++;
+//    private bool showTriggerFoldout = true;
+//    public override void OnInspectorGUI()
+//    {
+//        base.OnInspectorGUI();
+//        test.Update();
 
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerCondition"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerLayer"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("SelfLimit"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("limitRelation"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("limitValue"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerEffect"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerStatus"), true); // true allows for lists
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerSkill"));
-                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerAction"));
+//        if (hasTrigger.boolValue)
+//        {
+//            showTriggerFoldout = EditorGUILayout.Foldout(showTriggerFoldout, "Trigger Settings", true);
 
-                EditorGUI.indentLevel--;
-            }
-        }
-        //if (isField.boolValue)
-        //{
-        //    EditorGUILayout.PropertyField(field, new GUIContent("Field Effects"),true);
-        //}
-        //foreach(var a in boolProperty)
-        //{
-        //    if (a.boolValue)
-        //    {
-        //        EditorGUILayout.PropertyField(contentProperty[boolProperty.IndexOf(a)],true);
-        //    }
-        //}
-        serializedObject.ApplyModifiedProperties();
-        test.ApplyModifiedProperties();
-    }
-}
+//            if (showTriggerFoldout)
+//            {
+//                EditorGUI.indentLevel++;
+
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerCondition"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerLayer"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("SelfLimit"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("limitRelation"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("limitValue"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerEffect"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerStatus"), true); // true allows for lists
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerSkill"));
+//                EditorGUILayout.PropertyField(Trigger.FindPropertyRelative("triggerAction"));
+
+//                EditorGUI.indentLevel--;
+//            }
+//        }
+//        //if (isField.boolValue)
+//        //{
+//        //    EditorGUILayout.PropertyField(field, new GUIContent("Field Effects"),true);
+//        //}
+//        //foreach(var a in boolProperty)
+//        //{
+//        //    if (a.boolValue)
+//        //    {
+//        //        EditorGUILayout.PropertyField(contentProperty[boolProperty.IndexOf(a)],true);
+//        //    }
+//        //}
+//        serializedObject.ApplyModifiedProperties();
+//        test.ApplyModifiedProperties();
+//    }
+//}

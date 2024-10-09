@@ -364,31 +364,52 @@ public static class DamageAction
 
         if(source.characterData.elementType == CharacterData_SO.weaknessType.BING)
         {
-            //给冻结Status 
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "100"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
+
+            var cloneStatus2 = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "101"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus2);
         }
         if (source.characterData.elementType == CharacterData_SO.weaknessType.HUO)
         {
-            //给冻结Status 
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "102"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
+
         }
         if (source.characterData.elementType == CharacterData_SO.weaknessType.FENG)
         {
-            //给冻结Status 
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "103"));
+            if(attacked.enemyType != Character.EnemyType.Normal)
+            {
+                cloneStatus.StatusLayer = 3;
+            }
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
         }
         if (source.characterData.elementType == CharacterData_SO.weaknessType.LEI)
         {
-            //给冻结Status 
-        }
-        if (source.characterData.elementType == CharacterData_SO.weaknessType.WULI)
-        {
-            //给冻结Status 
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "104"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
         }
         if (source.characterData.elementType == CharacterData_SO.weaknessType.LIANGZI)
         {
-            //给冻结Status 
+            context += $"量子击破额外推条 20% * (1 + {source.characterData.BrokensFocus * 0.01f}%(击破特攻))";
+            PushActionValueAction.PushBackActionValue(attacked, 0.2f * (1+source.characterData.BrokensFocus*0.01f));
+
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "105"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
+        }
+        if (source.characterData.elementType == CharacterData_SO.weaknessType.WULI)
+        {
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "106"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
         }
         if (source.characterData.elementType == CharacterData_SO.weaknessType.XUSHU)
         {
-            //给冻结Status 
+            context += $"量子击破额外推条 30% * (1 + {source.characterData.BrokensFocus * 0.01f}%(击破特攻))";
+            PushActionValueAction.PushBackActionValue(attacked, 0.3f * (1 + source.characterData.BrokensFocus * 0.01f));
+
+            var cloneStatus = GameObject.Instantiate(GameManager.Instance.AllStatus.Find(e => e.StatusName == "107"));
+            StatusAction.AddStatusAction(source, attacked, cloneStatus);
         }
     }
     public static void DealDamageAddress(Character attacker,Character attacked,Skill_SO skill,float damageValue)
@@ -399,4 +420,78 @@ public static class DamageAction
         Messenger.Instance.BroadCast(Messenger.EventType.DealDamage, attacker, attacked, damageValue);      //攻击方造成伤害
         Messenger.Instance.BroadCast(Messenger.EventType.TakeDamage, damageValue, attacked);                //承受伤害
     }
+
+    public static float TakeContinuousDamage(Character source,Character attacked,Status status)
+    {
+        var type = source.characterData.elementType;
+        if(type == CharacterData_SO.weaknessType.XUSHU)
+        {
+            context += $"{attacked.characterName} 禁锢状态解除\n";
+            return 0;
+        }
+
+        #region 击破持续伤害 规则
+        float baseDamage;
+        if (type != CharacterData_SO.weaknessType.WULI)
+        {
+            baseDamage = StaticNumber.brokenBaseDamage[source.characterData.Level];
+            context += $"{attacked.characterName}承受<color=red>持续伤害</color> 基础伤害 {baseDamage}\n";
+        }
+        else
+        {
+            baseDamage = attacked.characterData.maxHealth;
+            context += $"物理击破 基础伤害为最大生命值 {baseDamage} \n";
+        }
+
+        if (type == CharacterData_SO.weaknessType.BING || type == CharacterData_SO.weaknessType.HUO)
+        {
+            baseDamage *= 2;
+            context += $"属性系数{2} 处理后伤害{baseDamage}\n";
+        }
+        else if(type == CharacterData_SO.weaknessType.FENG)
+        {
+            baseDamage *= 2;
+            context += $"属性系数{2} 处理后伤害{baseDamage}\n";
+
+            baseDamage *= status.StatusLayer;
+            context += $"风化层数{status.StatusLayer} 处理后伤害{baseDamage}\n";
+        }
+        else if(type == CharacterData_SO.weaknessType.LEI)
+        {
+            baseDamage *= 4;
+            context += $"属性系数{4} 处理后伤害{baseDamage}\n";
+        }
+        else if(type == CharacterData_SO.weaknessType.LIANGZI)
+        {
+            baseDamage *= status.StatusLayer;
+            context += $"纠缠层数{status.StatusLayer} 处理后伤害{baseDamage}\n";
+
+            baseDamage *= 1.2f * (attacked.characterData.maxToughShield * 0.1f + 2) / 4;
+            context += $"纠缠专属 1.2倍韧性系数{1.2f * (attacked.characterData.maxToughShield * 0.1f + 2) / 4} 处理后伤害{baseDamage}\n";
+        }
+        else if(type == CharacterData_SO.weaknessType.WULI)
+        {
+            if(attacked.enemyType == Character.EnemyType.Normal)
+            {
+                baseDamage *= 0.16f;
+                context += $"普通敌人 系数16% 处理后伤害{baseDamage}\n";
+            }
+            else
+            {
+                baseDamage *= 0.07f;
+                context += $"普通敌人 系数7% 处理后伤害{baseDamage}\n";
+            }
+        }
+
+        baseDamage *= (1 + source.characterData.BrokensFocus*0.01f);
+        context += $"击破特攻{source.characterData.BrokensFocus * 0.01f}% 处理后伤害 {baseDamage}\n";
+        #endregion
+
+        attacked.characterData.currentHealth -= baseDamage;
+        GameManager.Instance.DamageAppearFunc(null, attacked, baseDamage, source.characterData.elementType);
+        Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
+        return baseDamage;
+    }
+
+
 }

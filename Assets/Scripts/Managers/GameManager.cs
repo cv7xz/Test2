@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public float textShowTime;
 
     public GameObject StatusPanel;
+    public Scrollbar BattleInforBar;
     public Text statusText;
 
     public GameObject InfomationPanel;
@@ -57,6 +58,8 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
+
+    private string lastContext;
     private void Update()
     {
         textShowTime -= Time.deltaTime;
@@ -67,7 +70,20 @@ public class GameManager : MonoBehaviour
             mouseDownCharacter?.FreshInformation();
         }
 
+
+        if(lastContext != DamageAction.context)  //模仿属性的Set  被写入新内容时 产生事件
+        {
+            GameManager.Instance.FreshBattleInfor(DamageAction.context);
+            StartCoroutine(FreshBattleInfor());
+        }
+        lastContext = DamageAction.context;
+
         FreshSpecialPanel();
+    }
+    IEnumerator FreshBattleInfor()
+    {
+        yield return new WaitForEndOfFrame();
+        BattleInforBar.value = 0f;
     }
     private void Start()
     {

@@ -72,7 +72,7 @@ public class Player : Character
         characterData.maxHealth = characterData.baseHealth * (1 + characterData.healthPercentBonus);
         characterData.currentDefend = characterData.baseDefend * (1 + characterData.DefendPercentBonus);
         characterData.currentAttack = characterData.baseAttack * (1 + characterData.AttackPercentBonus) + characterData.fixAttackBonus;
-        characterData.actionValue = InputManager.Instance.distance / characterData.currentSpeed;
+        characterData.actionValue = InputManager.distance / characterData.currentSpeed;
 
 
         FreshProperty(Status.InvolvedProperty.AttackValue);

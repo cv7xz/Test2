@@ -54,8 +54,12 @@ public class Status : ScriptableObject
 
         AttackTriggerEffect,
 
-        ControlStatus,   //控制类Status
+        ContinueDamageStatus,   
+        ControlStatus,    //控制类Status
+
+        EnergyRestore,
     }
+    public bool TurnStartTiming;
     public StatusType statusType;
     public List<float> StatusValue = new List<float>();
     public CharacterData_SO.weaknessType involvedElement; //减抗涉及的
@@ -122,7 +126,7 @@ public class Status : ScriptableObject
     }
     public List<InvolvedProperty> InvolvedName;
 
-    public bool isField;
+    public bool isField;   //FieldStatus的StatusType 会用 如 物体呼吸中
     public enum FieldTarget
     {
         AllFriends,
@@ -142,9 +146,16 @@ public class Status : ScriptableObject
 
     #region AttachStatus
     public bool IsAttached;  //某个Status与另外一个有联动   如花火增伤buff在有迷诡buff情况下数值增加  增伤buff的该bool值设true 在Fresh属性时处理
+
+    public enum AttachTarget
+    {
+        Self,
+        Caster,
+    }
     [System.Serializable]
     public struct AttachOtherStatus
     {
+        public AttachTarget attachTargte;
         public string StatusName;
         public float AddValue;
     }
@@ -230,6 +241,21 @@ public class Status : ScriptableObject
     public List<Status> fieldStatus = new List<Status>();  //Type 特定为 ExistFieldStatus专用  光环产生Status效果
 
     public bool FeiXiaoExtraSkillPoint;   //超级特判之飞霄  每回合触发一次 回合开始时重置触发次数
+
+    public enum actionEffect
+    {
+        NotFreshBroken,
+        PushActionValue,
+    }
+    [System.Serializable]
+    public struct Action
+    {
+        public actionEffect effect;
+        public float value;
+
+
+    }
+    public List<Action> controlActions = new List<Action>();
     public enum Compare
     {
         Less,

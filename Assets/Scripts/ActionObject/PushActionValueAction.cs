@@ -41,4 +41,18 @@ public static class PushActionValueAction
             }
         }
     }
+
+    public static void SetActionValue(Character character,float distance)
+    {
+        DamageAction.context += $"{character.name} ÐÐ¶¯Öµ: \n";
+        character.characterData.actionValue = distance / character.characterData.currentSpeed;
+
+        if (character.characterData.actionValue < 0)
+        {
+            character.characterData.actionValue = 0;
+        }
+        DamageAction.context += $"{character.characterData.actionValue}\n";
+
+        GameManager.Instance.FreshBattleInfor(DamageAction.context);
+    }
 }

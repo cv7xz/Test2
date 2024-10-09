@@ -38,7 +38,11 @@ public static class StatusAction
             originStatus.duration = status.duration;
         }
         //²ãÊýÏÞÖÆ
-        originStatus.StatusLayer = Mathf.Min(originStatus.StatusLayer, originStatus.LayerLimited);
+        if(originStatus.LayerLimited > 0)
+        {
+            originStatus.StatusLayer = Mathf.Min(originStatus.StatusLayer, originStatus.LayerLimited);
+        }
+
 
 
         status.Caster = source;
@@ -65,7 +69,11 @@ public static class StatusAction
         Status originStatus = target.currentStatus.Find(e => e.StatusName == status.StatusName);
         if (originStatus != null)
         {
-            originStatus.StatusLayer = Mathf.Min(originStatus.StatusLayer + addLayer, originStatus.LayerLimited);
+            if (originStatus.LayerLimited > 0)
+            {
+                originStatus.StatusLayer = Mathf.Min(originStatus.StatusLayer + addLayer, originStatus.LayerLimited);
+            }
+
             if (originStatus.ReapetFreshDuration)   
             {
                 Status AssetStatus = GameManager.Instance.AllStatus.Find(e => e.StatusName == status.StatusName);

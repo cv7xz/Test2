@@ -16,7 +16,7 @@ MonoBehaviour:
   AttackPercentBonus: 0
   fixAttackBonus: 0
   currentAttack: 0
-  baseHealth: 2000
+  baseHealth: 250000
   healthPercentBonus: 0
   currentHealth: 0
   maxHealth: 0

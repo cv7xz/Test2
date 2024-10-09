@@ -34,7 +34,7 @@ MonoBehaviour:
   IsDepend: 1
   dependValues: []
   InvolvedName: 00000000
-  isField: 0
+  isField: 1
   fieldEffects:
   - field: 0
     limit: 0

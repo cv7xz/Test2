@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a09ec3e91f4b30342a368d710a33e55d, type: 3}
-  m_Name: "\u962E\u6885E\u589E\u4F24"
+  m_Name: "\u962E\u6885\u5929\u8D4B\u56DE\u80FD"
   m_EditorClassIdentifier: 
   Caster: {fileID: 0}
   Owner: {fileID: 0}
-  StatusName: 1061
+  StatusName: 1068
   description: 
   duration: -1
   NotAutoDelete: 0
@@ -22,27 +22,26 @@ MonoBehaviour:
   HasBonusLimit: 0
   limitType:
     BonusAttackType: 0
-  TurnStartTiming: 0
-  statusType: 2
+  TurnStartTiming: 1
+  statusType: 25
   StatusValue:
-  - 0.32
+  - 5
   involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
   StatusLayer: 1
   LayerLimited: 1
-  DuartionLimited: 0
+  DuartionLimited: 1
   ValueLimited: 0
   IsDepend: 0
   dependValues: []
-  InvolvedName: 02000000
+  InvolvedName: 
   isField: 0
   fieldEffects: []
-  IsAttached: 1
+  IsAttached: 0
   attachOtherStatus:
-    attachTargte: 1
-    StatusName: 10611
-    AddValue: 0.4
+    StatusName: 
+    AddValue: 0
   IsAttachSkill: 0
   attachOtherSkill:
     SkillName: []

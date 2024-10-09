@@ -16,7 +16,7 @@ MonoBehaviour:
   AttackPercentBonus: 0
   fixAttackBonus: 0
   currentAttack: 0
-  baseHealth: 30000
+  baseHealth: 1000000
   healthPercentBonus: 0
   currentHealth: 0
   maxHealth: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
   XUSHUDefend: 0.2
   currentWULIDefend: 0
   WULIDefend: 0.2
-  maxToughShield: 80
+  maxToughShield: 30
   currentToughShield: 0
   weakness: 00000000010000000200000005000000
   actionValue: 0

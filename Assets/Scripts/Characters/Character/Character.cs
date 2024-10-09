@@ -9,10 +9,21 @@ public class Character : MonoBehaviour
         Player = 0,
         Enemy = 1,
     };
+    public enum EnemyType
+    {
+        Normal,
+        Elite,
+        Boss,
+    }
+    public EnemyType enemyType;
     public CharaterType type;
     public string characterName;
     public int CurrentIndex;
     public Sprite sprite;
+
+    #region Special
+    public bool cantAddStatus1067 = false;  //不可附加残梅绽buff
+    #endregion
 
     public int currentIndex
     {
@@ -57,6 +68,7 @@ public class Character : MonoBehaviour
     }
     public virtual void Start()
     {
+        cantAddStatus1067 = false;
         TargetFlag.SetActive(false);
         healthBar = Instantiate(HealthBarPrefab, GameManager.Instance.canvas.transform);
         healthBar.transform.position = HealthPos.transform.position;
@@ -89,18 +101,56 @@ public class Character : MonoBehaviour
         healthText.text = $"{characterData.currentHealth}/{characterData.maxHealth}";
     }
 
+
+    //在上一个角色行动完后会立即产生 下一个角色的TurnStart信号 此时就已经进行Status的结算  然后再经过 ActionTime 才有下一个角色的ActionExecute (如果是enemy则进行随机攻击)
     #region Status随回合刷新
-    public void FreshStatusTurnStart(Character character)
+    public void FreshStatusTurnStart(Character character)   //为什么要用信号做character的状态刷新？
     {
         if (character != this)
         {
             return;
         }
-
+        bool FreshToughShield = true;
+        
+        InputManager.Instance.SkipAction = false;
+        Status a = new Status();
         for (int i = currentStatus.Count - 1; i >= 0; i--)
         {
             if (currentStatus[i] != null)
             {
+                #region 回合开始前 时点 结算持续伤害 控制效果等
+                if (currentStatus[i].TurnStartTiming)
+                {
+                    if (currentStatus[i].statusType == Status.StatusType.ContinueDamageStatus)
+                    {
+                        DamageAction.TakeContinuousDamage(currentStatus[i].Caster, character, currentStatus[i]);
+                    }
+                    if (currentStatus[i].statusType == Status.StatusType.ControlStatus)
+                    {
+                        a = currentStatus[i];
+                        InputManager.Instance.SkipAction = true;     //该角色有ControlStatus   默认跳过行动
+                        foreach (var action in currentStatus[i].controlActions)
+                        {
+                            if (action.effect == Status.actionEffect.NotFreshBroken)
+                            {
+                                FreshToughShield = false;
+                            }
+                            else if (action.effect == Status.actionEffect.PushActionValue)
+                            {
+                                character.characterData.actionValue = action.value / characterData.currentSpeed;
+                                InputManager.Instance.enemyActionCounterDown.ResetTimer();
+                            }
+                        }
+                    }
+                    if(currentStatus[i].statusType == Status.StatusType.EnergyRestore)
+                    {
+                        EnergyChangeAction.AddEnergyAction(this, currentStatus[i].StatusValue[0]);
+                    }
+                }
+
+                #endregion
+
+                #region  不同Status回合数的结算
                 if (currentStatus[i].duration == -1 || currentStatus[i].turnStartDuration == false)  //持续时间无限 或非回合开始时减少时间
                 {
                     continue;
@@ -129,13 +179,51 @@ public class Character : MonoBehaviour
                 currentStatus[i].duration -= 1;
                 if (currentStatus[i].duration <= 0)
                 {
-
-
                     var temp = currentStatus[i];
                     currentStatus.Remove(currentStatus[i]);
                     FreshProperty(temp);
                 }
+                #endregion
             }
+        }
+
+        if (InputManager.Instance.SkipAction)
+        {
+            DamageAction.context += $"{character.characterName} 因 {a.name}Status 跳过行动\n  角色行动值:{character.characterData.actionValue}\n";
+            //InputManager.Instance.enemyActionCounterDown.AddEndAction(() => InputManager.Instance.FreshAction());
+            InputManager.Instance.FreshAction();
+        }
+
+        if(character.type == CharaterType.Enemy && character.characterData.currentToughShield < 1e-6 && FreshToughShield)
+        {
+            var s = currentStatus.Find(e => e.StatusName == "1067");
+            if (s != null)
+            {
+                var RUANMEI = GameManager.Instance.players.Find(e => e.characterName == "RUANMEI");   //可以想到  残梅绽的Catser提供者不一定是阮梅 需要全局找
+                if(RUANMEI == null)
+                {
+                    RUANMEI = s.Caster;
+                }
+                float damageValue = StaticNumber.brokenBaseDamage[RUANMEI.characterData.Level];
+                damageValue = 2 * (1 + RUANMEI.characterData.BrokensFocus * 0.01f) * 0.5f;
+
+                damageValue *= ((characterData.maxToughShield * 0.1f + 2f) / 4f);
+
+                float damageDecrease = characterData.currentDefend / (characterData.Level * 10 + 200 + characterData.currentDefend);
+                damageValue *= (1 - damageDecrease);
+                characterData.currentHealth -= damageValue;
+
+                DamageAction.context += $"受到残梅绽伤害 {damageValue}\n";
+                cantAddStatus1067 = true;
+                //InputManager.Instance.enemyActionCounterDown.ResetTimer();
+                PushActionValueAction.SetActionValue(this, 1000f + 2000f * RUANMEI.characterData.BrokensFocus * 0.01f);
+                InputManager.Instance.SkipAction = true;
+                currentStatus.Remove(s);
+                return;
+            }
+
+            cantAddStatus1067 = true;
+            character.characterData.currentToughShield = character.characterData.maxToughShield;
         }
     }
     public void FreshStatusTurnEnd(Character character)
@@ -365,9 +453,16 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.DamageIncreaseBonus)
                     {
-                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                        if (s.IsAttached)
                         {
-                            tempDamageIncreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                            if (s.attachOtherStatus.attachTargte == Status.AttachTarget.Self && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                            {
+                                tempDamageIncreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                            }
+                            else if(s.attachOtherStatus.attachTargte == Status.AttachTarget.Caster && s.Caster.currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+                            {
+                                tempDamageIncreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
+                            }
                         }
                         else
                         {
@@ -832,7 +927,15 @@ public class Character : MonoBehaviour
             {
                 foreach (var value in status.StatusValue)
                 {
-                    context += value.ToString() + "  ";
+                    if (status.IsAttached)
+                    {
+                        context += (value + status.attachOtherStatus.AddValue).ToString() + "(依附于Status)"; 
+                    }
+                    else
+                    {
+                        context += value.ToString() + "  ";
+                    }
+
                 }
             }
 

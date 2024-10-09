@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Enemy :Character
 {
+
     public GameObject ToughBarPrefab, ToughBar;
     public Transform ToughPos;
 
@@ -28,7 +29,7 @@ public class Enemy :Character
         characterData.currentLIANGZIDefend = characterData.LIANGZIDefend;
         characterData.currentXUSHUDefend = characterData.XUSHUDefend;
 
-        characterData.actionValue = InputManager.Instance.distance / characterData.currentSpeed;
+        characterData.actionValue = InputManager.distance / characterData.currentSpeed;
     }
     public override void Start()
     {

@@ -56,7 +56,7 @@ public class InputManager : MonoBehaviour
     }
 
     public Character currentActionCharacter;
-    public float distance = 10000f;
+    public const float distance = 10000f;
 
     public float randomAttackTimeLeft;   //TODO:弹射攻击考虑两次之间相隔一段时间
 
@@ -243,7 +243,7 @@ public class InputManager : MonoBehaviour
     /// <summary>
     /// Q E行动
     /// </summary>
-
+    public bool SkipAction = false;
     public List<KeyCode> finalSkillKeyCodes = new List<KeyCode> { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4};
     public void ActionExecute()
     {
@@ -293,7 +293,7 @@ public class InputManager : MonoBehaviour
         #endregion
 
         //当额外行动条有行动时 先处理额外  若为追加则直接执行 若终结技则根据输入执行
-        #region 敌人回合 或者追加类型行动
+        #region 敌人回合 或者追加类型行动 (不受控制 程序自行执行)
 
         if (SpecialActionList.Count != 0 && SpecialActionList.First.Value.skill.damageType == Skill_SO.DamageType.ExtraAttack && enemyActionCounterDown.currentTime <= 0)
         {
@@ -301,25 +301,29 @@ public class InputManager : MonoBehaviour
             FreshSpecialAction();
         }
 
-        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0)
+        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0 )
         {
-            List<Character> player = new List<Character>();
-            foreach (var p in GameManager.Instance.players)
+            if (SkipAction == false)
             {
-                if(p != null)
+                List<Character> player = new List<Character>();
+                foreach (var p in GameManager.Instance.players)
                 {
-                    player.Add(p);
+                    if (p != null)
+                    {
+                        player.Add(p);
+                    }
                 }
+                GameManager.Instance.ShowPanelText($"Enemy {currentActionCharacter.CurrentIndex} Action");
+
+                int randomTargetIndex = UnityEngine.Random.Range(0, player.Count);
+                DamageAction.DealDamageAction(currentActionCharacter, player[randomTargetIndex]);
+                Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
+
             }
-            GameManager.Instance.ShowPanelText($"Enemy {currentActionCharacter.CurrentIndex} Action");
-
-            int randomTargetIndex = UnityEngine.Random.Range(0, player.Count);
-            DamageAction.DealDamageAction(currentActionCharacter, player[randomTargetIndex]);
-            Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
-
-            FreshAction();
 
             enemyActionCounterDown.ResetTimer();
+            enemyActionCounterDown.AddEndAction(()=>FreshAction());
+            
             return;
         }
 
@@ -426,7 +430,7 @@ public class InputManager : MonoBehaviour
 
     public List<Character> characters = new List<Character>();
     public Dictionary<Character,GameObject> Dict = new Dictionary<Character,GameObject>();
-    public void FreshAction()
+    public void FreshAction(float dis = distance)
     {
         if(currentActionCharacter != null)
         {
@@ -467,7 +471,8 @@ public class InputManager : MonoBehaviour
             newActionBar.transform.GetChild(1).GetComponent<Text>().text = characters[i].characterData.actionValue.ToString("f2");
             Dict.Add(characters[i], newActionBar);
         }
-        characters[0].characterData.actionValue = distance / characters[0].characterData.currentSpeed;
+
+        characters[0].characterData.actionValue = dis / characters[0].characterData.currentSpeed;    //某个角色开始行动前行动值就已经设置了  应该要改
         currentActionCharacter = characters[0];
 
         if (currentActionCharacter != null)
@@ -527,7 +532,7 @@ public class InputManager : MonoBehaviour
             newEnmey2.GetComponent<Enemy>().currentIndex = 1;
             newEnmey2.transform.position = GameManager.Instance.enemySlots[1].position;
 
-            GameObject newEnmey3 = Instantiate(GameManager.Instance.AllEnemy[1]);
+            GameObject newEnmey3 = Instantiate(GameManager.Instance.AllEnemy[0]);
             newEnmey3.GetComponent<Enemy>().currentIndex = 2;
             newEnmey3.transform.position = GameManager.Instance.enemySlots[2].position;
 
@@ -535,7 +540,7 @@ public class InputManager : MonoBehaviour
             newEnmey4.GetComponent<Enemy>().currentIndex = 3;
             newEnmey4.transform.position = GameManager.Instance.enemySlots[3].position;
 
-            GameObject newEnmey5 = Instantiate(GameManager.Instance.AllEnemy[1]);
+            GameObject newEnmey5 = Instantiate(GameManager.Instance.AllEnemy[0]);
             newEnmey5.GetComponent<Enemy>().currentIndex = 4;
             newEnmey5.transform.position = GameManager.Instance.enemySlots[4].position;
 
@@ -893,7 +898,7 @@ public class InputManager : MonoBehaviour
         if (skill.damageType == Skill_SO.DamageType.SkillAttack)   
         {
             Debug.Log("行动条移动");
-            FreshAction();
+            enemyActionCounterDown.AddEndAction(() => FreshAction());
         }
         if(skill.skillQER == Skill_SO.SkillQER.E)
         {

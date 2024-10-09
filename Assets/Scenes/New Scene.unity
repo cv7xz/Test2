@@ -608,7 +608,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 468282619}
   m_HandleRect: {fileID: 468282618}
   m_Direction: 2
-  m_Value: 1.0000002
+  m_Value: 1
   m_Size: 0.739479
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2677,6 +2677,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3c4f860c52630054abfa1e5286188b21, type: 2}
   - {fileID: 11400000, guid: 4a6fcc02e0d2b564fabce756c99553fd, type: 2}
   - {fileID: 11400000, guid: 0a76fe2fa5313ab4790b55e7f9cdf2b0, type: 2}
+  - {fileID: 11400000, guid: c3b9d0edcdc87084a9efd98add160b3a, type: 2}
+  - {fileID: 11400000, guid: c4845907b8b3a044395da16a75c9b9fd, type: 2}
+  - {fileID: 11400000, guid: 56ac087be5902184dae166236efd703f, type: 2}
+  - {fileID: 11400000, guid: a05bc2a840db73847bb14ef777332d50, type: 2}
+  - {fileID: 11400000, guid: 477b75179dceb644eab179c3e189342a, type: 2}
+  - {fileID: 11400000, guid: 75fe0fde332382c4ca3572be0544b56f, type: 2}
+  - {fileID: 11400000, guid: 15d28051f016c1d449f20a64cc5f7650, type: 2}
+  - {fileID: 11400000, guid: 48bbaf935effa6d48b0b5ed57293cf97, type: 2}
   enemies:
   - {fileID: 0}
   - {fileID: 0}
@@ -2704,6 +2712,7 @@ MonoBehaviour:
   tipsText: {fileID: 649991416}
   textShowTime: 0
   StatusPanel: {fileID: 425194363}
+  BattleInforBar: {fileID: 141453609}
   statusText: {fileID: 796604766}
   InfomationPanel: {fileID: 1450032140}
   CharacterInfomText: {fileID: 1923702807}
@@ -4279,7 +4288,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1416258291
@@ -4653,7 +4662,6 @@ MonoBehaviour:
   IconR: {fileID: 1871722725}
   currentGameState: 1
   currentActionCharacter: {fileID: 0}
-  distance: 10000
   randomAttackTimeLeft: 0
   enemyActionCounterDown: {fileID: 0}
   ActionCounterDownText: {fileID: 828938266}
@@ -4666,6 +4674,7 @@ MonoBehaviour:
   FeiXiaoSpecialQ: {fileID: 0}
   FeiXiaoSpecialE: {fileID: 0}
   FeiXiaoFinalEnd: {fileID: 0}
+  SkipAction: 0
   finalSkillKeyCodes: 31000000320000003300000034000000
   characters: []
   TryingCastFinalSkill: 0
