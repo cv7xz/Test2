@@ -90,13 +90,25 @@ public class Status : ScriptableObject
     {
         public InvolvedProperty property;
         public DependTarget dependTarget;
+
         public CharacterData_SO.weaknessType certainElement;
         public List<float> values;
+
+        public DependTpye dependType;
+        public float minLimit;      //超过minLimit后  每经过everyStep  依存值增加stepValue   击破超过120%时 每超过10% 效果提高6%
+        public float maxValue;
+        public float everyStep;
+        public float stepValue;
+
         public float correctValues;
     }
     
     public List<DependValue> dependValues;
-
+    public enum DependTpye
+    {
+        Normal,
+        MinLimit,
+    }
     public enum DependTarget
     {
         Owner,
@@ -158,6 +170,8 @@ public class Status : ScriptableObject
         public AttachTarget attachTargte;
         public string StatusName;
         public float AddValue;
+        public bool hasDepend;
+        public List<DependValue> dependValues;
     }
     public AttachOtherStatus attachOtherStatus;
     #endregion
@@ -264,6 +278,14 @@ public class Status : ScriptableObject
         MoreOrEqual,
         More,
     }
+
+    public enum DependCalculate
+    {
+        Multi,
+        Divide,
+        Add,
+    }
+
     //以下两个Ability是 某些Status的层数会因为 事件 而变动，此外，还有一些Status有 达到某个条件时触发效果的能力  两个Ability都是添加事件  (拥有计数或触发效果的能力)
     //有计数器能力的Status  会涉及层数的变动  但不一定会触发事件  (花火使用战技点 全队加增伤buff层数增加)
 

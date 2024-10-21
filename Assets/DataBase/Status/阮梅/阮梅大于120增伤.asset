@@ -15,8 +15,8 @@ MonoBehaviour:
   Caster: {fileID: 0}
   Owner: {fileID: 0}
   StatusName: 10611
-  description: 
-  duration: 0
+  description: "\u53EA\u662F\u4E2A\u6807\u8BB0 \u6548\u679C\u914D\u7F6E\u5728Attach\u7684Status\u4E2D"
+  duration: -1
   NotAutoDelete: 0
   turnStartDuration: 0
   HasBonusLimit: 0
@@ -28,9 +28,9 @@ MonoBehaviour:
   involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
-  StatusLayer: 0
-  LayerLimited: 0
-  DuartionLimited: 0
+  StatusLayer: 1
+  LayerLimited: 1
+  DuartionLimited: 1
   ValueLimited: 0
   IsDepend: 0
   dependValues: []
@@ -42,6 +42,8 @@ MonoBehaviour:
     attachTargte: 0
     StatusName: 
     AddValue: 0
+    hasDepend: 0
+    dependValues: []
   IsAttachSkill: 0
   attachOtherSkill:
     SkillName: []

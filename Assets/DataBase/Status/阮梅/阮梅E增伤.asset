@@ -42,7 +42,19 @@ MonoBehaviour:
   attachOtherStatus:
     attachTargte: 1
     StatusName: 10611
-    AddValue: 0.4
+    AddValue: 0
+    hasDepend: 1
+    dependValues:
+    - property: 3
+      dependTarget: 1
+      certainElement: 0
+      values: []
+      dependType: 1
+      minLimit: 120
+      maxValue: 0.36
+      everyStep: 10
+      stepValue: 0.06
+      correctValues: 0
   IsAttachSkill: 0
   attachOtherSkill:
     SkillName: []

@@ -359,44 +359,155 @@ public class Character : MonoBehaviour
     public float GetDependValue(Status s)
     {
         float dependValue = 0;
+        Character dependTarget = new Character();
+        float tempValue = 0;
         foreach(var depend in s.dependValues)
         {
-            if(depend.dependTarget == Status.DependTarget.Owner)
-            {
-                if (depend.property == Status.InvolvedProperty.BrokenFocus)
-                {
-                    dependValue += depend.values[0] * characterData.BrokensFocus * 0.01f + depend.correctValues;   //加增伤buff  依存100% 击破特攻
-                }
-            }
 
+            #region  一般不会改 简化一堆if嵌套的情况 提出所有简单枚举 如目标 depend属性类型
+            if (depend.dependTarget == Status.DependTarget.Owner)
+            {
+                dependTarget = s.Owner;
+            }
             else if(depend.dependTarget == Status.DependTarget.Caster)
             {
-                if(depend.property == Status.InvolvedProperty.CriticalDamageValue)
-                {
-                    dependValue += depend.values[0] * s.Caster.characterData.criticalDamage + depend.correctValues;  //加爆伤buff  依存施法者24% + 45%爆伤
-                }
-                else if(depend.property == Status.InvolvedProperty.HealthValue)
-                {
-                    dependValue += depend.values[0] * s.Caster.characterData.maxHealth + depend.correctValues;  //加符玄最大生命值的6%
-                }
+                dependTarget = s.Caster;
             }
-            else if(depend.dependTarget == Status.DependTarget.Global)
+
+            if (depend.property == Status.InvolvedProperty.CriticalDamageValue)
             {
-                if(depend.property == Status.InvolvedProperty.CertainElementPlayerNumber)
+                tempValue = dependTarget.characterData.criticalDamage;  //加爆伤buff  依存施法者24% + 45%爆伤
+            }
+            else if (depend.property == Status.InvolvedProperty.HealthValue)
+            {
+                tempValue = dependTarget.characterData.maxHealth;  //加符玄最大生命值的6%
+            }
+            else if (depend.property == Status.InvolvedProperty.BrokenFocus)
+            {
+                tempValue = dependTarget.characterData.BrokensFocus;
+            }
+
+            if (depend.dependTarget == Status.DependTarget.Global)
+            {
+                if (depend.dependType == Status.DependTpye.Normal)
                 {
-                    int number = Mathf.Max(StaticNumber.GetPlayerNumber(depend.certainElement) - 1,0);
-                    dependValue += depend.values[number] + depend.correctValues;   //加攻击buff  依存场上某属性角色数量  依存数值非线性 根据数量读取数组
+                    if (depend.property == Status.InvolvedProperty.CertainElementPlayerNumber)
+                    {
+                        int number = Mathf.Max(StaticNumber.GetPlayerNumber(depend.certainElement) - 1, 0);
+                        dependValue += depend.values[number] + depend.correctValues;   //加攻击buff  依存场上某属性角色数量  依存数值非线性 根据数量读取数组
+                    }
+                }
+                continue;
+            }
+            #endregion
+
+
+            if (depend.dependType == Status.DependTpye.Normal)
+            {
+                dependValue += depend.values[0] * tempValue + depend.correctValues;  //加爆伤buff  依存施法者24% + 45%爆伤
+            }
+            else if(depend.dependType == Status.DependTpye.MinLimit)
+            {
+                if (tempValue > depend.minLimit)
+                {
+                    int steps = (int)((tempValue - depend.minLimit) / depend.everyStep);
+                    dependValue += Mathf.Min((steps * depend.stepValue), depend.maxValue);
                 }
             }
+
         }
         return dependValue;
-
     }
-    public void FreshCertainProperty(Status.InvolvedProperty type)
+
+    public float GetAttachDependValue(Status s)
     {
+        float dependValue = 0;
+        if(s.attachOtherStatus.hasDepend == false)
+        {
+            return s.attachOtherStatus.AddValue;
+        }
 
+        Character dependTarget = new Character();
+        float tempValue = 0;
+        foreach (var depend in s.attachOtherStatus.dependValues)
+        {
+
+            #region  一般不会改 简化一堆if嵌套的情况 提出所有简单枚举 如目标 depend属性类型
+            if (depend.dependTarget == Status.DependTarget.Owner)
+            {
+                dependTarget = s.Owner;
+            }
+            else if (depend.dependTarget == Status.DependTarget.Caster)
+            {
+                dependTarget = s.Caster;
+            }
+
+            if (depend.property == Status.InvolvedProperty.CriticalDamageValue)
+            {
+                tempValue = dependTarget.characterData.criticalDamage;  //加爆伤buff  依存施法者24% + 45%爆伤
+            }
+            else if (depend.property == Status.InvolvedProperty.HealthValue)
+            {
+                tempValue = dependTarget.characterData.maxHealth;  //加符玄最大生命值的6%
+            }
+            else if (depend.property == Status.InvolvedProperty.BrokenFocus)
+            {
+                tempValue = dependTarget.characterData.BrokensFocus;
+            }
+
+            if (depend.dependTarget == Status.DependTarget.Global)
+            {
+                if (depend.dependType == Status.DependTpye.Normal)
+                {
+                    if (depend.property == Status.InvolvedProperty.CertainElementPlayerNumber)
+                    {
+                        int number = Mathf.Max(StaticNumber.GetPlayerNumber(depend.certainElement) - 1, 0);
+                        dependValue += depend.values[number] + depend.correctValues;   //加攻击buff  依存场上某属性角色数量  依存数值非线性 根据数量读取数组
+                    }
+                }
+                continue;
+            }
+            #endregion
+
+
+            if (depend.dependType == Status.DependTpye.Normal)
+            {
+                dependValue += depend.values[0] * tempValue + depend.correctValues;  //加爆伤buff  依存施法者24% + 45%爆伤
+            }
+            else if (depend.dependType == Status.DependTpye.MinLimit)
+            {
+                if (tempValue > depend.minLimit)
+                {
+                    int steps = (int)((tempValue - depend.minLimit) / depend.everyStep);
+                    dependValue += Mathf.Min((steps * depend.stepValue), depend.maxValue);
+                }
+            }
+
+        }
+        return dependValue;
     }
 
+    public float StatusValueFunction(Status s)
+    {
+        float tempValue = 0f;
+        if (s.IsAttached)
+        {
+            if (s.attachOtherStatus.attachTargte == Status.AttachTarget.Self && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+            {
+                tempValue += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] + GetAttachDependValue(s) * s.StatusLayer);
+            }
+            else if (s.attachOtherStatus.attachTargte == Status.AttachTarget.Caster && s.Caster.currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
+            {
+                tempValue += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] + GetAttachDependValue(s) * s.StatusLayer);
+            }
+        }
+        else
+        {
+            tempValue += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+        }
+
+        return tempValue;
+    }
 
     //当添加buff时 若buff本身类型对应数值变化 则Fresh对应属性
     //当角色有被动光环buff时(常驻击破转增伤) 即该buff涉及了其他属性  则在属性发生变化时调用对应Involved属性参数  遍历涉及的Status Fresh对应属性
@@ -412,7 +523,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.AttackPercentBonus)
                     {
-                        tempAttackBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        tempAttackBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -432,7 +543,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.HealthPercentBonus)
                     {
-                        tempHealthBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        tempHealthBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -453,21 +564,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.DamageIncreaseBonus)
                     {
-                        if (s.IsAttached)
-                        {
-                            if (s.attachOtherStatus.attachTargte == Status.AttachTarget.Self && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
-                            {
-                                tempDamageIncreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                            }
-                            else if(s.attachOtherStatus.attachTargte == Status.AttachTarget.Caster && s.Caster.currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
-                            {
-                                tempDamageIncreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                            }
-                        }
-                        else
-                        {
-                            tempDamageIncreaseBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
-                        }
+                        tempDamageIncreaseBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -484,7 +581,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.BrokenFocusBonus)
                     {
-                        tempBrokenFocusBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        tempBrokenFocusBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -502,14 +599,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.CriticalDamageBonus)
                     {
-                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
-                        {
-                            tempCriticalDamageBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                        }
-                        else
-                        {
-                            tempCriticalDamageBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0]) * s.StatusLayer);
-                        }
+                        tempCriticalDamageBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -527,7 +617,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.EffectPercentBonus)
                     {
-                        tempEffectPercentBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        tempEffectPercentBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -545,7 +635,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.EffectDefendBonus)
                     {
-                        tempEffectDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        tempEffectDefendBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -566,7 +656,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.BING || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            BINGDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            BINGDefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -579,7 +669,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.HUO || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            HUODefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            HUODefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -592,7 +682,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.FENG || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            FENGDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            FENGDefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -605,7 +695,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.LEI || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            LEIDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            LEIDefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -618,7 +708,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.WULI || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            WULIDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            WULIDefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -631,7 +721,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.XUSHU || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            XUSHUDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            XUSHUDefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -644,7 +734,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.involvedElement == CharacterData_SO.weaknessType.LIANGZI || s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            LIANGZIDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            LIANGZIDefendBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -669,35 +759,35 @@ public class Character : MonoBehaviour
                     {
                         if(s.involvedElement == CharacterData_SO.weaknessType.NONE)
                         {
-                            tempAllPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempAllPentrationBonus += StatusValueFunction(s);
                         }
                         else if(s.involvedElement == CharacterData_SO.weaknessType.BING)
                         {
-                            tempBINGPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempBINGPentrationBonus += StatusValueFunction(s);
                         }
                         else if (s.involvedElement == CharacterData_SO.weaknessType.HUO)
                         {
-                            tempHUOPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempHUOPentrationBonus += StatusValueFunction(s);
                         }
                         else if (s.involvedElement == CharacterData_SO.weaknessType.FENG)
                         {
-                            tempFENGPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempFENGPentrationBonus += StatusValueFunction(s);
                         }
                         else if (s.involvedElement == CharacterData_SO.weaknessType.LEI)
                         {
-                            tempLEIPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempLEIPentrationBonus += StatusValueFunction(s);
                         }
                         else if (s.involvedElement == CharacterData_SO.weaknessType.WULI)
                         {
-                            tempWULIPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempWULIPentrationBonus += StatusValueFunction(s);
                         }
                         else if (s.involvedElement == CharacterData_SO.weaknessType.XUSHU)
                         {
-                            tempXUSHUPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempXUSHUPentrationBonus += StatusValueFunction(s);
                         }
                         else if (s.involvedElement == CharacterData_SO.weaknessType.LIANGZI)
                         {
-                            tempLIANGZIPentrationBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempLIANGZIPentrationBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -718,7 +808,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.DefendValueBonus)
                     {
-                        tempDefendBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                        tempDefendBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -737,14 +827,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.CriticalPercentBonus)
                     {
-                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
-                        {
-                            tempCriticalPercentBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                        }
-                        else
-                        {
-                            tempCriticalPercentBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0]) * s.StatusLayer);
-                        }
+                        tempCriticalPercentBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -763,14 +846,7 @@ public class Character : MonoBehaviour
                 {
                     if (s.statusType == Status.StatusType.DamageDecreseBonus)
                     {
-                        if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
-                        {
-                            tempDamageDecreaseBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                        }
-                        else
-                        {
-                            tempDamageDecreaseBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
-                        }
+                        tempDamageDecreaseBonus += StatusValueFunction(s);
                     }
                 }
 
@@ -791,22 +867,14 @@ public class Character : MonoBehaviour
                     {
                         if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
                         {
-                            tempSpeedFixBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                        }
-                        else
-                        {
-                            tempSpeedFixBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempSpeedFixBonus += StatusValueFunction(s);
                         }
                     }
                     else if(s.statusType == Status.StatusType.SpeedPercentBonus)
                     {
                         if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
                         {
-                            tempSpeedPercentBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                        }
-                        else
-                        {
-                            tempSpeedPercentBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempSpeedPercentBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -825,11 +893,7 @@ public class Character : MonoBehaviour
                     {
                         if (s.IsAttached && currentStatus.Find(e => e.StatusName == s.attachOtherStatus.StatusName))
                         {
-                            tempBrokenEfficiencyBonus += s.IsDepend ? GetDependValue(s) : ((s.StatusValue[0] + s.attachOtherStatus.AddValue) * s.StatusLayer);
-                        }
-                        else
-                        {
-                            tempBrokenEfficiencyBonus += s.IsDepend ? GetDependValue(s) : (s.StatusValue[0] * s.StatusLayer);
+                            tempBrokenEfficiencyBonus += StatusValueFunction(s);
                         }
                     }
                 }
@@ -914,7 +978,7 @@ public class Character : MonoBehaviour
             //    continue;
             //}
             //context += status.description + "\n";
-            context += status.name + " 持续: " + status.duration.ToString() + " 层数: " + status.StatusLayer + " 数值:";
+            context += status.name.Replace("(Clone)","C") + " 持续: " + status.duration.ToString() + " 层数: " + status.StatusLayer + " 数值:";
             if (status.isSpecialStatus)
             {
                 context += "</color>";
@@ -929,7 +993,7 @@ public class Character : MonoBehaviour
                 {
                     if (status.IsAttached)
                     {
-                        context += (value + status.attachOtherStatus.AddValue).ToString() + "(依附于Status)"; 
+                        context += StatusValueFunction(status).ToString() + "(依附于Status)"; 
                     }
                     else
                     {
