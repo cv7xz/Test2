@@ -24,7 +24,8 @@ MonoBehaviour:
     BonusAttackType: 0
   TurnStartTiming: 0
   statusType: 7
-  StatusValue: []
+  StatusValue:
+  - 0
   involvedElement: 0
   repeatRule: 0
   ReapetFreshDuration: 0
@@ -46,6 +47,8 @@ MonoBehaviour:
     attachTargte: 0
     StatusName: 
     AddValue: 0
+    hasDepend: 0
+    dependValues: []
   IsAttachSkill: 0
   attachOtherSkill:
     SkillName: []
@@ -74,6 +77,7 @@ MonoBehaviour:
       skill: {fileID: 0}
       targetType: 0
       AfterDamage: 0
+    actionSource: 0
   StatusGroup: 0
   childStatus: []
   fieldStatus: []

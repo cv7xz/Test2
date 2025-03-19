@@ -131,7 +131,7 @@ public class Status : ScriptableObject
         PureDefendValue,  //防御
         CriticalPercentValue,
 
-        DamageDecreseValue,
+        DamageDecreseValue,  //百分比减伤
         BrokenEfficiencyValue,
 
         DefendPenetrationValue,
@@ -219,6 +219,7 @@ public class Status : ScriptableObject
         FriendDealDamage,
         CastSkillE,
         AttackEnemy,    //攻击敌人 DealDamage信号  对受击敌人进行Status添加
+        BreakEnemyToughShield,
     }
 
     public enum TriggerEffect
@@ -244,8 +245,8 @@ public class Status : ScriptableObject
         public List<Status> triggerStatus;   //在蓝天下击杀触发加暴击率效果
         public Skill_SO triggerSkill;
         public Skill_SO.Actions triggerAction;
+        public actionSource actionSource;
     }
-    [HideInInspector]
     public Trigger trigger;
     #endregion
 
@@ -256,6 +257,11 @@ public class Status : ScriptableObject
 
     public bool FeiXiaoExtraSkillPoint;   //超级特判之飞霄  每回合触发一次 回合开始时重置触发次数
 
+    public enum actionSource
+    {
+        Owner,
+        Caster,
+    }
     public enum actionEffect
     {
         NotFreshBroken,
@@ -338,10 +344,13 @@ public class Status : ScriptableObject
                     Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, DealDamageToEnemyTriggerAction);
                     break;
                 case TriggerCondition.CastSkillE:
-                    Messenger.Instance.AddListener(Messenger.EventType.CastSkillE,CheckCondition);
+                    Messenger.Instance.AddListener<Character>(Messenger.EventType.CastSkillE,CheckCondition);
                     break;
                 case TriggerCondition.AttackEnemy:
                     Messenger.Instance.AddListener<Character, Character, float>(Messenger.EventType.DealDamage, AttackTriggerAction);
+                    break;
+                case TriggerCondition.BreakEnemyToughShield:
+                    Messenger.Instance.AddListener<Character,Character>(Messenger.EventType.ToughShieldBroken, CheckCondition);
                     break;
             }
         }
@@ -365,7 +374,33 @@ public class Status : ScriptableObject
         }
         else if(trigger.triggerEffect == TriggerEffect.ExecuteAction)
         {
+
             InputManager.Instance.ExecuteAction(trigger.triggerAction, Owner, null);
+        }
+    }
+
+    public void ApplyTrigger(Character target)
+    {
+        if (trigger.triggerEffect == TriggerEffect.ExecuteSkill)
+        {
+            InputManager.Instance.SpecialActionList.AddFirst(new InputManager.SpecialAction(Owner, trigger.triggerSkill, target));
+            InputManager.Instance.FreshSpecialAction();
+            InputManager.Instance.enemyActionCounterDown.ResetTimer();
+        }
+        else if (trigger.triggerEffect == TriggerEffect.AddStatus)   //在蓝天下击杀触发加暴击率效果
+        {
+            foreach (var status in trigger.triggerStatus)
+            {
+                var cloneStatus = Instantiate(status);
+                StatusAction.AddStatusAction(Caster, Owner, cloneStatus);
+            }
+        }
+        else if (trigger.triggerEffect == TriggerEffect.ExecuteAction)
+        {
+            if(trigger.actionSource == actionSource.Owner)
+            {
+                InputManager.Instance.ExecuteAction(trigger.triggerAction, Owner, target);
+            }
         }
     }
 
@@ -481,11 +516,15 @@ public class Status : ScriptableObject
             }
         }
     }
+    public void CheckCondition(Character attacker,Character attacked)  //阮梅R加攻击特效 击破韧性盾
+    {
+        ApplyTrigger(attacked);
+    }
     private void DealDamageToEnemyTriggerAction(Character attacker, Character attacked, float damageValue)   //一回合一次  队友攻击触发追加攻击
     {
         if(attacker.type == Character.CharaterType.Player && attacker != Owner)
         {
-            CheckCondition();
+            CheckConditionForTarget(attacked);
         }
     }
     private void AttackTriggerAction(Character attacker,Character attacked,float damageValue)
@@ -528,6 +567,21 @@ public class Status : ScriptableObject
         Owner.FreshProperty(this);
     }
 
+    private void CheckConditionForTarget(Character a)
+    {
+        if (trigger.triggerLayer == 0)
+        {
+            ApplyTrigger(a);
+        }
+        else
+        {
+            if (StatusLayer >= trigger.triggerLayer)
+            {
+                ApplyTrigger(a);
+                StatusLayer -= trigger.triggerLayer;
+            }
+        }
+    }
     private void KillTargetAction(Character attacter,Character killed)     //在蓝天下 击杀
     {
         if (attacter.currentStatus.Contains(this))

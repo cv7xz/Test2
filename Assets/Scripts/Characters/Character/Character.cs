@@ -393,7 +393,7 @@ public class Character : MonoBehaviour
                 {
                     if (depend.property == Status.InvolvedProperty.CertainElementPlayerNumber)
                     {
-                        int number = Mathf.Max(StaticNumber.GetPlayerNumber(depend.certainElement) - 1, 0);
+                        int number = Mathf.Max(StaticNumber.GetPlayerNumber(depend.certainElement) - 1, 0);   //减1对齐value数组下标
                         dependValue += depend.values[number] + depend.correctValues;   //加攻击buff  依存场上某属性角色数量  依存数值非线性 根据数量读取数组
                     }
                 }

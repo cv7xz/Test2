@@ -142,7 +142,7 @@ public static class DamageAction
 
             if (toughDamage >= attackedData.currentToughShield && attackedData.currentToughShield > 1e-6)
             {
-                Messenger.Instance.BroadCast(Messenger.EventType.ToughShieldBroken, attacker, skill);
+                Messenger.Instance.BroadCast(Messenger.EventType.ToughShieldBroken, attacker, attacked);
                 BrokenDamageAction(attacker, attacked);
                 BrokenTriggerEffect(attacker,attacked);
             }
@@ -312,7 +312,7 @@ public static class DamageAction
         GameManager.Instance.DamageAppearFunc(attacker, attacked, damageValue, attackerData.elementType);
         GameManager.Instance.DamageBallAppear(attacker, attacked, damageValue);
     }
-    public static float BrokenDamageAction(Character source, Character attacked)
+    public static float BrokenDamageAction(Character source, Character attacked,float value = 1f)
     {
         CharacterData_SO attackerData = source.characterData;
         CharacterData_SO attackedData = attacked.characterData;
@@ -354,6 +354,12 @@ public static class DamageAction
 
         context += $"抗性减伤 {0.9} 处理后伤害 {damageValue}\n";
 
+        if (value != 1f)
+        {
+            damageValue *= value;
+        }
+
+        context += $"特殊倍率 {value} 处理后伤害 {damageValue}\n";
         GameManager.Instance.DamageAppearFunc(source, attacked, damageValue,attackerData.elementType,true);
         return damageValue;
     }

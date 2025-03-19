@@ -22,7 +22,8 @@ MonoBehaviour:
   HasBonusLimit: 0
   limitType:
     BonusAttackType: 0
-  statusType: 0
+  TurnStartTiming: 0
+  statusType: 21
   StatusValue:
   - 0.25
   involvedElement: 0
@@ -39,8 +40,11 @@ MonoBehaviour:
   fieldEffects: []
   IsAttached: 0
   attachOtherStatus:
+    attachTargte: 0
     StatusName: 
     AddValue: 0
+    hasDepend: 0
+    dependValues: []
   IsAttachSkill: 0
   attachOtherSkill:
     SkillName: []
@@ -70,7 +74,9 @@ MonoBehaviour:
       skill: {fileID: 0}
       targetType: 0
       AfterDamage: 0
+    actionSource: 0
   StatusGroup: 0
   childStatus: []
   fieldStatus: []
   FeiXiaoExtraSkillPoint: 0
+  controlActions: []

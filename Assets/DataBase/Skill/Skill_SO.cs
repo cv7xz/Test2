@@ -120,6 +120,7 @@ public class Skill_SO : ScriptableObject
         AddStatusLayer,  //符玄终结技加层数
         ExecuteSkill,   //飞霄技能 跟一次追加 (子技能)
         AddStatusDuration,
+        DealBrokenDamage,   //阮梅附加击破伤害
     }
 
     [System.Serializable]

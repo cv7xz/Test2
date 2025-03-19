@@ -88,11 +88,13 @@ public class InputManager : MonoBehaviour
     {
         public Character executeCharacter;
         public Skill_SO skill;
+        public Character Target;
 
-        public SpecialAction(Character a,Skill_SO b)
+        public SpecialAction(Character a,Skill_SO b,Character c = null)
         {
             executeCharacter = a;
             skill = b;
+            Target = c;
         }
     }
 
@@ -109,80 +111,18 @@ public class InputManager : MonoBehaviour
         }
         ActionCounterDownText.text = "当前人物" + currentActionCharacter.characterName +  "行动\n动画倒计时: " + enemyActionCounterDown.currentTime.ToString("f2");
         enemyActionCounterDown.Update();
-        ActionExecute();
+
+        FinalSkillCommand();     //Player的终结技指令  数字键 1 2 3 4
+        ActionExecute();         //追加攻击 敌人的行动 
+        PlayerActionCommand();   //Player的Q/E  指令
+
         if(FeiXiaoFinalSkillState == false)   //终结技状态
         {
             ChangeTarget();
         }
- 
 
-        #region 终结技前置条件通过  输入进入"是否释放终结技"状态
-        if (TryingCastFinalSkill && FeiXiaoFinalSkillState == false)
-        {
-            Character player = SpecialActionList.First.Value.executeCharacter;
-            if(player.skillFinal.specialFinalSkill == Skill_SO.SpecialFinalSkill.None)
-            {
-                ChangeTargetFirstCharacter(player.skillFinal);
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    SpecialActionDequeue(ESC: true);
+        ConfirmFinalSkill();
 
-                    FreshSpecialAction();
-                }
-
-                else if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    SpecialActionDequeue(player.skillFinal, player, currentSelectEnemy);
-
-                    FreshSpecialAction();
-
-                }
-            }
-            else if(player.skillFinal.specialFinalSkill == Skill_SO.SpecialFinalSkill.FEIXIAO)
-            {
-                ChangeTargetFirstCharacter(player.skillFinal);
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    SpecialActionDequeue(ESC: true);
-
-                    FreshSpecialAction();
-                }
-
-                else if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    SkillExecute(player.skillFinal, player, currentSelectEnemy);
-                    FeiXiaoFinalSkillState = true;
-                }
-            }
-        }
-
-        if(FeiXiaoFinalSkillState == true)
-        {
-            Character player = SpecialActionList.First.Value.executeCharacter;
-            DamageInfo totalInfo = new DamageInfo(player,currentSelectEnemy,player.skillFinal);
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                FeiXiaoFinalSkillCount += 1;
-                totalInfo.toughDamage += SpeicalSkillExecute(FeiXiaoSpecialE, player, currentSelectEnemy).toughDamage;
-            }
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                FeiXiaoFinalSkillCount += 1;
-                totalInfo.toughDamage += SpeicalSkillExecute(FeiXiaoSpecialE, player, currentSelectEnemy).toughDamage;
-            }
-
-            if(FeiXiaoFinalSkillCount >= 6)
-            {
-                SpecialActionDequeue(FeiXiaoFinalEnd,player,currentSelectEnemy);  //TODO 要释放终结技结尾
-                FreshSpecialAction();
-                FeiXiaoFinalSkillCount = 0;
-                FeiXiaoFinalSkillState = false;
-                Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, totalInfo);
-                Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
-            }
-        }
-        #endregion
     }
     public void FreshSpecialAction()
     {
@@ -245,14 +185,9 @@ public class InputManager : MonoBehaviour
     /// </summary>
     public bool SkipAction = false;
     public List<KeyCode> finalSkillKeyCodes = new List<KeyCode> { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4};
-    public void ActionExecute()
+
+    public void FinalSkillCommand()
     {
-
-        if (currentSelectEnemy == null && currentSelectPlayer == null)
-        {
-            FindFirstTarget();
-        }
-
         #region FinalSkill开启 不需要知道当前谁在行动
         for (int i = 0; i <= 3; i++)
         {
@@ -262,7 +197,7 @@ public class InputManager : MonoBehaviour
                 var skill = player.skillFinal;
                 if (player != null)
                 {
-                    if(SpecialActionList.Contains(new SpecialAction(player,skill)))
+                    if (SpecialActionList.Contains(new SpecialAction(player, skill)))
                     {
                         GameManager.Instance.ShowPanelText("casting finalSkill now!");
                         return;
@@ -270,7 +205,7 @@ public class InputManager : MonoBehaviour
                     if (skill.specialFinalSkill == Skill_SO.SpecialFinalSkill.FEIXIAO)
                     {
                         var skillPointStatus = player.currentStatus.Find(e => e.StatusName == "1051");
-                        if(skillPointStatus.StatusLayer < 12)
+                        if (skillPointStatus.StatusLayer < 12)
                         {
                             GameManager.Instance.ShowPanelText("no enough energy!");
                             return;
@@ -281,7 +216,7 @@ public class InputManager : MonoBehaviour
                         GameManager.Instance.ShowPanelText("no enough energy!");
                         return;
                     }
-                    
+
 
                     CurrentInputState = CurrentInputStateEnum.R;
                     SpecialActionList.AddLast(new SpecialAction(player, skill));
@@ -291,46 +226,11 @@ public class InputManager : MonoBehaviour
             }
         }
         #endregion
+    }
 
-        //当额外行动条有行动时 先处理额外  若为追加则直接执行 若终结技则根据输入执行
-        #region 敌人回合 或者追加类型行动 (不受控制 程序自行执行)
-
-        if (SpecialActionList.Count != 0 && SpecialActionList.First.Value.skill.damageType == Skill_SO.DamageType.ExtraAttack && enemyActionCounterDown.currentTime <= 0)
-        {
-            SpecialActionDequeue(SpecialActionList.First.Value.skill, SpecialActionList.First.Value.executeCharacter, currentSelectEnemy);
-            FreshSpecialAction();
-        }
-
-        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0 )
-        {
-            if (SkipAction == false)
-            {
-                List<Character> player = new List<Character>();
-                foreach (var p in GameManager.Instance.players)
-                {
-                    if (p != null)
-                    {
-                        player.Add(p);
-                    }
-                }
-                GameManager.Instance.ShowPanelText($"Enemy {currentActionCharacter.CurrentIndex} Action");
-
-                int randomTargetIndex = UnityEngine.Random.Range(0, player.Count);
-                DamageAction.DealDamageAction(currentActionCharacter, player[randomTargetIndex]);
-                Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
-
-            }
-
-            enemyActionCounterDown.ResetTimer();
-            enemyActionCounterDown.AddEndAction(()=>FreshAction());
-            
-            return;
-        }
-
-        #endregion
-
-
-        else if(currentActionCharacter.type == Character.CharaterType.Player && SpecialActionList.Count == 0 &&  CurrentInputState != CurrentInputStateEnum.R)
+    public void PlayerActionCommand()
+    {
+        if (currentActionCharacter.type == Character.CharaterType.Player && SpecialActionList.Count == 0 && CurrentInputState != CurrentInputStateEnum.R)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -373,14 +273,14 @@ public class InputManager : MonoBehaviour
                     CurrentInputState = CurrentInputStateEnum.E;
                     if (skill.target == Skill_SO.Target.Enemy)
                     {
-                        if(currentSelectEnemy == null)
+                        if (currentSelectEnemy == null)
                         {
                             FindFirstTarget();
                         }
                     }
                     else
                     {
-                        if(currentSelectPlayer == null)
+                        if (currentSelectPlayer == null)
                         {
                             FindFirstFriend();
                         }
@@ -388,6 +288,138 @@ public class InputManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ConfirmFinalSkill()
+    {
+        #region 当前特殊行动列表第一位是FinalSkill   输入进入"是否释放终结技"状态
+        if (SpecialActionList.Count > 0 && SpecialActionList.First.Value.skill.damageType == Skill_SO.DamageType.FinalAttack && FeiXiaoFinalSkillState == false)
+        {
+            Character player = SpecialActionList.First.Value.executeCharacter;
+            if (player.skillFinal.specialFinalSkill == Skill_SO.SpecialFinalSkill.None)
+            {
+                ChangeTargetFirstCharacter(player.skillFinal);
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    SpecialActionDequeue(ESC: true);
+
+                    FreshSpecialAction();
+                }
+
+                else if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    SpecialActionDequeue(player.skillFinal, player, currentSelectEnemy);
+
+                    FreshSpecialAction();
+
+                }
+            }
+            else if (player.skillFinal.specialFinalSkill == Skill_SO.SpecialFinalSkill.FEIXIAO)
+            {
+                ChangeTargetFirstCharacter(player.skillFinal);
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    SpecialActionDequeue(ESC: true);
+
+                    FreshSpecialAction();
+                }
+
+                else if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    SkillExecute(player.skillFinal, player, currentSelectEnemy);
+                    FeiXiaoFinalSkillState = true;
+                }
+            }
+        }
+
+        if (FeiXiaoFinalSkillState == true)
+        {
+            Character player = SpecialActionList.First.Value.executeCharacter;
+            DamageInfo totalInfo = new DamageInfo(player, currentSelectEnemy, player.skillFinal);
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                FeiXiaoFinalSkillCount += 1;
+                totalInfo.toughDamage += SpeicalSkillExecute(FeiXiaoSpecialE, player, currentSelectEnemy).toughDamage;
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                FeiXiaoFinalSkillCount += 1;
+                totalInfo.toughDamage += SpeicalSkillExecute(FeiXiaoSpecialE, player, currentSelectEnemy).toughDamage;
+            }
+
+            if (FeiXiaoFinalSkillCount >= 6)
+            {
+                SpecialActionDequeue(FeiXiaoFinalEnd, player, currentSelectEnemy);  //TODO 要释放终结技结尾
+                FreshSpecialAction();
+                FeiXiaoFinalSkillCount = 0;
+                FeiXiaoFinalSkillState = false;
+                Messenger.Instance.BroadCast(Messenger.EventType.ToughDamage, totalInfo);
+                Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
+            }
+        }
+        #endregion
+    }
+    public void ActionExecute()
+    {
+
+        if (currentSelectEnemy == null && currentSelectPlayer == null)
+        {
+            FindFirstTarget();
+        }
+
+
+        //当额外行动条有行动时 先处理额外  若为追加则直接执行 若终结技则根据输入执行
+        #region 敌人回合 或者追加类型行动 (不受控制 程序自行执行)
+
+        //SpecialActionList 下一个特殊行动是追加类型 
+        if (SpecialActionList.Count != 0 && SpecialActionList.First.Value.skill.damageType == Skill_SO.DamageType.ExtraAttack && enemyActionCounterDown.currentTime <= 0)
+        {
+            if(SpecialActionList.First.Value.Target != null)
+            {
+                SpecialActionDequeue(SpecialActionList.First.Value.skill, SpecialActionList.First.Value.executeCharacter, SpecialActionList.First.Value.Target);
+                FreshSpecialAction();
+            }
+            else
+            {
+                Debug.Log($"{SpecialActionList.First.Value.skill.skillID} 没有目标！ 确认该技能是否是随机目标");
+                SpecialActionDequeue(SpecialActionList.First.Value.skill, SpecialActionList.First.Value.executeCharacter);
+                FreshSpecialAction();
+
+            }
+        }
+
+        //敌人的行动  也由程序自动执行
+        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0 )
+        {
+            if (SkipAction == false)
+            {
+                List<Character> player = new List<Character>();
+                foreach (var p in GameManager.Instance.players)
+                {
+                    if (p != null)
+                    {
+                        player.Add(p);
+                    }
+                }
+                GameManager.Instance.ShowPanelText($"Enemy {currentActionCharacter.CurrentIndex} Action");
+
+                int randomTargetIndex = UnityEngine.Random.Range(0, player.Count);
+                DamageAction.DealDamageAction(currentActionCharacter, player[randomTargetIndex]);
+                Messenger.Instance.BroadCast(Messenger.EventType.SettleDeath);
+
+            }
+
+            enemyActionCounterDown.ResetTimer();
+            enemyActionCounterDown.AddEndAction(()=>FreshAction());
+            
+            return;
+        }
+
+        #endregion
+
+
+
     }
 
     /// <summary>
@@ -564,7 +596,6 @@ public class InputManager : MonoBehaviour
             #endregion
 
             FreshAction();
-            // Player Instantiate后 Awake紧跟着调用 然后这一帧代码调用 最后调用Start
 
             #region 角色在场光环效果
             for (int i = 0; i < GameManager.Instance.players.Count; i++)
@@ -599,9 +630,13 @@ public class InputManager : MonoBehaviour
                                 StatusAction.AddStatusAllFriend(player, player.currentStatus[j].fieldEffects[k].status);
                             }
                         }
-                        else if (player.currentStatus[j].fieldEffects[k].field == Status.FieldTarget.Global)
+                        else if (player.currentStatus[j].fieldEffects[k].field == Status.FieldTarget.Global)   
                         {
-                            GameManager.Instance.maxSkillPoint += (int)player.currentStatus[j].fieldEffects[k].status.StatusValue[0];
+                            if (player.currentStatus[j].fieldEffects[k].status.StatusName == "1015")
+                            {
+                                GameManager.Instance.maxSkillPoint += (int)player.currentStatus[j].fieldEffects[k].status.StatusValue[0];    //这个Status 1015 花火战技点上限 只用了其status
+                            }
+
                         }
                     }
                 }
@@ -618,11 +653,12 @@ public class InputManager : MonoBehaviour
         {
             enemyActionCounterDown.currentTime = 20f;
             enemyActionCounterDown.pauseFlag = true;
-
-            TryingCastFinalSkill = true;
         }
     }
+    
     private CharacterData_SO.weaknessType tempType;
+
+    //暂时给FeiXiao设计的
     public DamageInfo SpeicalSkillExecute(Skill_SO skill, Character executeCharacter, Character targetCharacter)
     {
         if(skill.attackType == Skill_SO.TargetType.SingleTarget)
@@ -826,6 +862,7 @@ public class InputManager : MonoBehaviour
                 if (action.AfterDamage == true)
                 {
                     ExecuteAction(action, executeCharacter, targetCharacter);
+                    Debug.Log($"{skill.skillID}  {targetCharacter.name} ");
                 }
             }
             #endregion
@@ -882,7 +919,7 @@ public class InputManager : MonoBehaviour
                     }
                 }
             }
-            #endregion
+            #endregion 
 
             #region 效果执行后Action
             foreach (var action in skill.addactions)
@@ -902,7 +939,7 @@ public class InputManager : MonoBehaviour
         }
         if(skill.skillQER == Skill_SO.SkillQER.E)
         {
-            Messenger.Instance.BroadCast(Messenger.EventType.CastSkillE);
+            Messenger.Instance.BroadCast(Messenger.EventType.CastSkillE, executeCharacter);
         }
         enemyActionCounterDown.ResetTimer();
     }
@@ -955,13 +992,20 @@ public class InputManager : MonoBehaviour
                 EnergyChangeAction.AddEnergyAction(executeCharacter, action.value);
             }
         }
-        else if (action.addaction == Skill_SO.AddAction.ExecuteSkill)
+        else if (action.addaction == Skill_SO.AddAction.ExecuteSkill)    //例如飞霄E技能释放追加
         {
             if (action.targetType == Skill_SO.TargetType.SingleTarget)
             {
-                SpecialActionList.AddFirst(new SpecialAction(executeCharacter, action.skill));
+                SpecialActionList.AddFirst(new SpecialAction(executeCharacter, action.skill,target));
                 FreshSpecialAction();
                 enemyActionCounterDown.ResetTimer();
+            }
+        }
+        else if (action.addaction == Skill_SO.AddAction.DealBrokenDamage)
+        {
+            if(action.targetType == Skill_SO.TargetType.SingleTarget)
+            {
+                DamageAction.BrokenDamageAction(executeCharacter, target, action.value);
             }
         }
     }
@@ -983,6 +1027,9 @@ public class InputManager : MonoBehaviour
         } 
     }
 
+    /// <summary>
+    /// 特殊行动退队列   一定是按照队列的顺序退  ESC是手动取消终结技传进来的参数 
+    /// </summary>
     public void SpecialActionDequeue(Skill_SO skill = null,Character caster = null,Character target = null,bool ESC = false)  //退队列  技能释放(可能触发各种追加攻击)  然后根据队列最上方类型(追加 或者终结技)
     {
         if (ESC)
@@ -991,7 +1038,6 @@ public class InputManager : MonoBehaviour
             if (SpecialActionList.Count == 0)
             {
                 CurrentInputState = CurrentInputStateEnum.None;
-                TryingCastFinalSkill = false;
                 enemyActionCounterDown.ResetTimer();
                 enemyActionCounterDown.pauseFlag = false;
                 return;
@@ -1001,14 +1047,12 @@ public class InputManager : MonoBehaviour
             if (next.skill.damageType == Skill_SO.DamageType.ExtraAttack)
             {
                 CurrentInputState = CurrentInputStateEnum.None;
-                TryingCastFinalSkill = false;
                 enemyActionCounterDown.ResetTimer();
                 enemyActionCounterDown.pauseFlag = false;
             }
             else if (next.skill.damageType == Skill_SO.DamageType.FinalAttack)
             {
                 CurrentInputState = CurrentInputStateEnum.R;
-                TryingCastFinalSkill = true;
                 enemyActionCounterDown.currentTime = 20f;
                 enemyActionCounterDown.pauseFlag = true;
             }
@@ -1022,7 +1066,6 @@ public class InputManager : MonoBehaviour
             if (SpecialActionList.Count == 0)
             {
                 CurrentInputState = CurrentInputStateEnum.None;
-                TryingCastFinalSkill = false;
                 enemyActionCounterDown.ResetTimer();
                 enemyActionCounterDown.pauseFlag = false;
                 return;
@@ -1032,14 +1075,12 @@ public class InputManager : MonoBehaviour
             if (next.skill.damageType == Skill_SO.DamageType.ExtraAttack)
             {
                 CurrentInputState = CurrentInputStateEnum.None;
-                TryingCastFinalSkill = false;
                 enemyActionCounterDown.ResetTimer();
                 enemyActionCounterDown.pauseFlag = false;
             }
             else if (next.skill.damageType == Skill_SO.DamageType.FinalAttack)
             {
                 CurrentInputState = CurrentInputStateEnum.R;
-                TryingCastFinalSkill = true;
                 enemyActionCounterDown.currentTime = 20f;
                 enemyActionCounterDown.pauseFlag = true;
             }
