@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     public Character mouseDownCharacter;
 
 
+
     public Text DamageTextPrefab, damageText;
     #endregion
 
@@ -51,6 +52,8 @@ public class GameManager : MonoBehaviour
     public int maxSkillPoint = 5;
 
     public float TotalActionValuePass = 0f;
+    public int GlobalExtraTimePoint = 0,GlobalFinalTimePoint=0;      //各种追加攻击的全局时点
+
     private void Awake()
     {
         if(Instance == null)
@@ -206,6 +209,18 @@ public class GameManager : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    public void Test()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            //currentCharacterTip.GetComponent<Image>().sprite = 
+        }
+    }
+    public IEnumerator CharacterAppear(GameObject character, float time = 2f)
+    {
+        yield return null;
     }
 
     public GameObject PlayerDamageBall,EnemyDamageBall;

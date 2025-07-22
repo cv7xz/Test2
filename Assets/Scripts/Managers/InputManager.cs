@@ -62,7 +62,7 @@ public class InputManager : MonoBehaviour
 
     public CounterDown<Skill_SO, Character> enemyActionCounterDown;
     public Text ActionCounterDownText;
-
+    public GameObject currentCharacterTip;
 
     public Transform SelectPanel;
     public GameObject SpritePrefab,EnemySlotPrefab;
@@ -89,12 +89,13 @@ public class InputManager : MonoBehaviour
         public Character executeCharacter;
         public Skill_SO skill;
         public Character Target;
-
-        public SpecialAction(Character a,Skill_SO b,Character c = null)
+        public int index;
+        public SpecialAction(Character a,Skill_SO b,Character c = null, int d = 0)
         {
             executeCharacter = a;
             skill = b;
             Target = c;
+            index = d;
         }
     }
 
@@ -110,6 +111,7 @@ public class InputManager : MonoBehaviour
             return;
         }
         ActionCounterDownText.text = "当前人物" + currentActionCharacter.characterName +  "行动\n动画倒计时: " + enemyActionCounterDown.currentTime.ToString("f2");
+        currentCharacterTip.GetComponent<Image>().sprite = currentActionCharacter.GetComponent<Character>().sprite;
         enemyActionCounterDown.Update();
 
         FinalSkillCommand();     //Player的终结技指令  数字键 1 2 3 4
@@ -130,15 +132,33 @@ public class InputManager : MonoBehaviour
         {
             Destroy(SpecialActionPanel.transform.GetChild(i).gameObject);
         }
-        foreach(var player in SpecialActionList)
+
+        List<SpecialAction> tempSpecialAction = new List<SpecialAction>(SpecialActionList);
+        tempSpecialAction.Sort((a, b) =>
         {
+            if (a.skill.damageType != b.skill.damageType)
+            {
+                return ((int)a.skill.damageType).CompareTo((int)b.skill.damageType);
+            }
+            else
+            {
+                return a.index.CompareTo(b.index);
+            }
+        });      //追加攻击优先，且按照时间顺序排列，之后是终结技的顺序
+
+        SpecialActionList.Clear();
+
+        foreach (var action in tempSpecialAction)
+        {
+            SpecialActionList.AddLast(action);
             GameObject newActionBar = Instantiate(actionBar, SpecialActionPanel.transform);
-            newActionBar.transform.GetChild(0).GetComponent<Image>().sprite = player.executeCharacter.sprite;
-            if(player.skill.damageType == Skill_SO.DamageType.FinalAttack)
+            newActionBar.transform.GetChild(0).GetComponent<Image>().sprite = action.executeCharacter.sprite;
+
+            if(action.skill.damageType == Skill_SO.DamageType.FinalAttack)
             {
                 newActionBar.transform.GetChild(1).GetComponent<Text>().text = "FinalSkill";
             }
-            else if(player.skill.damageType == Skill_SO.DamageType.ExtraAttack)
+            else if(action.skill.damageType == Skill_SO.DamageType.ExtraAttack)
             {
                 newActionBar.transform.GetChild(1).GetComponent<Text>().text = "ExtraSkill";
             }
@@ -195,13 +215,18 @@ public class InputManager : MonoBehaviour
             {
                 var player = GameManager.Instance.players[i];
                 var skill = player.skillFinal;
+
                 if (player != null)
                 {
-                    if (SpecialActionList.Contains(new SpecialAction(player, skill)))
+                    foreach(var specialAction in SpecialActionList)
                     {
-                        GameManager.Instance.ShowPanelText("casting finalSkill now!");
-                        return;
+                        if(specialAction.executeCharacter == player && specialAction.skill == player.skillFinal)
+                        {
+                            GameManager.Instance.ShowPanelText("casting finalSkill now!");
+                            return;
+                        }
                     }
+
                     if (skill.specialFinalSkill == Skill_SO.SpecialFinalSkill.FEIXIAO)
                     {
                         var skillPointStatus = player.currentStatus.Find(e => e.StatusName == "1051");
@@ -217,11 +242,11 @@ public class InputManager : MonoBehaviour
                         return;
                     }
 
-
                     CurrentInputState = CurrentInputStateEnum.R;
-                    SpecialActionList.AddLast(new SpecialAction(player, skill));
+                    SpecialActionList.AddLast(new SpecialAction(player, skill, null, GameManager.Instance.GlobalFinalTimePoint));
+                    GameManager.Instance.GlobalFinalTimePoint += 1;
                     FreshSpecialAction();
-                    TryCastFinalSkill(skill, player);
+                    //TryCastFinalSkill(skill, player);
                 }
             }
         }
@@ -369,7 +394,7 @@ public class InputManager : MonoBehaviour
         }
 
 
-        //当额外行动条有行动时 先处理额外  若为追加则直接执行 若终结技则根据输入执行
+        //当额外行动条有行动时 先处理额外  若为追加则直接执行 若终结技则根据输入执行     要按队列顺序执行！
         #region 敌人回合 或者追加类型行动 (不受控制 程序自行执行)
 
         //SpecialActionList 下一个特殊行动是追加类型 
@@ -390,7 +415,7 @@ public class InputManager : MonoBehaviour
         }
 
         //敌人的行动  也由程序自动执行
-        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0 )
+        else if (currentActionCharacter.type == Character.CharaterType.Enemy && enemyActionCounterDown.currentTime <= 0 && SpecialActionList.Count == 0)
         {
             if (SkipAction == false)
             {
@@ -644,8 +669,6 @@ public class InputManager : MonoBehaviour
             #endregion
         }
     }
-    [HideInInspector]
-    public bool TryingCastFinalSkill = false;
     public void TryCastFinalSkill(Skill_SO skill, Character executeCharacter)
     {
         GameManager.Instance.ShowPanelText("Try Cast Final Skill");
@@ -996,7 +1019,8 @@ public class InputManager : MonoBehaviour
         {
             if (action.targetType == Skill_SO.TargetType.SingleTarget)
             {
-                SpecialActionList.AddFirst(new SpecialAction(executeCharacter, action.skill,target));
+                SpecialActionList.AddFirst(new SpecialAction(executeCharacter, action.skill,target,GameManager.Instance.GlobalExtraTimePoint));
+                GameManager.Instance.GlobalExtraTimePoint += 1;
                 FreshSpecialAction();
                 enemyActionCounterDown.ResetTimer();
             }

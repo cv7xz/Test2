@@ -360,7 +360,8 @@ public class Status : ScriptableObject
     {
         if (trigger.triggerEffect == TriggerEffect.ExecuteSkill)
         {
-            InputManager.Instance.SpecialActionList.AddFirst(new InputManager.SpecialAction(Owner, trigger.triggerSkill));
+            InputManager.Instance.SpecialActionList.AddFirst(new InputManager.SpecialAction(Owner, trigger.triggerSkill,null,GameManager.Instance.GlobalExtraTimePoint));
+            GameManager.Instance.GlobalExtraTimePoint += 1;
             InputManager.Instance.FreshSpecialAction();
             InputManager.Instance.enemyActionCounterDown.ResetTimer();
         }
@@ -383,7 +384,8 @@ public class Status : ScriptableObject
     {
         if (trigger.triggerEffect == TriggerEffect.ExecuteSkill)
         {
-            InputManager.Instance.SpecialActionList.AddFirst(new InputManager.SpecialAction(Owner, trigger.triggerSkill, target));
+            InputManager.Instance.SpecialActionList.AddFirst(new InputManager.SpecialAction(Owner, trigger.triggerSkill, target,GameManager.Instance.GlobalExtraTimePoint));
+            GameManager.Instance.GlobalExtraTimePoint += 1;
             InputManager.Instance.FreshSpecialAction();
             InputManager.Instance.enemyActionCounterDown.ResetTimer();
         }

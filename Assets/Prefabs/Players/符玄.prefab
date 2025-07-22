@@ -192,12 +192,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: 21300000, guid: d90e197bcaf0147c9866a54a84327f25, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 62ff59269bb716a4987968ccd4d6a4b6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 0.9, y: 0.9}
+  m_DrawMode: 1
+  m_Size: {x: 0.5, y: 0.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -215,10 +215,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30093f532f67d5343b3e861d5d58b595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   type: 0
   characterName: FUXUAN
   CurrentIndex: 0
-  sprite: {fileID: 21300000, guid: d90e197bcaf0147c9866a54a84327f25, type: 3}
+  sprite: {fileID: 21300000, guid: 62ff59269bb716a4987968ccd4d6a4b6, type: 3}
+  cantAddStatus1067: 0
   TargetFlag: {fileID: 5053799761866833667}
   HealthBarPrefab: {fileID: 6441210317514940679, guid: d4570dbc69d800b4d8470136132e6340, type: 3}
   healthBar: {fileID: 0}
@@ -255,10 +257,10 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.9, y: 0.9}
-    newSize: {x: 0.9, y: 0.9}
+    oldSize: {x: 1.6, y: 1.6}
+    newSize: {x: 0.5, y: 0.5}
     adaptiveTilingThreshold: 0.5
-    drawMode: 0
+    drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2

@@ -42,5 +42,5 @@ MonoBehaviour:
     statusName: 
     skill: {fileID: 11400000, guid: 61ac65a3232800643abc306fe2549f6b, type: 2}
     targetType: 0
-    AfterDamage: 1
+    AfterDamage: 0
   specialFinalSkill: 0
